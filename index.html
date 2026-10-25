@@ -316,6 +316,54 @@
     border-radius: 4px;
   }
 
+  .works-lead {
+    margin: -4px 0 20px;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .work-groups details {
+    border-top: 1px dashed var(--line);
+    padding: 20px 0;
+  }
+  .work-groups details:last-of-type { border-bottom: 1px dashed var(--line); }
+  .work-groups summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 0.92rem;
+  }
+  .work-groups summary::-webkit-details-marker { display: none; }
+  .work-groups summary .g-tag {
+    color: var(--accent);
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+  }
+  .work-groups summary .g-count { color: var(--ink-2); font-size: 0.78rem; }
+  .work-groups summary .g-hint { margin-left: auto; color: var(--ink-2); font-size: 0.75rem; }
+  .work-groups .g-item {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    padding-top: 14px;
+    font-size: 0.92rem;
+  }
+  .work-groups .g-item .g-name { font-family: var(--mono); font-weight: 600; }
+  .work-groups .g-item .g-desc { color: var(--ink-2); font-size: 0.86rem; flex: 1 1 260px; }
+  .work-groups .g-item .g-links {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    display: flex;
+    gap: 14px;
+  }
+
   /* ---------- AIGC 画廊 ---------- */
   .gallery-intro { max-width: 640px; color: var(--ink-2); font-size: 0.95rem; margin: -10px 0 28px; }
   .gallery {
@@ -547,6 +595,7 @@
   <section id="work">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">04</span><h2>开源作品</h2></div>
+      <p class="works-lead reveal">这里重点展示三件代表作——一份行业报告、一款节日游戏、一套离线工具；其余作品已按标签归类，点击标签即可展开。</p>
 
       <article class="proj reveal">
         <div class="yr">2026<br><span class="tag-live">进度公示</span></div>
@@ -587,44 +636,29 @@
         </div>
       </article>
 
-      <article class="proj reveal">
-        <div class="yr">2026<br><span class="tag-live">在线可玩</span></div>
-        <div>
-          <h3><a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">game-2026-kapaidashi</a></h3>
-          <p class="desc">Roguelike 卡牌构筑游戏框架：纯 HTML5 + ES6 模块实现，含卡池、战斗与随机事件体系，GitHub Pages 上有可玩 Demo。</p>
-          <div class="stack"><span>JavaScript</span><span>ES6 模块</span><span>Roguelike</span><span>卡牌构筑</span></div>
-        </div>
-        <div class="links">
-          <a href="https://wanderwrs.github.io/game-2026-kapaidashi/" target="_blank" rel="noopener">在线体验</a>
-          <a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">源码</a>
-        </div>
-      </article>
-
-      <article class="proj reveal">
-        <div class="yr">2026<br><span class="tag-live">在线可玩</span></div>
-        <div>
-          <h3><a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">pixel-runner</a></h3>
-          <p class="desc">像素风 2D 无限跑酷游戏 PixelRunner——从美术到逻辑全程由 TraeWork AI 生成的一次完整实践。</p>
-          <div class="stack"><span>HTML</span><span>Canvas</span><span>AI 生成</span><span>像素风</span></div>
-        </div>
-        <div class="links">
-          <a href="https://wanderwrs.github.io/pixel-runner/" target="_blank" rel="noopener">在线体验</a>
-          <a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">源码</a>
-        </div>
-      </article>
-
-      <article class="proj reveal">
-        <div class="yr">2026<br><span class="tag-live">在线访问</span></div>
-        <div>
-          <h3><a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">railway-safety-h5</a></h3>
-          <p class="desc">铁路沿线安全知识闯关 H5：以答题闯关的形式做安全宣教，面向沿线作业场景的轻量培训工具。</p>
-          <div class="stack"><span>JavaScript</span><span>H5</span><span>安全宣教</span><span>答题闯关</span></div>
-        </div>
-        <div class="links">
-          <a href="https://wanderwrs.github.io/railway-safety-h5/" target="_blank" rel="noopener">在线访问</a>
-          <a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">源码</a>
-        </div>
-      </article>
+      <div class="work-groups reveal">
+        <details>
+          <summary><span class="g-tag">在线可玩</span><span>游戏 Demo</span><span class="g-count">× 2</span><span class="g-hint">点击展开 / 收起</span></summary>
+          <div class="g-item">
+            <a class="g-name" href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">game-2026-kapaidashi</a>
+            <span class="g-desc">Roguelike 卡牌构筑游戏框架：纯 HTML5 + ES6 模块实现，含卡池、战斗与随机事件体系。</span>
+            <span class="g-links"><a href="https://wanderwrs.github.io/game-2026-kapaidashi/" target="_blank" rel="noopener">在线体验</a><a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">源码</a></span>
+          </div>
+          <div class="g-item">
+            <a class="g-name" href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">pixel-runner</a>
+            <span class="g-desc">像素风 2D 无限跑酷游戏 PixelRunner——从美术到逻辑全程由 TraeWork AI 生成的一次完整实践。</span>
+            <span class="g-links"><a href="https://wanderwrs.github.io/pixel-runner/" target="_blank" rel="noopener">在线体验</a><a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">源码</a></span>
+          </div>
+        </details>
+        <details>
+          <summary><span class="g-tag">在线访问</span><span>H5 宣教</span><span class="g-count">× 1</span><span class="g-hint">点击展开 / 收起</span></summary>
+          <div class="g-item">
+            <a class="g-name" href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">railway-safety-h5</a>
+            <span class="g-desc">铁路沿线安全知识闯关 H5：以答题闯关的形式做安全宣教，面向沿线作业场景的轻量培训工具。</span>
+            <span class="g-links"><a href="https://wanderwrs.github.io/railway-safety-h5/" target="_blank" rel="noopener">在线访问</a><a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">源码</a></span>
+          </div>
+        </details>
+      </div>
 
       <p class="more-repos reveal">
         另有早期版本与素材仓库：<a href="https://github.com/wanderwrs/1024-kunka-adventure" target="_blank" rel="noopener"><code>1024-kunka-adventure</code></a>（1024 游戏初版）、
