@@ -483,10 +483,20 @@
   footer {
     border-top: 1px solid var(--line);
     position: relative;
-    padding: 30px 0 44px;
+    overflow: hidden;
+    padding: 46px 0 64px;
     font-size: 0.8rem;
     color: var(--ink-2);
   }
+  footer #pebbleFx {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  footer .wrap { position: relative; z-index: 1; }
   footer::before {
     content: '';
     position: absolute;
@@ -777,6 +787,7 @@
 </main>
 
 <footer>
+  <canvas id="pebbleFx" aria-hidden="true"></canvas>
   <div class="wrap">
     <span>© 2026 Wanderers.小石头</span>
     <span class="mono">BUILT WITH TRAE · HOSTED ON GITHUB PAGES</span>
@@ -879,6 +890,102 @@
     nextBtn.addEventListener('click', function () { page++; renderList(); });
 
     renderTags(); renderList();
+  })();
+
+  // 页脚小石子：鼠标漂移互动（尊重减弱动效设置）
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var footer = document.querySelector('footer');
+    var canvas = document.getElementById('pebbleFx');
+    if (reduced || !footer || !canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext('2d');
+    var COLORS = [
+      'rgba(31, 122, 92, 0.55)',
+      'rgba(78, 159, 203, 0.55)',
+      'rgba(35, 48, 42, 0.28)',
+      'rgba(31, 122, 92, 0.28)'
+    ];
+    var pebbles = [], W = 0, H = 0;
+    var mouse = { x: -9999, y: -9999, inside: false };
+    var running = false, raf = 0;
+
+    function seed() {
+      var n = Math.max(26, Math.min(64, Math.round(W * H / 15000)));
+      pebbles = [];
+      for (var i = 0; i < n; i++) {
+        var hx = Math.random() * W, hy = Math.random() * H;
+        pebbles.push({
+          hx: hx, hy: hy, x: hx, y: hy, vx: 0, vy: 0,
+          r: 1.6 + Math.random() * 3.2,
+          c: COLORS[(Math.random() * COLORS.length) | 0],
+          ph: Math.random() * Math.PI * 2,
+          sp: 0.3 + Math.random() * 0.5
+        });
+      }
+    }
+    function resize() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = footer.clientWidth; H = footer.clientHeight;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      seed();
+    }
+    function step(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < pebbles.length; i++) {
+        var p = pebbles[i];
+        var bobY = Math.sin(t * 0.001 * p.sp + p.ph) * 3;
+        if (mouse.inside) {
+          var dx = p.x - mouse.x, dy = (p.y + bobY) - mouse.y;
+          var d2 = dx * dx + dy * dy, R = 130;
+          if (d2 < R * R && d2 > 0.01) {
+            var d = Math.sqrt(d2), f = (1 - d / R) * 2.2;
+            p.vx += (dx / d) * f; p.vy += (dy / d) * f;
+          }
+        }
+        p.vx += (p.hx - p.x) * 0.015; p.vy += (p.hy - p.y) * 0.015;
+        p.vx *= 0.9; p.vy *= 0.9;
+        p.x += p.vx; p.y += p.vy;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y + bobY, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.c;
+        ctx.fill();
+      }
+      raf = requestAnimationFrame(step);
+    }
+    function play() { if (!running) { running = true; raf = requestAnimationFrame(step); } }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+
+    footer.addEventListener('mousemove', function (e) {
+      var r = footer.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+      mouse.inside = true;
+    });
+    footer.addEventListener('mouseleave', function () {
+      mouse.inside = false; mouse.x = -9999; mouse.y = -9999;
+    });
+    footer.addEventListener('click', function (e) {
+      var r = footer.getBoundingClientRect();
+      var cx = e.clientX - r.left, cy = e.clientY - r.top;
+      pebbles.forEach(function (p) {
+        var dx = p.x - cx, dy = p.y - cy;
+        var d = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (d < 190) {
+          var f = (1 - d / 190) * 9;
+          p.vx += (dx / d) * f; p.vy += (dy / d) * f;
+        }
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (en) { en.isIntersecting ? play() : stop(); });
+      }, { threshold: 0.05 }).observe(footer);
+    } else {
+      play();
+    }
+    window.addEventListener('resize', resize);
+    resize();
   })();
 </script>
 
