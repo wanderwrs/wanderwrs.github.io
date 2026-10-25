@@ -306,6 +306,36 @@
     border-radius: 4px;
   }
 
+  /* ---------- AIGC 画廊 ---------- */
+  .gallery-intro { max-width: 640px; color: var(--ink-2); font-size: 0.95rem; margin: -10px 0 28px; }
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .gallery figure { margin: 0; }
+  .gallery a { display: block; }
+  .gallery img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .gallery a:hover img { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(31, 35, 40, 0.14); }
+  .gallery figcaption {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .gallery .cap-tag { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); white-space: nowrap; }
+  .gallery-note { margin-top: 20px; font-size: 0.85rem; color: var(--ink-2); }
+
   /* ---------- 随笔 ---------- */
   .note { padding: 20px 0; border-bottom: 1px dashed var(--line); }
   .note:last-child { border-bottom: none; }
@@ -372,8 +402,9 @@
     <nav class="nav-links" aria-label="页面导航">
       <a href="#about" class="num" data-n="01">关于</a>
       <a href="#fields" class="num" data-n="02">领域</a>
-      <a href="#work" class="num" data-n="03">作品</a>
-      <a href="#notes" class="num" data-n="04">随笔</a>
+      <a href="#aigc" class="num" data-n="03">AIGC</a>
+      <a href="#work" class="num" data-n="04">作品</a>
+      <a href="#notes" class="num" data-n="05">随笔</a>
       <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </div>
@@ -459,16 +490,54 @@
         </div>
         <div class="field field-wide">
           <h3><span class="idx">E</span>AIGC 内容创作</h3>
-          <p>深度使用 AIGC 技术进行内容生产：AI 图片生成、视频生成与文案制作，覆盖作品封面、宣传素材与文档写作等场景，让「一个人」也能跑完从创意到成片的完整流程。典型案例持续收录中。</p>
+          <p>深度使用 AIGC 技术进行内容生产：AI 图片生成、视频生成与文案制作，覆盖作品封面、宣传素材与文档写作等场景，让「一个人」也能跑完从创意到成片的完整流程。首个案例「千禧年风格系列一」已上线，<a href="#aigc">去看看</a>。</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ 03 作品 ============ -->
+  <!-- ============ 03 AIGC 案例 ============ -->
+  <section id="aigc">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">03</span><h2>AIGC 案例</h2></div>
+      <p class="gallery-intro reveal">
+        以下作品由 Seedream 5.0 Pro 生成。「千禧年风格系列」试图复刻 2000 年前后中国小镇街头的胶片质感：
+        白瓷砖楼、红灯笼、邮政报刊亭与放学的人潮。点击图片可查看大图。
+      </p>
+      <div class="gallery reveal">
+        <figure>
+          <a href="assets/aigc/y2k-1.jpg" target="_blank" rel="noopener">
+            <img src="assets/aigc/y2k-1.jpg" alt="千禧年风格 AI 生成作品：夏日午后的小镇河街，放学学生、白瓷砖楼房与远处石拱桥" width="1600" height="899" loading="lazy">
+          </a>
+          <figcaption><span>系列一 · 河街的夏天</span><span class="cap-tag">2006.07</span></figcaption>
+        </figure>
+        <figure>
+          <a href="assets/aigc/y2k-2.jpg" target="_blank" rel="noopener">
+            <img src="assets/aigc/y2k-2.jpg" alt="千禧年风格 AI 生成作品：春节前的街角，红灯笼、春联与穿羽绒服的人群" width="1600" height="899" loading="lazy">
+          </a>
+          <figcaption><span>系列一 · 灯笼与春联</span><span class="cap-tag">年前街角</span></figcaption>
+        </figure>
+        <figure>
+          <a href="assets/aigc/y2k-3.jpg" target="_blank" rel="noopener">
+            <img src="assets/aigc/y2k-3.jpg" alt="千禧年风格 AI 生成作品：老街年前的集市，糖果年货摊与转角白瓷砖楼" width="1600" height="899" loading="lazy">
+          </a>
+          <figcaption><span>系列一 · 年前集市</span><span class="cap-tag">老街年味</span></figcaption>
+        </figure>
+        <figure>
+          <a href="assets/aigc/y2k-4.jpg" target="_blank" rel="noopener">
+            <img src="assets/aigc/y2k-4.jpg" alt="千禧年风格 AI 生成作品：绿色邮政报刊亭前的街角，停靠的自行车与摩托车" width="1600" height="899" loading="lazy">
+          </a>
+          <figcaption><span>系列一 · 邮亭街角</span><span class="cap-tag">2003.11</span></figcaption>
+        </figure>
+      </div>
+      <p class="gallery-note reveal">Seedream 5.0 Pro · 千禧年风格系列一 · 共 4 幅 · 更多系列整理中</p>
+    </div>
+  </section>
+
+  <!-- ============ 04 作品 ============ -->
   <section id="work">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="no">03</span><h2>开源作品</h2></div>
+      <div class="sec-head reveal"><span class="no">04</span><h2>开源作品</h2></div>
 
       <article class="proj reveal">
         <div class="yr">2026<br><span class="tag-live">进度公示</span></div>
@@ -556,10 +625,10 @@
     </div>
   </section>
 
-  <!-- ============ 04 随笔 ============ -->
+  <!-- ============ 05 随笔 ============ -->
   <section id="notes">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="no">04</span><h2>随笔</h2></div>
+      <div class="sec-head reveal"><span class="no">05</span><h2>随笔</h2></div>
 
       <article class="note reveal">
         <span class="date">2026-10-22</span>
@@ -581,10 +650,10 @@
     </div>
   </section>
 
-  <!-- ============ 05 联系 ============ -->
+  <!-- ============ 06 联系 ============ -->
   <section id="contact" class="contact">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="no">05</span><h2>联系我</h2></div>
+      <div class="sec-head reveal"><span class="no">06</span><h2>联系我</h2></div>
       <p class="reveal">
         欢迎交流铁路工程信息化、纯前端工具与 AI 辅助开发的实践心得。
         最快的联系途径是 GitHub——Issue 和讨论都欢迎。
