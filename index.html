@@ -525,16 +525,63 @@
   }
   .note h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 6px; }
   .note p { font-size: 0.92rem; color: var(--ink-2); max-width: 640px; }
-  .note-pager { margin-top: 22px; }
 
-  /* ---------- 06 业余无线电 ---------- */
-  .radio-grid {
-    display: grid;
-    grid-template-columns: 1fr 1.15fr;
-    gap: 44px;
-    align-items: start;
+  /* ---------- 横向滚动卡片（05 随笔 / 06 业余无线电） ---------- */
+  .h-scroll {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 6px;
   }
-  .radio-text p { margin-bottom: 14px; }
+  .h-scroll::-webkit-scrollbar { display: none; }
+  .h-card { scroll-snap-align: start; }
+  .notes-track .note {
+    flex: 0 0 min(420px, 86vw);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 20px 22px;
+    margin: 0;
+  }
+  .notes-track .note p { max-width: none; }
+  .radio-track .radio-text {
+    flex: 0 0 min(430px, 86vw);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 22px 24px;
+  }
+  .radio-track .radio-text p { margin-bottom: 14px; }
+  .radio-track .qsl-card { flex: 0 0 auto; margin: 0; }
+  .radio-track .qsl-card a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(320px, 70vw);
+    height: min(360px, 80vw);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #fff;
+    overflow: hidden;
+  }
+  .radio-track .qsl-card img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+  .radio-track .qsl-card a:hover img { transform: scale(1.03); }
+  .radio-track .qsl-card figcaption {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--ink-2);
+    margin-top: 8px;
+    text-align: center;
+  }
   .cs-line { font-size: 1.05rem; }
   .callsign {
     font-family: var(--mono);
@@ -560,43 +607,6 @@
     z-index: 60;
     opacity: 0;
     transition: opacity 0.18s ease;
-  }
-  .qsl-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-  .qsl-grid figure { margin: 0; }
-  .qsl-grid a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 360px;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    background: #fff;
-  }
-  .qsl-grid img {
-    width: auto;
-    height: auto;
-    max-width: 100%;
-    max-height: 100%;
-    display: block;
-    transition: transform 0.35s ease;
-  }
-  .qsl-grid a:hover img { transform: scale(1.03); }
-  .qsl-grid figcaption {
-    font-family: var(--mono);
-    font-size: 0.74rem;
-    color: var(--ink-2);
-    margin-top: 8px;
-    text-align: center;
-  }
-  @media (max-width: 860px) {
-    .radio-grid { grid-template-columns: 1fr; gap: 26px; }
-    .qsl-grid { grid-template-columns: 1fr 1fr; }
-    .qsl-grid a { height: 240px; }
   }
 
   /* ---------- 联系 / 页脚 ---------- */
@@ -948,28 +958,28 @@
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">05</span><h2>随笔</h2></div>
 
-      <article class="note reveal">
-        <span class="date">2026-10-22</span>
-        <h3>一个 HTML 文件的程序员节礼物</h3>
-        <p>1024 之前的那个晚上，我把 6 关解谜、隐藏碎片、排行榜和一堆「假蓝屏、假病毒」彩蛋塞进了同一个 HTML 文件。碎片藏在源码注释、Console、隐藏 DOM 和 LocalStorage 里——毕竟这是给程序员玩的解谜，F12 才是正确的打开方式。</p>
-      </article>
+      <div class="h-scroll notes-track reveal" id="notesTrack">
+        <article class="note">
+          <span class="date">2026-10-22</span>
+          <h3>一个 HTML 文件的程序员节礼物</h3>
+          <p>1024 之前的那个晚上，我把 6 关解谜、隐藏碎片、排行榜和一堆「假蓝屏、假病毒」彩蛋塞进了同一个 HTML 文件。碎片藏在源码注释、Console、隐藏 DOM 和 LocalStorage 里——毕竟这是给程序员玩的解谜，F12 才是正确的打开方式。</p>
+        </article>
 
-      <article class="note reveal">
-        <span class="date">2026-09-01</span>
-        <h3>让 AI 从零写一个跑酷游戏</h3>
-        <p>pixel-runner 是一次实验：需求只出现在我的描述里，美术、关卡、手感调校全部交给 TraeWork AI 完成。结论是「一个人 + AI」完全可以把一个游戏想法推进到能玩、能上线的程度——前提是你得会提需求，也得懂验收。</p>
-      </article>
+        <article class="note">
+          <span class="date">2026-09-01</span>
+          <h3>让 AI 从零写一个跑酷游戏</h3>
+          <p>pixel-runner 是一次实验：需求只出现在我的描述里，美术、关卡、手感调校全部交给 TraeWork AI 完成。结论是「一个人 + AI」完全可以把一个游戏想法推进到能玩、能上线的程度——前提是你得会提需求，也得懂验收。</p>
+        </article>
 
-      <article class="note reveal">
-        <span class="date">2026-08-25</span>
-        <h3>给工程计算做一个离线 PWA</h3>
-        <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
-      </article>
-
-      <div class="wb-pager note-pager" id="notePager" hidden>
-        <button type="button" id="notePrev">← 上一页</button>
-        <span id="notePageInfo"></span>
-        <button type="button" id="noteNext">下一页 →</button>
+        <article class="note">
+          <span class="date">2026-08-25</span>
+          <h3>给工程计算做一个离线 PWA</h3>
+          <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
+        </article>
+      </div>
+      <div class="aigc-nav notes-nav">
+        <button type="button" id="notesPrev" aria-label="向前滑动">←</button>
+        <button type="button" id="notesNext" aria-label="向后滑动">→</button>
       </div>
     </div>
   </section>
@@ -978,8 +988,8 @@
   <section id="radio">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">06</span><h2>业余无线电</h2></div>
-      <div class="radio-grid reveal">
-        <div class="radio-text">
+      <div class="h-scroll radio-track reveal" id="radioTrack">
+        <div class="radio-text h-card">
           <p>
             工作之余，我是业余无线电爱好者（HAM）。空气里那些看不见的电波，
             和代码一样让我着迷——一根天线、一段频谱，就能和远方素未谋面的人通上话。
@@ -990,16 +1000,18 @@
             欢迎在电波里找我，也欢迎交换 QSL 卡片——卡片虽轻，联着的是世界另一端的同好。VY 73!
           </p>
         </div>
-        <div class="qsl-grid">
-          <figure class="reveal">
-            <a href="assets/qsl/qsl-front.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-front.jpg" alt="BI9CIR QSL 卡正面（竖版）：花鸟筑巢图案、CRAC 徽标与呼号、CQ Zone 23 / ITU Zone 43" loading="lazy"></a>
-            <figcaption>QSL 正面 · CQ 23 / ITU 43</figcaption>
-          </figure>
-          <figure class="reveal">
-            <a href="assets/qsl/qsl-back.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-back.jpg" alt="BI9CIR QSL 卡背面：中华人民共和国个人业余电台信息页" loading="lazy"></a>
-            <figcaption>QSL 背面 · PSE TNX QSL, VY 73!</figcaption>
-          </figure>
-        </div>
+        <figure class="qsl-card h-card reveal">
+          <a href="assets/qsl/qsl-front.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-front.jpg" alt="BI9CIR QSL 卡正面（竖版）：花鸟筑巢图案、CRAC 徽标与呼号、CQ Zone 23 / ITU Zone 43" loading="lazy"></a>
+          <figcaption>QSL 正面 · CQ 23 / ITU 43</figcaption>
+        </figure>
+        <figure class="qsl-card h-card reveal">
+          <a href="assets/qsl/qsl-back.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-back.jpg" alt="BI9CIR QSL 卡背面：中华人民共和国个人业余电台信息页" loading="lazy"></a>
+          <figcaption>QSL 背面 · PSE TNX QSL, VY 73!</figcaption>
+        </figure>
+      </div>
+      <div class="aigc-nav">
+        <button type="button" id="radioPrev" aria-label="向前滑动">←</button>
+        <button type="button" id="radioNext" aria-label="向后滑动">→</button>
       </div>
     </div>
   </section>
@@ -1225,33 +1237,38 @@
     canvases.forEach(function (cv) { makeField(cv.parentElement, cv); });
   })();
 
-  // 随笔分页：每页 3 篇，超出用上一页/下一页切换
+  // 横向轨道（随笔 / 业余无线电）：箭头按卡片步进滑动
   (function () {
-    var notes = document.querySelectorAll('#notes .note');
-    var pager = document.getElementById('notePager');
-    if (!pager || !notes.length) return;
-    var PER = 3, page = 1;
-    var prevBtn = document.getElementById('notePrev');
-    var nextBtn = document.getElementById('noteNext');
-    var info = document.getElementById('notePageInfo');
-    function render() {
-      var pages = Math.ceil(notes.length / PER);
-      if (page > pages) page = pages;
-      notes.forEach(function (el, i) {
-        el.style.display = (i >= (page - 1) * PER && i < page * PER) ? '' : 'none';
-      });
-      if (pages > 1) {
-        pager.hidden = false;
-        info.textContent = '第 ' + page + ' / ' + pages + ' 页 · 共 ' + notes.length + ' 篇';
-        prevBtn.disabled = page <= 1;
-        nextBtn.disabled = page >= pages;
-      } else {
-        pager.hidden = true;
+    function bindNav(trackId, prevId, nextId) {
+      var track = document.getElementById(trackId);
+      if (!track) return;
+      var prevBtn = document.getElementById(prevId);
+      var nextBtn = document.getElementById(nextId);
+      function step() {
+        var card = track.firstElementChild;
+        return card ? card.getBoundingClientRect().width + 20 : 320;
       }
+      function update() {
+        var max = track.scrollWidth - track.clientWidth - 4;
+        prevBtn.disabled = track.scrollLeft <= 4;
+        nextBtn.disabled = track.scrollLeft >= max;
+      }
+      prevBtn.addEventListener('click', function () {
+        track.scrollBy({ left: -step(), behavior: 'smooth' });
+      });
+      nextBtn.addEventListener('click', function () {
+        track.scrollBy({ left: step(), behavior: 'smooth' });
+      });
+      var t = 0;
+      track.addEventListener('scroll', function () {
+        clearTimeout(t);
+        t = setTimeout(update, 80);
+      });
+      window.addEventListener('resize', update);
+      update();
     }
-    prevBtn.addEventListener('click', function () { if (page > 1) { page--; render(); } });
-    nextBtn.addEventListener('click', function () { page++; render(); });
-    render();
+    bindNav('notesTrack', 'notesPrev', 'notesNext');
+    bindNav('radioTrack', 'radioPrev', 'radioNext');
   })();
 
   // 呼号 BI9CIR：悬停时渐变小方块跟随鼠标
