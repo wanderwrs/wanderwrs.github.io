@@ -321,47 +321,82 @@
     font-size: 0.9rem;
     color: var(--ink-2);
   }
-  .work-groups details {
+  .work-browser {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    gap: 30px;
     border-top: 1px dashed var(--line);
-    padding: 20px 0;
+    padding-top: 24px;
   }
-  .work-groups details:last-of-type { border-bottom: 1px dashed var(--line); }
-  .work-groups summary {
-    list-style: none;
+  .work-tags {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-self: start;
+    position: sticky;
+    top: 88px;
+  }
+  .work-tags button {
+    appearance: none;
+    background: none;
+    border: 1px dashed transparent;
+    border-radius: 6px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
+    text-align: left;
     font-family: var(--mono);
-    font-size: 0.92rem;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    padding: 8px 12px;
+    transition: color 0.15s ease, border-color 0.15s ease;
   }
-  .work-groups summary::-webkit-details-marker { display: none; }
-  .work-groups summary .g-tag {
+  .work-tags button:hover { color: var(--ink); }
+  .work-tags button.active {
     color: var(--accent);
-    border: 1px solid currentColor;
-    border-radius: 4px;
-    font-size: 0.72rem;
-    padding: 2px 8px;
+    border-color: var(--accent);
+    background: var(--chip);
   }
-  .work-groups summary .g-count { color: var(--ink-2); font-size: 0.78rem; }
-  .work-groups summary .g-hint { margin-left: auto; color: var(--ink-2); font-size: 0.75rem; }
-  .work-groups .g-item {
-    display: flex;
-    align-items: baseline;
-    flex-wrap: wrap;
-    gap: 6px 14px;
-    padding-top: 14px;
-    font-size: 0.92rem;
-  }
-  .work-groups .g-item .g-name { font-family: var(--mono); font-weight: 600; }
-  .work-groups .g-item .g-desc { color: var(--ink-2); font-size: 0.86rem; flex: 1 1 260px; }
-  .work-groups .g-item .g-links {
+  .work-tags button .cnt { float: right; font-size: 0.72rem; opacity: 0.75; }
+  .work-list .wb-item { padding: 16px 0; border-bottom: 1px dashed var(--line); }
+  .work-list .wb-item:first-child { padding-top: 0; }
+  .work-list .wb-item h4 {
     font-family: var(--mono);
-    font-size: 0.78rem;
-    white-space: nowrap;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .work-list .wb-item h4 a { color: var(--ink); }
+  .work-list .wb-item p { margin: 6px 0 0; font-size: 0.88rem; color: var(--ink-2); }
+  .work-list .wb-item .wb-links {
+    margin-top: 8px;
     display: flex;
     gap: 14px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+  }
+  .wb-pager {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 16px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-2);
+  }
+  .wb-pager button {
+    appearance: none;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink);
+    padding: 5px 12px;
+  }
+  .wb-pager button:disabled { opacity: 0.35; cursor: default; }
+  .wb-pager button:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+  @media (max-width: 860px) {
+    .work-browser { grid-template-columns: 1fr; gap: 18px; }
+    .work-tags { flex-direction: row; flex-wrap: wrap; position: static; }
   }
 
   /* ---------- AIGC 画廊 ---------- */
@@ -595,7 +630,7 @@
   <section id="work">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">04</span><h2>开源作品</h2></div>
-      <p class="works-lead reveal">这里重点展示三件代表作——一份行业报告、一款节日游戏、一套离线工具；其余作品已按标签归类，点击标签即可展开。</p>
+      <p class="works-lead reveal">置顶一件代表作，其余作品按标签归档——点击左侧标签，项目在右侧展示；每页最多 5 条，超出可翻页。</p>
 
       <article class="proj reveal">
         <div class="yr">2026<br><span class="tag-live">进度公示</span></div>
@@ -636,28 +671,16 @@
         </div>
       </article>
 
-      <div class="work-groups reveal">
-        <details>
-          <summary><span class="g-tag">在线可玩</span><span>游戏 Demo</span><span class="g-count">× 2</span><span class="g-hint">点击展开 / 收起</span></summary>
-          <div class="g-item">
-            <a class="g-name" href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">game-2026-kapaidashi</a>
-            <span class="g-desc">Roguelike 卡牌构筑游戏框架：纯 HTML5 + ES6 模块实现，含卡池、战斗与随机事件体系。</span>
-            <span class="g-links"><a href="https://wanderwrs.github.io/game-2026-kapaidashi/" target="_blank" rel="noopener">在线体验</a><a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">源码</a></span>
+      <div class="work-browser reveal">
+        <nav class="work-tags" id="workTags" aria-label="作品标签"></nav>
+        <div class="work-panel">
+          <div class="work-list" id="workList"></div>
+          <div class="wb-pager" id="workPager" hidden>
+            <button type="button" id="wbPrev">← 上一页</button>
+            <span id="wbPageInfo"></span>
+            <button type="button" id="wbNext">下一页 →</button>
           </div>
-          <div class="g-item">
-            <a class="g-name" href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">pixel-runner</a>
-            <span class="g-desc">像素风 2D 无限跑酷游戏 PixelRunner——从美术到逻辑全程由 TraeWork AI 生成的一次完整实践。</span>
-            <span class="g-links"><a href="https://wanderwrs.github.io/pixel-runner/" target="_blank" rel="noopener">在线体验</a><a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">源码</a></span>
-          </div>
-        </details>
-        <details>
-          <summary><span class="g-tag">在线访问</span><span>H5 宣教</span><span class="g-count">× 1</span><span class="g-hint">点击展开 / 收起</span></summary>
-          <div class="g-item">
-            <a class="g-name" href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">railway-safety-h5</a>
-            <span class="g-desc">铁路沿线安全知识闯关 H5：以答题闯关的形式做安全宣教，面向沿线作业场景的轻量培训工具。</span>
-            <span class="g-links"><a href="https://wanderwrs.github.io/railway-safety-h5/" target="_blank" rel="noopener">在线访问</a><a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">源码</a></span>
-          </div>
-        </details>
+        </div>
       </div>
 
       <p class="more-repos reveal">
@@ -732,6 +755,84 @@
       });
     }, { threshold: 0.08 });
     els.forEach(function (e) { io.observe(e); });
+  })();
+  // 作品浏览器：左标签 / 右项目，每页最多 5 条
+  (function () {
+    var GH = 'https://github.com/wanderwrs/';
+    var PAGES = 'https://wanderwrs.github.io/';
+    var WORKS = [
+      { name: '1024-kunka-adventure-new', tag: 'play',
+        desc: '1024 程序员节互动解谜游戏：单文件 HTML 实现 6 关解谜、隐藏碎片收集（源码注释 / Console / DOM / LocalStorage）、排行榜与模拟故障彩蛋，全程在浏览器本地运行。',
+        demo: '在线体验' },
+      { name: 'game-2026-kapaidashi', tag: 'play',
+        desc: 'Roguelike 卡牌构筑游戏框架：纯 HTML5 + ES6 模块实现，含卡池、战斗与随机事件体系。',
+        demo: '在线体验' },
+      { name: 'pixel-runner', tag: 'play',
+        desc: '像素风 2D 无限跑酷游戏 PixelRunner——从美术到逻辑全程由 TraeWork AI 生成的一次完整实践。',
+        demo: '在线体验' },
+      { name: 'the-math-office', tag: 'use',
+        desc: '「the MATH office」公路工程计算器合集：纯前端 PWA，支持离线使用，为工程现场的无网环境提供常用计算能力。',
+        demo: '在线使用' },
+      { name: 'railway-safety-h5', tag: 'visit',
+        desc: '铁路沿线安全知识闯关 H5：以答题闯关的形式做安全宣教，面向沿线作业场景的轻量培训工具。',
+        demo: '在线访问' }
+    ];
+    var TAGS = [
+      { id: 'all', label: '全部作品' },
+      { id: 'play', label: '在线可玩 · 游戏' },
+      { id: 'use', label: '在线使用 · 工具' },
+      { id: 'visit', label: '在线访问 · H5 宣教' }
+    ];
+    var PER_PAGE = 5;
+    var cur = 'all', page = 1;
+    var tagBox = document.getElementById('workTags');
+    var listBox = document.getElementById('workList');
+    var pager = document.getElementById('workPager');
+    var prevBtn = document.getElementById('wbPrev');
+    var nextBtn = document.getElementById('wbNext');
+    var info = document.getElementById('wbPageInfo');
+
+    function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+    function renderTags() {
+      tagBox.innerHTML = TAGS.map(function (t) {
+        var n = t.id === 'all' ? WORKS.length : WORKS.filter(function (w) { return w.tag === t.id; }).length;
+        return '<button type="button" data-tag="' + t.id + '"' + (t.id === cur ? ' class="active"' : '') +
+          '>' + t.label + '<span class="cnt"> ' + n + '</span></button>';
+      }).join('');
+    }
+
+    function renderList() {
+      var items = cur === 'all' ? WORKS.slice() : WORKS.filter(function (w) { return w.tag === cur; });
+      var pages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+      if (page > pages) page = pages;
+      var slice = items.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+      listBox.innerHTML = slice.map(function (w) {
+        return '<article class="wb-item"><h4><a href="' + GH + w.name + '" target="_blank" rel="noopener">' +
+          esc(w.name) + '</a></h4><p>' + esc(w.desc) + '</p><div class="wb-links">' +
+          '<a href="' + PAGES + w.name + '/" target="_blank" rel="noopener">' + w.demo + '</a>' +
+          '<a href="' + GH + w.name + '" target="_blank" rel="noopener">源码</a></div></article>';
+      }).join('');
+      if (pages > 1) {
+        pager.hidden = false;
+        info.textContent = '第 ' + page + ' / ' + pages + ' 页 · 共 ' + items.length + ' 条';
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = page >= pages;
+      } else {
+        pager.hidden = true;
+      }
+    }
+
+    tagBox.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-tag]');
+      if (!b || b.dataset.tag === cur) return;
+      cur = b.dataset.tag; page = 1;
+      renderTags(); renderList();
+    });
+    prevBtn.addEventListener('click', function () { if (page > 1) { page--; renderList(); } });
+    nextBtn.addEventListener('click', function () { page++; renderList(); });
+
+    renderTags(); renderList();
   })();
 </script>
 
