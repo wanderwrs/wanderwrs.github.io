@@ -105,6 +105,16 @@
 
   /* ---------- Hero ---------- */
   .hero { padding: 84px 0 72px; }
+  .hero-inner { display: flex; align-items: center; gap: 48px; }
+  .hero-text { flex: 1; min-width: 0; }
+  .hero-avatar {
+    width: 112px;
+    height: 112px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
   .kicker {
     font-family: var(--mono);
     font-size: 0.8rem;
@@ -384,6 +394,8 @@
   /* ---------- 响应式 ---------- */
   @media (max-width: 720px) {
     .hero { padding: 60px 0 52px; }
+    .hero-inner { flex-direction: column-reverse; align-items: flex-start; gap: 18px; }
+    .hero-avatar { width: 88px; height: 88px; border-radius: 16px; }
     .about-cols { grid-template-columns: 1fr; gap: 30px; }
     .field-grid { grid-template-columns: 1fr; }
     .field:nth-last-child(2) { border-bottom: 1px dashed var(--line); }
@@ -414,6 +426,8 @@
 
   <!-- ============ Hero ============ -->
   <div class="wrap hero">
+    <div class="hero-inner">
+    <div class="hero-text">
     <p class="kicker">PORTFOLIO / 个人站</p>
     <h1>Wanderers.小石头</h1>
     <p class="sub">铁路工程从业者 · 纯前端开发 · AI / AIGC 深度实践者</p>
@@ -432,6 +446,9 @@
       <span class="chip">纯前端 · 零后端</span>
       <span class="chip">AIGC · 图片 / 视频 / 文案</span>
       <span class="chip">GitHub Pages 托管</span>
+    </div>
+    </div>
+    <img class="hero-avatar" src="assets/avatar.jpeg" alt="Wanderers.小石头的头像" width="96" height="96">
     </div>
   </div>
 
