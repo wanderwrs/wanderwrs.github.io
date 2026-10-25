@@ -474,6 +474,68 @@
   }
   .note h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 6px; }
   .note p { font-size: 0.92rem; color: var(--ink-2); max-width: 640px; }
+  .note-pager { margin-top: 22px; }
+
+  /* ---------- 06 业余无线电 ---------- */
+  .radio-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 44px;
+    align-items: start;
+  }
+  .radio-text p { margin-bottom: 14px; }
+  .cs-line { font-size: 1.05rem; }
+  .callsign {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 1.3em;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    position: relative;
+    padding: 2px 8px;
+    cursor: crosshair;
+    border-bottom: 2px solid rgba(78, 159, 203, 0.4);
+  }
+  #csCube {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--accent), var(--sky));
+    box-shadow: 0 4px 14px rgba(31, 122, 92, 0.35);
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .qsl-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  .qsl-grid figure { margin: 0; }
+  .qsl-grid a {
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: #fff;
+  }
+  .qsl-grid img { width: 100%; display: block; transition: transform 0.35s ease; }
+  .qsl-grid a:hover img { transform: scale(1.03); }
+  .qsl-grid figcaption {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--ink-2);
+    margin-top: 8px;
+    text-align: center;
+  }
+  @media (max-width: 860px) {
+    .radio-grid { grid-template-columns: 1fr; gap: 26px; }
+    .qsl-grid { grid-template-columns: 1fr; }
+  }
 
   /* ---------- 联系 / 页脚 ---------- */
   .contact p { max-width: 560px; margin-bottom: 22px; }
@@ -557,6 +619,7 @@
       <a href="#aigc" class="num" data-n="03">AIGC</a>
       <a href="#work" class="num" data-n="04">作品</a>
       <a href="#notes" class="num" data-n="05">随笔</a>
+      <a href="#radio" class="num" data-n="06">无线电</a>
       <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </div>
@@ -773,13 +836,49 @@
         <h3>给工程计算做一个离线 PWA</h3>
         <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
       </article>
+
+      <div class="wb-pager note-pager" id="notePager" hidden>
+        <button type="button" id="notePrev">← 上一页</button>
+        <span id="notePageInfo"></span>
+        <button type="button" id="noteNext">下一页 →</button>
+      </div>
     </div>
   </section>
 
-  <!-- ============ 06 联系 ============ -->
+  <!-- ============ 06 业余无线电 ============ -->
+  <section id="radio">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">06</span><h2>业余无线电</h2></div>
+      <div class="radio-grid reveal">
+        <div class="radio-text">
+          <p>
+            工作之余，我是业余无线电爱好者（HAM）。空气里那些看不见的电波，
+            和代码一样让我着迷——一根天线、一段频谱，就能和远方素未谋面的人通上话。
+          </p>
+          <p class="cs-line">呼号：<span class="callsign" id="callsign">BI9CIR</span></p>
+          <p>
+            坐标 CQ Zone 23 · ITU Zone 43，持 CRAC 颁发的个人业余电台执照。
+            欢迎在电波里找我，也欢迎交换 QSL 卡片——卡片虽轻，联着的是世界另一端的同好。VY 73!
+          </p>
+        </div>
+        <div class="qsl-grid">
+          <figure class="reveal">
+            <a href="assets/qsl/qsl-front.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-front.jpg" alt="BI9CIR QSL 卡正面：花鸟筑巢图案与呼号、CQ Zone 23 / ITU Zone 43" loading="lazy"></a>
+            <figcaption>QSL 正面 · CQ 23 / ITU 43</figcaption>
+          </figure>
+          <figure class="reveal">
+            <a href="assets/qsl/qsl-back.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-back.jpg" alt="BI9CIR QSL 卡背面：中华人民共和国个人业余电台信息页" loading="lazy"></a>
+            <figcaption>QSL 背面 · PSE TNX QSL, VY 73!</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 07 联系 ============ -->
   <section id="contact" class="contact">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="no">06</span><h2>联系我</h2></div>
+      <div class="sec-head reveal"><span class="no">07</span><h2>联系我</h2></div>
       <p class="reveal">
         欢迎交流铁路工程信息化、纯前端工具与 AI 辅助开发的实践心得。
         最快的联系途径是 GitHub——Issue 和讨论都欢迎。
@@ -995,6 +1094,65 @@
     }
 
     canvases.forEach(function (cv) { makeField(cv.parentElement, cv); });
+  })();
+
+  // 随笔分页：每页 3 篇，超出用上一页/下一页切换
+  (function () {
+    var notes = document.querySelectorAll('#notes .note');
+    var pager = document.getElementById('notePager');
+    if (!pager || !notes.length) return;
+    var PER = 3, page = 1;
+    var prevBtn = document.getElementById('notePrev');
+    var nextBtn = document.getElementById('noteNext');
+    var info = document.getElementById('notePageInfo');
+    function render() {
+      var pages = Math.ceil(notes.length / PER);
+      if (page > pages) page = pages;
+      notes.forEach(function (el, i) {
+        el.style.display = (i >= (page - 1) * PER && i < page * PER) ? '' : 'none';
+      });
+      if (pages > 1) {
+        pager.hidden = false;
+        info.textContent = '第 ' + page + ' / ' + pages + ' 页 · 共 ' + notes.length + ' 篇';
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = page >= pages;
+      } else {
+        pager.hidden = true;
+      }
+    }
+    prevBtn.addEventListener('click', function () { if (page > 1) { page--; render(); } });
+    nextBtn.addEventListener('click', function () { page++; render(); });
+    render();
+  })();
+
+  // 呼号 BI9CIR：悬停时渐变小方块跟随鼠标
+  (function () {
+    var cs = document.getElementById('callsign');
+    if (!cs) return;
+    var cube = document.createElement('div');
+    cube.id = 'csCube';
+    document.body.appendChild(cube);
+    var tx = 0, ty = 0, x = 0, y = 0, rot = 0, active = false, raf = 0;
+    function loop() {
+      x += (tx - x) * 0.16;
+      y += (ty - y) * 0.16;
+      rot += ((tx - x) * 0.8 - rot) * 0.12;
+      cube.style.transform = 'translate(' + (x - 8) + 'px,' + (y - 8) + 'px) rotate(' + rot + 'deg)';
+      if (active || Math.abs(tx - x) > 0.5 || Math.abs(ty - y) > 0.5) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        raf = 0;
+      }
+    }
+    cs.addEventListener('mousemove', function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!active) { active = true; cube.style.opacity = '1'; x = tx; y = ty; }
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
+    cs.addEventListener('mouseleave', function () {
+      active = false;
+      cube.style.opacity = '0';
+    });
   })();
 </script>
 
