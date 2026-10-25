@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wanderers.小石头的个人站：铁路工程从业者，纯前端与 AI 辅助开发爱好者。收录自我介绍、行业领域与开源作品。">
+<meta name="theme-color" content="#FAFAF7">
+<title>Wanderers.小石头 · 个人站</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E6B4A'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAFAF7' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #FAFAF7;
+    --paper-2: #F3F2ED;
+    --ink: #1F2328;
+    --ink-2: #57606A;
+    --line: #E4E2DB;
+    --accent: #1E6B4A;
+    --accent-deep: #14523A;
+    --chip: #F0EFE9;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: #CBE3D6; }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- 顶部导航 ---------- */
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(250, 250, 247, 0.88);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 58px;
+  }
+  .brand {
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+  }
+  .brand .dot { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+  }
+  .nav-links a {
+    color: var(--ink-2);
+    font-size: 0.9rem;
+  }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.num::before {
+    content: attr(data-n);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-right: 4px;
+  }
+  .nav-github {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 4px 12px;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 84px 0 72px; }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(2.1rem, 5.5vw, 3.1rem);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1.25;
+    margin-bottom: 14px;
+  }
+  .hero .sub {
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    margin-bottom: 22px;
+  }
+  .hero .lede {
+    max-width: 620px;
+    color: var(--ink);
+    margin-bottom: 30px;
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 34px;
+  }
+  .btn {
+    display: inline-block;
+    font-size: 0.92rem;
+    padding: 9px 20px;
+    border-radius: 7px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    background: transparent;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
+  .btn-ghost {
+    border-color: var(--line);
+    color: var(--ink-2);
+  }
+  .btn-ghost:hover { background: transparent; border-color: var(--accent); color: var(--accent); }
+  .meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink-2);
+    background: var(--chip);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px 12px;
+  }
+  .chip b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- 分区通用 ---------- */
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+  .sec-head .no {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--accent);
+  }
+  .sec-head h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- 关于我 ---------- */
+  .about-cols {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 48px;
+  }
+  .about-text p { margin-bottom: 16px; color: var(--ink); }
+  .about-text p em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .fact-list {
+    list-style: none;
+    border-left: 2px solid var(--line);
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: start;
+  }
+  .fact-list .k {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-2);
+    display: block;
+    margin-bottom: 2px;
+  }
+  .fact-list .v { font-size: 0.92rem; }
+
+  /* ---------- 行业与领域 ---------- */
+  .field-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 56px;
+  }
+  .field {
+    padding: 22px 0;
+    border-bottom: 1px dashed var(--line);
+  }
+  .field:last-child, .field:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+  .field h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .field h3 .idx {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .field p { font-size: 0.92rem; color: var(--ink-2); }
+
+  /* ---------- 作品 ---------- */
+  .proj {
+    display: grid;
+    grid-template-columns: 92px 1fr auto;
+    gap: 20px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+  .proj:first-of-type { border-top: 1px solid var(--line); }
+  .proj .yr {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-2);
+    line-height: 1.9;
+  }
+  .proj .yr .tag-live {
+    display: inline-block;
+    color: var(--accent);
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    font-size: 0.68rem;
+    padding: 0 6px;
+    margin-top: 4px;
+  }
+  .proj h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+  .proj h3 a { color: var(--ink); }
+  .proj h3 a:hover { color: var(--accent); }
+  .proj .desc { font-size: 0.92rem; color: var(--ink-2); margin-bottom: 10px; }
+  .proj .stack { display: flex; flex-wrap: wrap; gap: 8px; }
+  .proj .stack span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-2);
+    background: var(--chip);
+    border-radius: 4px;
+    padding: 1px 8px;
+  }
+  .proj .links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+  .proj .links a::before { content: "→ "; color: var(--accent); }
+
+  .more-repos {
+    margin-top: 26px;
+    font-size: 0.88rem;
+    color: var(--ink-2);
+  }
+  .more-repos code {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    background: var(--chip);
+    padding: 1px 7px;
+    border-radius: 4px;
+  }
+
+  /* ---------- 随笔 ---------- */
+  .note { padding: 20px 0; border-bottom: 1px dashed var(--line); }
+  .note:last-child { border-bottom: none; }
+  .note .date {
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+  }
+  .note h3 { font-size: 1rem; font-weight: 700; margin: 4px 0 6px; }
+  .note p { font-size: 0.92rem; color: var(--ink-2); max-width: 640px; }
+
+  /* ---------- 联系 / 页脚 ---------- */
+  .contact p { max-width: 560px; margin-bottom: 22px; }
+  .contact .gh-line {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+  }
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 30px 0 44px;
+    font-size: 0.8rem;
+    color: var(--ink-2);
+  }
+  footer .wrap {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer .mono { font-family: var(--mono); font-size: 0.74rem; }
+
+  /* ---------- 入场动效 ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* ---------- 响应式 ---------- */
+  @media (max-width: 720px) {
+    .hero { padding: 60px 0 52px; }
+    .about-cols { grid-template-columns: 1fr; gap: 30px; }
+    .field-grid { grid-template-columns: 1fr; }
+    .field:nth-last-child(2) { border-bottom: 1px dashed var(--line); }
+    .proj { grid-template-columns: 1fr; gap: 8px; }
+    .proj .yr { line-height: 1.6; }
+    .proj .links { flex-direction: row; gap: 20px; }
+    .nav-links a:not(.keep) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#top">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#about" class="num" data-n="01">关于</a>
+      <a href="#fields" class="num" data-n="02">领域</a>
+      <a href="#work" class="num" data-n="03">作品</a>
+      <a href="#notes" class="num" data-n="04">随笔</a>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ Hero ============ -->
+  <div class="wrap hero">
+    <p class="kicker">PORTFOLIO / 个人站</p>
+    <h1>Wanderers.小石头</h1>
+    <p class="sub">铁路工程从业者 · 纯前端与 AI 辅助开发爱好者</p>
+    <p class="lede">
+      白天与铁路工程打交道，业余时间写代码——把工程里重复繁琐的事做成顺手的小工具，
+      也用 AI 从零做出能直接玩的小游戏。所有作品均为纯前端实现，打开即用，多数支持离线。
+    </p>
+    <div class="cta-row">
+      <a class="btn" href="#work">看看作品</a>
+      <a class="btn btn-ghost" href="https://github.com/wanderwrs" target="_blank" rel="noopener">github.com/wanderwrs</a>
+    </div>
+    <div class="meta-chips">
+      <span class="chip"><b>8</b> 个开源仓库</span>
+      <span class="chip"><b>6</b> 个在线 Demo</span>
+      <span class="chip">纯前端 · 零后端</span>
+      <span class="chip">GitHub Pages 托管</span>
+    </div>
+  </div>
+
+  <!-- ============ 01 关于我 ============ -->
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">01</span><h2>关于我</h2></div>
+      <div class="about-cols reveal">
+        <div class="about-text">
+          <p>
+            你好，我是<em>小石头</em>。我的主业在铁路工程行业，长期和工程资料、安全管理和各种报表打交道——
+            那些大量重复、依赖经验、又容不得出错的工作，是我开始写代码最直接的原因。
+          </p>
+          <p>
+            我相信「工具应当打开就能用」。所以我做的项目几乎都是<em>纯前端、零后端</em>的实现：
+            一个 HTML 文件就是一个完整的作品，拷到离线电脑上也能跑。从铁路可行性研究报告工具、
+            公路工程计算器合集，到铁路沿线安全知识闯关 H5，都是这个思路的产物。
+          </p>
+          <p>
+            另一条线是<em>AI 辅助开发</em>：我用 Trae 等 AI 工具从零做出过像素跑酷、Roguelike 卡牌、
+            程序员节解谜游戏等作品，持续探索「一个人 + AI」能把一个想法推进到什么程度。
+            这个站点本身，同样由 AI 协助构建。
+          </p>
+        </div>
+        <ul class="fact-list">
+          <li><span class="k">FOCUS</span><span class="v">铁路工程 · 工程信息化</span></li>
+          <li><span class="k">STACK</span><span class="v">HTML / CSS / JavaScript / PWA</span></li>
+          <li><span class="k">TOOLS</span><span class="v">Trae / TraeWork AI · GitHub Pages</span></li>
+          <li><span class="k">STATUS</span><span class="v">持续造小工具中</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 行业与领域 ============ -->
+  <section id="fields">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">02</span><h2>行业与领域</h2></div>
+      <div class="field-grid reveal">
+        <div class="field">
+          <h3><span class="idx">A</span>铁路工程与安全管理</h3>
+          <p>深耕铁路工程行业，关注可行性研究、沿线安全管理等场景的数字化：把报告编制、安全宣教这类线下流程搬进浏览器。</p>
+        </div>
+        <div class="field">
+          <h3><span class="idx">B</span>公路工程计算工具</h3>
+          <p>「the MATH office」公路工程计算器合集——纯前端 PWA，支持离线使用，让工程师在没有网络的环境里也能完成日常计算。</p>
+        </div>
+        <div class="field">
+          <h3><span class="idx">C</span>AI 辅助开发</h3>
+          <p>以 Trae 系列 AI 工具为核心生产力，实践「需求描述 → AI 生成 → 人工调校」的开发流，多款游戏与应用全程由 AI 生成。</p>
+        </div>
+        <div class="field">
+          <h3><span class="idx">D</span>纯前端网页应用</h3>
+          <p>坚持零后端、零依赖的单文件架构：单 HTML、本地存储、GitHub Pages 托管，追求打开即用与永久在线。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 作品 ============ -->
+  <section id="work">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">03</span><h2>开源作品</h2></div>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">在线可玩</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/1024-kunka-adventure-new" target="_blank" rel="noopener">1024-kunka-adventure-new</a></h3>
+          <p class="desc">1024 程序员节互动解谜游戏：单文件 HTML 实现 6 关解谜、隐藏碎片收集（源码注释 / Console / DOM / LocalStorage）、排行榜与模拟故障彩蛋，全程在浏览器本地运行。</p>
+          <div class="stack"><span>HTML</span><span>单文件</span><span>Canvas 动效</span><span>localStorage</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/1024-kunka-adventure-new/" target="_blank" rel="noopener">在线体验</a>
+          <a href="https://github.com/wanderwrs/1024-kunka-adventure-new" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">在线使用</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/the-math-office" target="_blank" rel="noopener">the-math-office</a></h3>
+          <p class="desc">「the MATH office」公路工程计算器合集：纯前端 PWA，支持离线使用，为工程现场的无网环境提供常用计算能力。</p>
+          <div class="stack"><span>HTML</span><span>PWA</span><span>离线可用</span><span>工程计算</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/the-math-office/" target="_blank" rel="noopener">在线使用</a>
+          <a href="https://github.com/wanderwrs/the-math-office" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">在线可玩</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">game-2026-kapaidashi</a></h3>
+          <p class="desc">Roguelike 卡牌构筑游戏框架：纯 HTML5 + ES6 模块实现，含卡池、战斗与随机事件体系，GitHub Pages 上有可玩 Demo。</p>
+          <div class="stack"><span>JavaScript</span><span>ES6 模块</span><span>Roguelike</span><span>卡牌构筑</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/game-2026-kapaidashi/" target="_blank" rel="noopener">在线体验</a>
+          <a href="https://github.com/wanderwrs/game-2026-kapaidashi" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">在线可玩</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">pixel-runner</a></h3>
+          <p class="desc">像素风 2D 无限跑酷游戏 PixelRunner——从美术到逻辑全程由 TraeWork AI 生成的一次完整实践。</p>
+          <div class="stack"><span>HTML</span><span>Canvas</span><span>AI 生成</span><span>像素风</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/pixel-runner/" target="_blank" rel="noopener">在线体验</a>
+          <a href="https://github.com/wanderwrs/pixel-runner" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">在线访问</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">railway-safety-h5</a></h3>
+          <p class="desc">铁路沿线安全知识闯关 H5：以答题闯关的形式做安全宣教，面向沿线作业场景的轻量培训工具。</p>
+          <div class="stack"><span>JavaScript</span><span>H5</span><span>安全宣教</span><span>答题闯关</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/railway-safety-h5/" target="_blank" rel="noopener">在线访问</a>
+          <a href="https://github.com/wanderwrs/railway-safety-h5" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <article class="proj reveal">
+        <div class="yr">2026<br><span class="tag-live">进度公示</span></div>
+        <div>
+          <h3><a href="https://github.com/wanderwrs/railway-feasibility-report" target="_blank" rel="noopener">railway-feasibility-report</a></h3>
+          <p class="desc">铁路可行性研究报告工具：主体部署于离线内网电脑，不开放公网；仓库中的 HTML 为项目总结与进度公示页。</p>
+          <div class="stack"><span>HTML</span><span>离线部署</span><span>铁路工程</span></div>
+        </div>
+        <div class="links">
+          <a href="https://wanderwrs.github.io/railway-feasibility-report/" target="_blank" rel="noopener">进度页</a>
+          <a href="https://github.com/wanderwrs/railway-feasibility-report" target="_blank" rel="noopener">源码</a>
+        </div>
+      </article>
+
+      <p class="more-repos reveal">
+        另有早期版本与素材仓库：<a href="https://github.com/wanderwrs/1024-kunka-adventure" target="_blank" rel="noopener"><code>1024-kunka-adventure</code></a>（1024 游戏初版）、
+        <a href="https://github.com/wanderwrs/railway-safety-images" target="_blank" rel="noopener"><code>railway-safety-images</code></a>（铁路安全宣传图 H5 素材）。
+        完整列表见 <a href="https://github.com/wanderwrs?tab=repositories" target="_blank" rel="noopener">GitHub 主页</a>。
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 04 随笔 ============ -->
+  <section id="notes">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">04</span><h2>随笔</h2></div>
+
+      <article class="note reveal">
+        <span class="date">2026-10-22</span>
+        <h3>一个 HTML 文件的程序员节礼物</h3>
+        <p>1024 之前的那个晚上，我把 6 关解谜、隐藏碎片、排行榜和一堆「假蓝屏、假病毒」彩蛋塞进了同一个 HTML 文件。碎片藏在源码注释、Console、隐藏 DOM 和 LocalStorage 里——毕竟这是给程序员玩的解谜，F12 才是正确的打开方式。</p>
+      </article>
+
+      <article class="note reveal">
+        <span class="date">2026-09-01</span>
+        <h3>让 AI 从零写一个跑酷游戏</h3>
+        <p>pixel-runner 是一次实验：需求只出现在我的描述里，美术、关卡、手感调校全部交给 TraeWork AI 完成。结论是「一个人 + AI」完全可以把一个游戏想法推进到能玩、能上线的程度——前提是你得会提需求，也得懂验收。</p>
+      </article>
+
+      <article class="note reveal">
+        <span class="date">2026-08-25</span>
+        <h3>给工程计算做一个离线 PWA</h3>
+        <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 05 联系 ============ -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">05</span><h2>联系我</h2></div>
+      <p class="reveal">
+        欢迎交流铁路工程信息化、纯前端工具与 AI 辅助开发的实践心得。
+        最快的联系途径是 GitHub——Issue 和讨论都欢迎。
+      </p>
+      <p class="gh-line reveal"><a href="https://github.com/wanderwrs" target="_blank" rel="noopener">github.com/wanderwrs ↗</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Wanderers.小石头</span>
+    <span class="mono">BUILT WITH TRAE · HOSTED ON GITHUB PAGES</span>
+  </div>
+</footer>
+
+<script>
+  // 滚动入场动效（尊重系统减弱动效设置）
+  (function () {
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var els = document.querySelectorAll('.reveal');
+    if (reduced || !('IntersectionObserver' in window)) {
+      els.forEach ? els.forEach(function (e) { e.classList.add('in'); }) : null;
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          en.target.classList.add('in');
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+</script>
+
+</body>
+</html>
