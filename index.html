@@ -4,19 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Wanderers.小石头的个人站：铁路工程从业者，纯前端与 AI 辅助开发爱好者。收录自我介绍、行业领域与开源作品。">
-<meta name="theme-color" content="#FAFAF7">
+<meta name="theme-color" content="#FAF6EC">
 <title>Wanderers.小石头 · 个人站</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231E6B4A'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAFAF7' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
 <style>
   :root {
-    --paper: #FAFAF7;
-    --paper-2: #F3F2ED;
-    --ink: #1F2328;
-    --ink-2: #57606A;
-    --line: #E4E2DB;
-    --accent: #1E6B4A;
-    --accent-deep: #14523A;
-    --chip: #F0EFE9;
+    --paper: #FAF6EC;
+    --paper-2: #F4EFE2;
+    --ink: #23302A;
+    --ink-2: #5C6B62;
+    --line: #E7E1D2;
+    --accent: #1F7A5C;
+    --accent-deep: #155C44;
+    --sky: #4E9FCB;
+    --sky-deep: #337FA9;
+    --chip: #F1ECDE;
     --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
     --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
   }
@@ -27,14 +29,16 @@
 
   body {
     font-family: var(--sans);
-    background: var(--paper);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
     color: var(--ink);
     line-height: 1.75;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
   }
-
-  ::selection { background: #CBE3D6; }
+  ::selection { background: rgba(78, 159, 203, 0.25); }
 
   a { color: var(--accent); text-decoration: none; }
   a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
@@ -56,9 +60,19 @@
     position: sticky;
     top: 0;
     z-index: 20;
-    background: rgba(250, 250, 247, 0.88);
+    background: rgba(250, 246, 236, 0.88);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
+  }
+  .topbar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--sky));
+    opacity: 0.5;
   }
   .topbar-inner {
     display: flex;
@@ -114,6 +128,7 @@
     border-radius: 20px;
     border: 1px solid var(--line);
     background: #fff;
+    box-shadow: 7px 7px 0 rgba(31, 122, 92, 0.14), -7px -7px 0 rgba(78, 159, 203, 0.12);
   }
   .kicker {
     font-family: var(--mono);
@@ -121,6 +136,16 @@
     letter-spacing: 0.14em;
     color: var(--accent);
     margin-bottom: 20px;
+  }
+  .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 26px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--sky));
+    margin-right: 10px;
+    vertical-align: middle;
   }
   .hero h1 {
     font-size: clamp(2.1rem, 5.5vw, 3.1rem);
@@ -156,7 +181,7 @@
     background: transparent;
     transition: background 0.2s, color 0.2s, border-color 0.2s;
   }
-  .btn:hover { background: var(--ink); color: var(--paper); text-decoration: none; }
+  .btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; text-decoration: none; }
   .btn-ghost {
     border-color: var(--line);
     color: var(--ink-2);
@@ -186,11 +211,19 @@
     gap: 14px;
     margin-bottom: 30px;
   }
+  .sec-head::after {
+    content: '';
+    order: 2;
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--line), transparent 82%);
+  }
   .sec-head .no {
     font-family: var(--mono);
     font-size: 0.82rem;
     color: var(--accent);
   }
+  section:nth-of-type(even) .sec-head .no { color: var(--sky-deep); }
   .sec-head h2 {
     font-size: 1.35rem;
     font-weight: 700;
@@ -449,9 +482,22 @@
   }
   footer {
     border-top: 1px solid var(--line);
+    position: relative;
     padding: 30px 0 44px;
     font-size: 0.8rem;
     color: var(--ink-2);
+  }
+  footer::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 130px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--sky));
+    opacity: 0.6;
   }
   footer .wrap {
     display: flex;
