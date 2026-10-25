@@ -462,6 +462,57 @@
   }
   .gallery .cap-tag { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); white-space: nowrap; }
   .gallery-note { margin-top: 20px; font-size: 0.85rem; color: var(--ink-2); }
+  .gallery.portrait { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 860px) {
+    .gallery.portrait { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* AIGC 轮播 */
+  .aigc-track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .aigc-track::-webkit-scrollbar { display: none; }
+  .aigc-slide { flex: 0 0 100%; min-width: 100%; scroll-snap-align: start; }
+  .aigc-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 20px;
+  }
+  .aigc-nav > button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    color: var(--ink);
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .aigc-nav > button:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .aigc-nav > button:disabled { opacity: 0.35; cursor: default; }
+  .aigc-dots { display: flex; gap: 8px; }
+  .aigc-dots button {
+    width: 9px;
+    height: 9px;
+    border-radius: 5px;
+    border: none;
+    padding: 0;
+    background: rgba(31, 122, 92, 0.25);
+    cursor: pointer;
+    transition: width 0.25s, background 0.25s;
+  }
+  .aigc-dots button.on { width: 24px; background: var(--accent); }
 
   /* ---------- 随笔 ---------- */
   .note { padding: 20px 0; border-bottom: 1px dashed var(--line); }
@@ -517,13 +568,23 @@
   }
   .qsl-grid figure { margin: 0; }
   .qsl-grid a {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 360px;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--line);
     background: #fff;
   }
-  .qsl-grid img { width: 100%; display: block; transition: transform 0.35s ease; }
+  .qsl-grid img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    transition: transform 0.35s ease;
+  }
   .qsl-grid a:hover img { transform: scale(1.03); }
   .qsl-grid figcaption {
     font-family: var(--mono);
@@ -534,7 +595,8 @@
   }
   @media (max-width: 860px) {
     .radio-grid { grid-template-columns: 1fr; gap: 26px; }
-    .qsl-grid { grid-template-columns: 1fr; }
+    .qsl-grid { grid-template-columns: 1fr 1fr; }
+    .qsl-grid a { height: 240px; }
   }
 
   /* ---------- 联系 / 页脚 ---------- */
@@ -717,35 +779,102 @@
       <div class="sec-head reveal"><span class="no">03</span><h2>AIGC 案例</h2></div>
       <p class="gallery-intro reveal">
         以下作品由 Seedream 5.0 Pro 生成。「千禧年风格系列」试图复刻 2000 年前后中国小镇街头的胶片质感：
-        白瓷砖楼、红灯笼、邮政报刊亭与放学的人潮。点击图片可查看大图。
+        白瓷砖楼、红灯笼、邮政报刊亭与放学的人潮。左右滑动或点击箭头切换系列，点击图片可查看大图。
       </p>
-      <div class="gallery reveal">
-        <figure>
-          <a href="assets/aigc/y2k-1.jpg" target="_blank" rel="noopener">
-            <img src="assets/aigc/y2k-1.jpg" alt="千禧年风格 AI 生成作品：夏日午后的小镇河街，放学学生、白瓷砖楼房与远处石拱桥" width="1600" height="899" loading="lazy">
-          </a>
-          <figcaption><span>系列一 · 河街的夏天</span><span class="cap-tag">2006.07</span></figcaption>
-        </figure>
-        <figure>
-          <a href="assets/aigc/y2k-2.jpg" target="_blank" rel="noopener">
-            <img src="assets/aigc/y2k-2.jpg" alt="千禧年风格 AI 生成作品：春节前的街角，红灯笼、春联与穿羽绒服的人群" width="1600" height="899" loading="lazy">
-          </a>
-          <figcaption><span>系列一 · 灯笼与春联</span><span class="cap-tag">年前街角</span></figcaption>
-        </figure>
-        <figure>
-          <a href="assets/aigc/y2k-3.jpg" target="_blank" rel="noopener">
-            <img src="assets/aigc/y2k-3.jpg" alt="千禧年风格 AI 生成作品：老街年前的集市，糖果年货摊与转角白瓷砖楼" width="1600" height="899" loading="lazy">
-          </a>
-          <figcaption><span>系列一 · 年前集市</span><span class="cap-tag">老街年味</span></figcaption>
-        </figure>
-        <figure>
-          <a href="assets/aigc/y2k-4.jpg" target="_blank" rel="noopener">
-            <img src="assets/aigc/y2k-4.jpg" alt="千禧年风格 AI 生成作品：绿色邮政报刊亭前的街角，停靠的自行车与摩托车" width="1600" height="899" loading="lazy">
-          </a>
-          <figcaption><span>系列一 · 邮亭街角</span><span class="cap-tag">2003.11</span></figcaption>
-        </figure>
+      <div class="aigc-carousel reveal">
+        <div class="aigc-track" id="aigcTrack">
+          <div class="aigc-slide">
+            <div class="gallery">
+              <figure>
+                <a href="assets/aigc/y2k-1.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/y2k-1.jpg" alt="千禧年风格 AI 生成作品：夏日午后的小镇河街，放学学生、白瓷砖楼房与远处石拱桥" width="1600" height="899" loading="lazy">
+                </a>
+                <figcaption><span>系列一 · 河街的夏天</span><span class="cap-tag">2006.07</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/y2k-2.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/y2k-2.jpg" alt="千禧年风格 AI 生成作品：春节前的街角，红灯笼、春联与穿羽绒服的人群" width="1600" height="899" loading="lazy">
+                </a>
+                <figcaption><span>系列一 · 灯笼与春联</span><span class="cap-tag">年前街角</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/y2k-3.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/y2k-3.jpg" alt="千禧年风格 AI 生成作品：老街年前的集市，糖果年货摊与转角白瓷砖楼" width="1600" height="899" loading="lazy">
+                </a>
+                <figcaption><span>系列一 · 年前集市</span><span class="cap-tag">老街年味</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/y2k-4.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/y2k-4.jpg" alt="千禧年风格 AI 生成作品：绿色邮政报刊亭前的街角，停靠的自行车与摩托车" width="1600" height="899" loading="lazy">
+                </a>
+                <figcaption><span>系列一 · 邮亭街角</span><span class="cap-tag">2003.11</span></figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="aigc-slide">
+            <div class="gallery portrait">
+              <figure>
+                <a href="assets/aigc/rail-1.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/rail-1.jpg" alt="千禧年风格 AI 生成作品：绿皮火车沿铁路桥穿过老居民楼，傍晚暖光与黄葛树" loading="lazy">
+                </a>
+                <figcaption><span>系列二 · 穿楼而过</span><span class="cap-tag">2004.09</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/rail-2.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/rail-2.jpg" alt="千禧年风格 AI 生成作品：铁轨从老居民楼间穿过，两侧阳台晾晒的衣物" loading="lazy">
+                </a>
+                <figcaption><span>系列二 · 轨道边的日常</span><span class="cap-tag">2002.05</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/rail-3.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/rail-3.jpg" alt="千禧年风格 AI 生成作品：绿皮车沿江而行，远处大坝泄洪、江面轮船来往" loading="lazy">
+                </a>
+                <figcaption><span>系列二 · 沿江而行</span><span class="cap-tag">2003.07</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/rail-4.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/rail-4.jpg" alt="千禧年风格 AI 生成作品：雾气中的铁轨延伸向山城，远处山上的宝塔" loading="lazy">
+                </a>
+                <figcaption><span>系列二 · 雾散之前</span><span class="cap-tag">2001.11</span></figcaption>
+              </figure>
+            </div>
+          </div>
+          <div class="aigc-slide">
+            <div class="gallery portrait">
+              <figure>
+                <a href="assets/aigc/kid-1.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/kid-1.jpg" alt="千禧年风格 AI 生成作品：夏日池塘边钓龙虾的男孩，胶片时间戳 2001.06.30" loading="lazy">
+                </a>
+                <figcaption><span>系列三 · 池塘钓龙虾</span><span class="cap-tag">2001.06</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/kid-2.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/kid-2.jpg" alt="千禧年风格 AI 生成作品：农家院里晾晒的玉米，抽烟的老人与玩耍的孩童" loading="lazy">
+                </a>
+                <figcaption><span>系列三 · 晒玉米的午后</span><span class="cap-tag">秋收</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/kid-3.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/kid-3.jpg" alt="千禧年风格 AI 生成作品：台灯下写作业的孩子，墙上贴满奖状，旁边是老电视机" loading="lazy">
+                </a>
+                <figcaption><span>系列三 · 台灯下的作业</span><span class="cap-tag">2003.09</span></figcaption>
+              </figure>
+              <figure>
+                <a href="assets/aigc/kid-4.jpg" target="_blank" rel="noopener">
+                  <img src="assets/aigc/kid-4.jpg" alt="千禧年风格 AI 生成作品：小区空地上玩轮滑和滑板的孩子们" loading="lazy">
+                </a>
+                <figcaption><span>系列三 · 轮滑少年</span><span class="cap-tag">周末</span></figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
       </div>
-      <p class="gallery-note reveal">Seedream 5.0 Pro · 千禧年风格系列一 · 共 4 幅 · 更多系列整理中</p>
+      <div class="aigc-nav reveal">
+        <button type="button" id="aigcPrev" aria-label="上一组">←</button>
+        <div class="aigc-dots" id="aigcDots"></div>
+        <button type="button" id="aigcNext" aria-label="下一组">→</button>
+      </div>
+      <p class="gallery-note reveal">Seedream 5.0 Pro · 千禧年街头 / 铁路记忆 / 童年记忆 · 每组 4 幅 · 左右滑动查看</p>
     </div>
   </section>
 
@@ -863,7 +992,7 @@
         </div>
         <div class="qsl-grid">
           <figure class="reveal">
-            <a href="assets/qsl/qsl-front.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-front.jpg" alt="BI9CIR QSL 卡正面：花鸟筑巢图案与呼号、CQ Zone 23 / ITU Zone 43" loading="lazy"></a>
+            <a href="assets/qsl/qsl-front.jpg" target="_blank" rel="noopener"><img src="assets/qsl/qsl-front.jpg" alt="BI9CIR QSL 卡正面（竖版）：花鸟筑巢图案、CRAC 徽标与呼号、CQ Zone 23 / ITU Zone 43" loading="lazy"></a>
             <figcaption>QSL 正面 · CQ 23 / ITU 43</figcaption>
           </figure>
           <figure class="reveal">
@@ -878,7 +1007,7 @@
   <!-- ============ 07 联系 ============ -->
   <section id="contact" class="contact">
     <div class="wrap">
-      <div class="sec-head reveal"><span class="no">07</span><h2>联系我</h2></div>
+      <div class="sec-head reveal"><h2>联系我</h2></div>
       <p class="reveal">
         欢迎交流铁路工程信息化、纯前端工具与 AI 辅助开发的实践心得。
         最快的联系途径是 GitHub——Issue 和讨论都欢迎。
@@ -1153,6 +1282,53 @@
       active = false;
       cube.style.opacity = '0';
     });
+  })();
+
+  // AIGC 轮播：每组 4 幅，箭头 / 圆点 / 触摸滑动切换
+  (function () {
+    var track = document.getElementById('aigcTrack');
+    if (!track) return;
+    var slides = track.children.length;
+    var prevBtn = document.getElementById('aigcPrev');
+    var nextBtn = document.getElementById('aigcNext');
+    var dotsBox = document.getElementById('aigcDots');
+    var idx = 0, lock = false;
+    for (var i = 0; i < slides; i++) {
+      var d = document.createElement('button');
+      d.type = 'button';
+      d.setAttribute('aria-label', '第 ' + (i + 1) + ' 组');
+      (function (n) {
+        d.addEventListener('click', function () { go(n); });
+      })(i);
+      dotsBox.appendChild(d);
+    }
+    function update() {
+      var dots = dotsBox.children;
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.toggle('on', i === idx);
+      }
+      prevBtn.disabled = idx === 0;
+      nextBtn.disabled = idx === slides - 1;
+    }
+    function go(n) {
+      idx = Math.max(0, Math.min(slides - 1, n));
+      lock = true;
+      track.scrollTo({ left: idx * track.clientWidth, behavior: 'smooth' });
+      update();
+      setTimeout(function () { lock = false; }, 350);
+    }
+    prevBtn.addEventListener('click', function () { go(idx - 1); });
+    nextBtn.addEventListener('click', function () { go(idx + 1); });
+    var timer = 0;
+    track.addEventListener('scroll', function () {
+      if (lock) return;
+      clearTimeout(timer);
+      timer = setTimeout(function () {
+        var n = Math.round(track.scrollLeft / track.clientWidth);
+        if (n !== idx) { idx = Math.max(0, Math.min(slides - 1, n)); update(); }
+      }, 80);
+    });
+    update();
   })();
 </script>
 
