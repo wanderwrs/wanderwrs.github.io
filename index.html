@@ -117,6 +117,50 @@
   }
   .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
+  /* 导航折叠栏（其他） */
+  .nav-drop { position: relative; }
+  .nav-drop-btn {
+    appearance: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+  }
+  .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
+  .nav-drop.open .nav-drop-btn { color: var(--accent); }
+  .nav-drop.open .caret { transform: rotate(180deg); }
+  .nav-drop-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 138px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12);
+    padding: 7px;
+    display: none;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 30;
+  }
+  .nav-drop-menu::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+  .nav-drop.open .nav-drop-menu { display: flex; }
+  .nav-drop-menu a {
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--ink-2);
+  }
+  .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
+
   /* ---------- Hero ---------- */
   .hero { position: relative; overflow: hidden; padding: 84px 0 72px; }
   .hero > .wrap { position: relative; z-index: 1; }
@@ -677,6 +721,7 @@
     .proj .yr { line-height: 1.6; }
     .proj .links { flex-direction: row; gap: 20px; }
     .nav-links a:not(.keep) { display: none; }
+    .nav-drop { display: none; }
   }
 </style>
 </head>
@@ -690,8 +735,13 @@
       <a href="#fields" class="num" data-n="02">领域</a>
       <a href="#aigc" class="num" data-n="03">AIGC</a>
       <a href="#work" class="num" data-n="04">作品</a>
-      <a href="#notes" class="num" data-n="05">随笔</a>
-      <a href="#radio" class="num" data-n="06">无线电</a>
+      <div class="nav-drop" id="navDrop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="#notes" class="num" data-n="05">随笔</a>
+          <a href="#radio" class="num" data-n="06">无线电</a>
+        </div>
+      </div>
       <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </div>
@@ -1269,6 +1319,30 @@
     }
     bindNav('notesTrack', 'notesPrev', 'notesNext');
     bindNav('radioTrack', 'radioPrev', 'radioNext');
+  })();
+
+  // 导航折叠栏「其他」：点击展开/收起，点外部或菜单项后关闭
+  (function () {
+    var drop = document.getElementById('navDrop');
+    if (!drop) return;
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
   })();
 
   // 呼号 BI9CIR：悬停时渐变小方块跟随鼠标
