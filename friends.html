@@ -251,6 +251,18 @@
 
   /* ---------- 分区通用 ---------- */
   section { padding: 56px 0; border-top: 1px solid var(--line); }
+
+  /* 区间淡化背景：从上至下清晰度 5% → 70% 渐变 */
+  main { position: relative; }
+  #pageBg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('https://cdn.jsdelivr.net/gh/wanderwrs/wanderwrs.github.io@main/assets/aigc/school-bg.jpg') center 30% / cover no-repeat;
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.28) 34%, rgba(0, 0, 0, 0.5) 66%, rgba(0, 0, 0, 0.7) calc(100% - 70px), rgba(0, 0, 0, 0.14) 100%);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.28) 34%, rgba(0, 0, 0, 0.5) 66%, rgba(0, 0, 0, 0.7) calc(100% - 70px), rgba(0, 0, 0, 0.14) 100%);
+  }
   .sec-head {
     display: flex;
     align-items: baseline;
@@ -798,6 +810,7 @@
 </header>
 
 <main>
+  <div id="pageBg" aria-hidden="true"></div>
   <section id="friends">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">09</span><h2>友情链接</h2></div>
@@ -869,5 +882,14 @@
   })();
 </script>
 
-</body>
+<script>
+  (function () {
+    var img = new Image();
+    img.onerror = function () {
+      var el = document.getElementById('pageBg');
+      if (el) { el.style.backgroundImage = "url('assets/aigc/school-bg.jpg')"; }
+    };
+    img.src = 'https://cdn.jsdelivr.net/gh/wanderwrs/wanderwrs.github.io@main/assets/aigc/school-bg.jpg';
+  })();
+</script></body>
 </html>
