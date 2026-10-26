@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Wanderers.小石头的 U/V 波段业余卫星通讯记录：卫星过境、通联尝试与接收实验，内容整理中。">
+<meta name="description" content="Wanderers.小石头的 U/V 波段业余卫星通讯记录：简要介绍、ISS 国际空间站 48 小时过境实时预报（以中国大地原点为观测点）与通联记录。">
 <meta name="theme-color" content="#FAF6EC">
 <title>Wanderers.小石头 · U/V 卫星通讯</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
@@ -82,49 +82,100 @@
   .sec-head::after { content: ''; order: 2; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent 82%); }
   .sec-head .no { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
   .sec-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
-  .works-lead { margin: -4px 0 24px; font-size: 0.9rem; color: var(--ink-2); }
+  .works-lead { margin: -4px 0 30px; font-size: 0.9rem; color: var(--ink-2); }
 
-  .stage {
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background:
-      radial-gradient(420px 240px at 16% 0%, rgba(78, 159, 203, 0.10), transparent 64%),
-      radial-gradient(420px 260px at 88% 108%, rgba(31, 122, 92, 0.10), transparent 64%),
-      #fff;
-    padding: 52px 30px;
-    text-align: center;
-  }
-  .orbit {
-    width: 118px; height: 118px;
-    margin: 0 auto 26px;
+  /* ---------- 板块通用 ---------- */
+  .block { margin-bottom: 40px; }
+  .block:last-child { margin-bottom: 0; }
+  .block-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .block-head .bn { font-family: var(--mono); font-size: 0.74rem; color: var(--sky-deep); }
+  .block-head h3 { font-size: 1.05rem; font-weight: 700; }
+  .card { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 24px 26px; }
+
+  /* ---------- 03·3·1 简介 ---------- */
+  .intro-card p { font-size: 0.94rem; margin-bottom: 13px; }
+  .intro-card p:last-child { margin-bottom: 0; }
+  .intro-card p em { font-style: normal; color: var(--accent); font-weight: 600; }
+  .intro-card .term { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
+  .intro-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .chip { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-2); background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
+  .chip b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- 03·3·2 ISS 过境预报 ---------- */
+  .orbit-banner { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; flex-wrap: wrap; }
+  .orbit-disc {
+    width: 64px; height: 64px; flex-shrink: 0;
     border-radius: 50%;
     border: 1px dashed var(--sky);
-    background: radial-gradient(circle at center, rgba(78, 159, 203, 0.12), transparent 70%), var(--paper-2);
+    background: radial-gradient(circle at center, rgba(78, 159, 203, 0.14), transparent 70%), var(--paper-2);
     position: relative;
   }
-  .orbit::before {
+  .orbit-disc::before {
     content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    width: 34px; height: 34px;
+    position: absolute; top: 50%; left: 50%;
+    width: 20px; height: 20px;
     transform: translate(-50%, -50%);
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--sky));
   }
-  .orbit::after {
+  .orbit-disc::after {
     content: '';
-    position: absolute;
-    top: 8px; right: 16px;
-    width: 10px; height: 10px;
+    position: absolute; top: 3px; right: 9px;
+    width: 7px; height: 7px;
     border-radius: 2px;
     background: var(--ink);
     transform: rotate(45deg);
   }
-  .stage h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
-  .stage p { max-width: 520px; margin: 0 auto 22px; font-size: 0.94rem; color: var(--ink-2); }
-  .stage-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 26px; }
-  .chip { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-2); background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
-  .chip b { color: var(--accent); font-weight: 600; }
+  .orbit-banner .t { flex: 1; min-width: 220px; }
+  .orbit-banner .t b { display: block; font-size: 1rem; }
+  .orbit-banner .t span { font-size: 0.86rem; color: var(--ink-2); }
+  .pass-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .pass-meta { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-2); line-height: 1.9; }
+  .pass-refresh {
+    appearance: none; font-family: var(--mono); font-size: 0.78rem;
+    border: 1px solid var(--line); background: var(--chip); color: var(--ink-2);
+    border-radius: 6px; padding: 5px 14px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .pass-refresh:hover { color: var(--accent); border-color: var(--accent); }
+  .pass-rows { display: flex; flex-direction: column; }
+  .pass-row {
+    display: grid;
+    grid-template-columns: 88px 92px 92px 64px 96px 1fr;
+    gap: 10px;
+    padding: 10px 8px;
+    border-bottom: 1px dashed var(--line);
+    font-size: 0.86rem;
+    align-items: baseline;
+  }
+  .pass-row:last-child { border-bottom: none; }
+  .pass-row.live { background: rgba(31, 122, 92, 0.07); border-radius: 6px; }
+  .pass-row .d { font-family: var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .pass-row .t { font-family: var(--mono); color: var(--ink); white-space: nowrap; }
+  .pass-row .el { font-family: var(--mono); white-space: nowrap; }
+  .pass-row .el b { color: var(--accent); font-weight: 600; }
+  .pass-row .du { font-family: var(--mono); color: var(--ink-2); white-space: nowrap; }
+  .pass-row .az { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-2); line-height: 1.7; }
+  .live-badge {
+    display: inline-block; margin-left: 6px;
+    font-family: var(--mono); font-size: 0.66rem; color: #fff;
+    background: var(--accent); border-radius: 4px; padding: 1px 7px;
+    vertical-align: middle;
+  }
+  .pass-note { margin-top: 14px; font-size: 0.82rem; color: var(--ink-2); }
+  .pass-state { padding: 18px 8px; font-size: 0.9rem; color: var(--ink-2); text-align: center; }
+  .pass-state.err { color: #A94438; }
+  @media (max-width: 720px) {
+    .pass-row { grid-template-columns: 1fr 1fr 1fr; row-gap: 2px; }
+    .pass-row .az { grid-column: 1 / -1; }
+  }
+
+  /* ---------- 03·3·3 通联记录 ---------- */
+  .log-empty { text-align: center; padding: 34px 20px; }
+  .log-empty .glyph { font-family: var(--mono); font-size: 0.8rem; color: var(--sky-deep); letter-spacing: 0.2em; margin-bottom: 12px; }
+  .log-empty h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+  .log-empty p { max-width: 480px; margin: 0 auto; font-size: 0.92rem; color: var(--ink-2); }
+  .log-empty .stage-links { margin-top: 18px; }
   .stage-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; font-family: var(--mono); font-size: 0.86rem; }
   .stage-links a::before { content: '→ '; color: var(--accent); }
 
@@ -137,7 +188,7 @@
   @media (max-width: 720px) {
     .nav-links a:not(.keep) { display: none; }
     .nav-drop { display: none; }
-    .stage { padding: 40px 20px; }
+    .card { padding: 20px 18px; }
   }
   .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
 </style>
@@ -184,20 +235,55 @@
   <section id="satcom">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">03 · 3</span><h2>U/V 卫星通讯</h2></div>
-      <p class="works-lead reveal">业余无线电的第三条支线——U/V 波段业余卫星通讯的观察与记录。</p>
+      <p class="works-lead reveal">业余无线电的第三条支线——U/V 波段业余卫星通讯：从入门介绍到实时过境预报。</p>
 
-      <div class="stage reveal">
-        <div class="orbit" aria-hidden="true"></div>
-        <h3>内容整理中</h3>
-        <p>这里将收录 U/V 波段业余卫星通讯的记录：卫星过境预报、通联尝试、SSTV 接收与地面站小实验。等第一批日志整理好，就会在这里上线。</p>
-        <div class="stage-chips">
-          <span class="chip"><b>U/V</b> 业余卫星</span>
-          <span class="chip">通联记录整理中</span>
-          <span class="chip">敬请期待</span>
+      <!-- 03·3·1 简要介绍 -->
+      <div class="block reveal" id="intro">
+        <div class="block-head"><span class="bn">03 · 3 · 1</span><h3>什么是业余无线电卫星通讯</h3></div>
+        <div class="card intro-card">
+          <p>业余无线电卫星通讯（Amateur Radio Satellite Communication），是爱好者借助搭载业余无线电设备的卫星进行通信的活动。这些卫星大多工作在 <em>U/V 波段</em>——上行使用 UHF（435 MHz 附近）、下行使用 VHF（145 MHz 附近），或反过来配置。由于多普勒频移明显，通联时需要实时微调收发频率。</p>
+          <p>最特殊的「卫星」是 <em>国际空间站（ISS）</em>。站上的业余电台（ARISS）长期工作在 VHF 145.800 MHz 附近，会不定期发送 SSTV 慢扫描电视图像、进行学校通联活动，并常年开放 APRS 数字中继。航天员在休息时间也会用这台电台与地面爱好者聊天。</p>
+          <p>描述一次过境有三个关键参数：<span class="term">AOS</span>（Acquisition of Signal，卫星升起进入视界）、<span class="term">LOS</span>（Loss of Signal，卫星落下离开视界）和<span class="term">最大仰角</span>——仰角越高，视距越远、通联窗口越长，一次高质量的过境通常要求最大仰角在 30° 以上。</p>
+          <div class="intro-chips">
+            <span class="chip"><b>U/V</b> UHF↑ · VHF↓</span>
+            <span class="chip">多普勒频移 ±3 kHz 量级</span>
+            <span class="chip">ARISS · 145.800 MHz</span>
+          </div>
         </div>
-        <div class="stage-links">
-          <a href="works-railway.html">看看铁路技术</a>
-          <a href="index.html">回主页逛逛</a>
+      </div>
+
+      <!-- 03·3·2 ISS 48h 过境预报 -->
+      <div class="block reveal" id="iss-pass">
+        <div class="block-head"><span class="bn">03 · 3 · 2</span><h3>ISS 国际空间站 · 48 小时过境预报</h3></div>
+        <div class="card">
+          <div class="orbit-banner">
+            <div class="orbit-disc" aria-hidden="true"></div>
+            <div class="t">
+              <b>NORAD 25544 · ISS（ZARYA）</b>
+              <span>观测点：中国大地原点（陕西泾阳 · 34.32°N 108.88°E）——预报基于页面打开时刻起算的未来 48 小时，由 TLE 轨道数据在浏览器内实时计算。</span>
+            </div>
+          </div>
+          <div class="pass-toolbar">
+            <div class="pass-meta" id="passMeta">正在获取 TLE 轨道数据…</div>
+            <button class="pass-refresh" id="passRefresh" type="button">↻ 重新计算</button>
+          </div>
+          <div class="pass-rows" id="passRows"></div>
+          <div class="pass-state" id="passState">正在计算过境…</div>
+          <p class="pass-note">仅列出最大仰角 ≥ 10° 的过境；时间均为北京时间（UTC+8）。数据来源：Celestrak（备用 TLE API），感谢志愿者们维护的轨道根数。</p>
+        </div>
+      </div>
+
+      <!-- 03·3·3 通联记录 -->
+      <div class="block reveal" id="qso-log">
+        <div class="block-head"><span class="bn">03 · 3 · 3</span><h3>通联记录</h3></div>
+        <div class="card log-empty">
+          <div class="glyph">LOG · QSO · EMPTY</div>
+          <h4>暂无通联记录</h4>
+          <p>记录本还是空白的。等第一次成功抄收卫星信标、完成第一次 U/V 通联之后，每一条 QSO 都会在这里逐条登记。</p>
+          <div class="stage-links">
+            <a href="https://www.qrz.com/db/BI9CIR" target="_blank" rel="noopener">呼证主页 QRZ.com</a>
+            <a href="index.html#radio">回主页看无线电</a>
+          </div>
         </div>
       </div>
     </div>
@@ -210,6 +296,7 @@
   </div>
 </footer>
 
+<script src="assets/satcom/satellite.min.js"></script>
 <script>
   (function () {
     var els = document.querySelectorAll('.reveal');
@@ -245,6 +332,128 @@
       a.addEventListener('click', function () { setOpen(false); });
     });
   });
+</script>
+
+<script>
+  /* ---------- ISS 48h 过境预报 ---------- */
+  (function () {
+    var metaEl = document.getElementById('passMeta');
+    var rowsEl = document.getElementById('passRows');
+    var stateEl = document.getElementById('passState');
+    var refreshBtn = document.getElementById('passRefresh');
+    if (!metaEl || typeof satellite === 'undefined') {
+      if (stateEl) { stateEl.textContent = '轨道计算库加载失败，请刷新页面重试。'; stateEl.classList.add('err'); }
+      return;
+    }
+
+    /* 中国大地原点：陕西泾阳 34.32°N 108.88°E */
+    var OBS_LAT = 34.32, OBS_LON = 108.88, OBS_H = 0.43; /* 高度 km */
+    var WINDOW_H = 48, STEP_MS = 30 * 1000, MIN_EL = 10;
+    var DIRS = ['北', '东北', '东', '东南', '南', '西南', '西', '西北'];
+
+    function p2(n) { return (n < 10 ? '0' : '') + n; }
+    function fmtTime(d) { return p2(d.getHours()) + ':' + p2(d.getMinutes()) + ':' + p2(d.getSeconds()); }
+    function fmtDate(d) { return (d.getMonth() + 1) + '月' + d.getDate() + '日'; }
+    function fmtDur(ms) { var s = Math.round(ms / 1000); return Math.floor(s / 60) + ' 分 ' + p2(s % 60) + ' 秒'; }
+    function dirOf(az) { return DIRS[Math.round(az / 45) % 8]; }
+    function elOf(satrec, date) {
+      var pv = satellite.propagate(satrec, date);
+      if (!pv || !pv.position) return null;
+      var gmst = satellite.gstime(date);
+      var look = satellite.ecfToLookAngles(
+        { longitude: satellite.degreesToRadians(OBS_LON), latitude: satellite.degreesToRadians(OBS_LAT), height: OBS_H },
+        satellite.eciToEcf(pv.position, gmst)
+      );
+      return { el: satellite.radiansToDegrees(look.elevation), az: satellite.radiansToDegrees(look.azimuth) };
+    }
+    function tleEpoch(line1) {
+      var yy = parseInt(line1.substr(18, 2), 10);
+      var year = yy < 57 ? 2000 + yy : 1900 + yy;
+      var doy = parseFloat(line1.substr(20, 12));
+      return new Date(Date.UTC(year, 0, 1) + (doy - 1) * 86400000);
+    }
+    function loadTle() {
+      return fetch('https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE')
+        .then(function (r) { if (!r.ok) throw new Error('celestrak'); return r.text(); })
+        .then(function (t) {
+          var lines = t.trim().split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+          if (lines.length >= 3 && lines[1].charAt(0) === '1' && lines[2].charAt(0) === '2') {
+            return lines[1] + '\n' + lines[2];
+          }
+          throw new Error('format');
+        })
+        .catch(function () {
+          return fetch('https://tle.ivanstanojevic.me/api/tle/25544')
+            .then(function (r) { if (!r.ok) throw new Error('api'); return r.json(); })
+            .then(function (j) { return j.line1 + '\n' + j.line2; });
+        });
+    }
+    function computePasses(satrec) {
+      var now = Date.now();
+      var end = now + WINDOW_H * 3600 * 1000;
+      var passes = [], cur = null, live = elOf(satrec, new Date(now));
+      for (var t = now; t <= end; t += STEP_MS) {
+        var d = new Date(t);
+        var l = elOf(satrec, d);
+        if (!l) continue;
+        if (l.el > 0) {
+          if (!cur) cur = { aos: t, aosAz: l.az, maxEl: l.el, maxAz: l.az, maxT: t };
+          else if (l.el > cur.maxEl) { cur.maxEl = l.el; cur.maxAz = l.az; cur.maxT = t; }
+          cur.los = t; cur.losAz = l.az;
+        } else if (cur) {
+          passes.push(cur); cur = null;
+        }
+      }
+      if (cur) passes.push(cur);
+      return { passes: passes, live: live };
+    }
+    function render(res) {
+      var shown = res.passes.filter(function (p) { return p.maxEl >= MIN_EL; });
+      var now = Date.now();
+      var html = shown.map(function (p, i) {
+        var isLive = i === 0 && res.live && res.live.el > 0;
+        return '<div class="pass-row' + (isLive ? ' live' : '') + '">' +
+          '<span class="d">' + fmtDate(new Date(p.aos)) + '</span>' +
+          '<span class="t">' + fmtTime(new Date(p.aos)) + ' 升</span>' +
+          '<span class="t">' + fmtTime(new Date(p.los)) + ' 落</span>' +
+          '<span class="el"><b>' + Math.round(p.maxEl) + '°</b></span>' +
+          '<span class="du">' + fmtDur(p.los - p.aos) + '</span>' +
+          '<span class="az">' + dirOf(p.aosAz) + ' → ' + dirOf(p.maxAz) + ' → ' + dirOf(p.losAz) + (isLive ? '<span class="live-badge">正在过境</span>' : '') + '</span>' +
+          '</div>';
+      }).join('');
+      rowsEl.innerHTML = html;
+      stateEl.style.display = shown.length ? 'none' : 'block';
+      if (!shown.length) {
+        stateEl.textContent = '未来 48 小时内没有最大仰角 ≥ ' + MIN_EL + '° 的过境，可以隔天再来看看。';
+        stateEl.classList.remove('err');
+      }
+      return shown.length;
+    }
+    function run() {
+      stateEl.classList.remove('err');
+      stateEl.style.display = 'block';
+      stateEl.textContent = '正在获取 TLE 轨道数据并计算…';
+      rowsEl.innerHTML = '';
+      metaEl.textContent = '正在获取 TLE 轨道数据…';
+      loadTle().then(function (tle) {
+        var lines = tle.split('\n');
+        var satrec = satellite.twoline2satrec(lines[0].trim(), lines[1].trim());
+        var res = computePasses(satrec);
+        var n = render(res);
+        var epoch = tleEpoch(lines[0]);
+        metaEl.textContent = '共 ' + n + ' 次过境（≥ ' + MIN_EL + '°）· 窗口：未来 ' + WINDOW_H + ' 小时 · TLE 历元：' +
+          (epoch.getMonth() + 1) + '月' + epoch.getDate() + '日 ' + p2(epoch.getUTCHours()) + ':' + p2(epoch.getUTCMinutes()) + ' UTC';
+      }).catch(function () {
+        rowsEl.innerHTML = '';
+        stateEl.style.display = 'block';
+        stateEl.classList.add('err');
+        stateEl.textContent = 'TLE 轨道数据获取失败——请检查网络后点击「重新计算」重试。';
+        metaEl.textContent = '数据源不可用';
+      });
+    }
+    refreshBtn.addEventListener('click', run);
+    run();
+  })();
 </script>
 
 </body>
