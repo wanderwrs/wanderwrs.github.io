@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="本站说明：个人站的搭建流程、使用的工具、代码所有权与引用、友情链接等相关事项。">
+<meta name="theme-color" content="#FAF6EC">
+<title>Wanderers.小石头 · 站点说明</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #FAF6EC;
+    --paper-2: #F4EFE2;
+    --ink: #23302A;
+    --ink-2: #5C6B62;
+    --line: #E7E1D2;
+    --accent: #1F7A5C;
+    --accent-deep: #155C44;
+    --sky: #4E9FCB;
+    --sky-deep: #337FA9;
+    --chip: #F1ECDE;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(78, 159, 203, 0.25); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
+  .brand .dot { color: var(--accent); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+  .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .nav-drop { position: relative; }
+  .nav-drop-btn {
+    appearance: none; background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 0.9rem; color: var(--ink-2);
+    display: flex; align-items: center; gap: 5px; padding: 0;
+  }
+  .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
+  .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
+  .nav-drop.open .nav-drop-btn { color: var(--accent); }
+  .nav-drop.open .caret { transform: rotate(180deg); }
+  .nav-drop-menu {
+    position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px;
+    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px;
+    display: none; flex-direction: column; gap: 2px; z-index: 30;
+  }
+  .nav-drop-menu::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+  .nav-drop.open .nav-drop-menu { display: flex; }
+  .nav-drop-menu a { padding: 7px 12px; border-radius: 6px; font-size: 0.9rem; color: var(--ink-2); }
+  .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
+  .nav-drop-menu a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-drop-menu a.here { color: var(--accent); font-weight: 600; }
+
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 30px; }
+  .sec-head::after { content: ''; order: 2; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent 82%); }
+  .sec-head .no { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
+  .sec-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
+  .works-lead { margin: -4px 0 30px; font-size: 0.9rem; color: var(--ink-2); }
+
+  .block { margin-bottom: 40px; }
+  .block:last-child { margin-bottom: 0; }
+  .block-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+  .block-head .bn { font-family: var(--mono); font-size: 0.74rem; color: var(--sky-deep); }
+  .block-head h3 { font-size: 1.05rem; font-weight: 700; }
+  .card { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 24px 26px; }
+  .card p { font-size: 0.94rem; margin-bottom: 13px; }
+  .card p:last-child { margin-bottom: 0; }
+  .card p em { font-style: normal; color: var(--accent); font-weight: 600; }
+  .card .mono { font-family: var(--mono); font-size: 0.85rem; color: var(--accent-deep); }
+
+  .steps { list-style: none; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 0 0 16px 40px;
+    font-size: 0.94rem;
+  }
+  .steps li:last-child { padding-bottom: 0; }
+  .steps li::before {
+    content: counter(step, decimal-leading-zero);
+    position: absolute; left: 0; top: 1px;
+    font-family: var(--mono); font-size: 0.72rem;
+    color: var(--accent);
+    border: 1px solid var(--line);
+    background: var(--chip);
+    border-radius: 6px;
+    padding: 1px 7px;
+  }
+  .steps li::after {
+    content: '';
+    position: absolute; left: 14px; top: 26px; bottom: 4px;
+    width: 1px; background: var(--line);
+  }
+  .steps li:last-child::after { display: none; }
+  .steps li b { font-weight: 700; }
+  .steps li span { display: block; font-size: 0.88rem; color: var(--ink-2); }
+
+  .tool-grid { display: grid; grid-template-columns: 150px 1fr; gap: 0 20px; }
+  .tool-grid .t {
+    font-family: var(--mono); font-size: 0.82rem; color: var(--accent);
+    padding: 11px 0; border-bottom: 1px dashed var(--line);
+    align-self: start;
+  }
+  .tool-grid .d { font-size: 0.92rem; padding: 11px 0; border-bottom: 1px dashed var(--line); }
+  .tool-grid .d small { display: block; font-size: 0.78rem; color: var(--ink-2); font-family: var(--mono); }
+  .tool-grid > .t:last-of-type, .tool-grid > .d:last-of-type { border-bottom: none; }
+  @media (max-width: 640px) {
+    .tool-grid { grid-template-columns: 1fr; }
+    .tool-grid .t { padding-bottom: 2px; border-bottom: none; }
+    .tool-grid .d { padding-top: 2px; }
+  }
+
+  .rule-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .rule-list li { position: relative; padding-left: 18px; font-size: 0.94rem; }
+  .rule-list li::before { content: '—'; position: absolute; left: 0; color: var(--accent); }
+  .rule-list li b { font-weight: 700; }
+
+  .about-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+  .about-links a {
+    font-family: var(--mono); font-size: 0.82rem;
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: 5px 14px; color: var(--ink-2); background: var(--chip);
+  }
+  .about-links a:hover { color: var(--accent); border-color: var(--accent); text-decoration: none; }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  @media (max-width: 720px) {
+    .nav-links a:not(.keep) { display: none; }
+    .nav-drop { display: none; }
+    .card { padding: 20px 18px; }
+  }
+  .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="index.html#about" class="num" data-n="01">关于</a>
+      <a href="index.html#fields" class="num" data-n="02">领域</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">03</span>综合<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-railway.html" class="num" data-n="03·1">铁路技术</a>
+          <a href="works-aviation.html" class="num" data-n="03·2">航空爱好</a>
+          <a href="works-satcom.html" class="num" data-n="03·3">U/V 卫星通讯</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="works-literature.html" class="num" data-n="04·2">文学原创作品</a>
+          <a href="works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="index.html#notes" class="num" data-n="05">站点日志</a>
+          <a href="links.html" class="num" data-n="06">相关链接</a>
+          <a href="friends.html" class="num" data-n="07">友情链接</a>
+          <a href="about.html" class="num here" data-n="08" aria-current="page">说明</a>
+        </div>
+      </div>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="colophon">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">08</span><h2>说明</h2></div>
+      <p class="works-lead reveal">关于这个个人站：它怎么搭起来、用了什么工具、代码归谁、能怎么引用，以及友情链接的那些事。</p>
+
+      <!-- 08 · 1 搭建流程 -->
+      <div class="block reveal" id="build">
+        <div class="block-head"><span class="bn">08 · 1</span><h3>搭建流程</h3></div>
+        <div class="card">
+          <ol class="steps">
+            <li><b>静态站点，单文件体系。</b><span>全站没有框架、没有构建器：每个页面都是一个自包含的 HTML 文件（内联 CSS / JS），直接部署在 GitHub Pages 用户站点 wanderwrs.github.io 上。</span></li>
+            <li><b>页面体系。</b><span>主页承载 01-07 各板块，03 综合、04 作品与 06/07/08 等栏目使用同 CSS 的独立子页面，顶部导航以下拉折叠收纳。</span></li>
+            <li><b>发布管线。</b><span>文件通过 GitHub REST API 逐个提交到 main 分支，GitHub Actions 自动构建，约一分钟后全网上线；每次更新都经过线上内容检查与浏览器实测。</span></li>
+            <li><b>备案。</b><span>已在萌ICP备案中心完成备案：<a class="mono" href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a>，全站页脚可见。</span></li>
+            <li><b>隐私。</b><span>全站无 Cookie、无广告、无用户追踪脚本；留言板（规划中）仅存储访客主动提交的昵称与留言，审核通过后才会展示。</span></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- 08 · 2 工具清单 -->
+      <div class="block reveal" id="tools">
+        <div class="block-head"><span class="bn">08 · 2</span><h3>使用了哪些工具</h3></div>
+        <div class="card">
+          <div class="tool-grid">
+            <div class="t">Trae（AI IDE）</div>
+            <div class="d">站点的开发环境。页面代码在 AI 辅助下生成与迭代，由站长提出需求、审校每一行代码并决定最终上线内容。<small>自然语言协作 · 人机结对</small></div>
+            <div class="t">Seedream 5.0 Pro</div>
+            <div class="d">「AIGC 图片作品」全部 21 幅作品的生成模型（千禧年风格 / 砼核幻想 / 雾季开学三个系列）。<small>文生图 · 即梦系</small></div>
+            <div class="t">satellite.js v5.0.0</div>
+            <div class="d">U/V 卫星通讯页的 ISS 过境预报由它在浏览器内完成轨道递推，自托管于本站。<small>MIT License · shashwatak/satellite.js</small></div>
+            <div class="t">CelesTrak</div>
+            <div class="d">ISS（NORAD 25544）TLE 轨道根数的数据来源，备用源为 TLE API。<small>轨道数据 · 感谢 Dr. T.S. Kelso</small></div>
+            <div class="t">jsDelivr CDN</div>
+            <div class="d">AIGC 图片与静态资源的加速图床，回退链路指向本站 assets 目录。<small>全球边缘缓存</small></div>
+            <div class="t">Waline</div>
+            <div class="d">留言板方案（部署中）：自托管客户端，数据存于私有仓库，留言经站长审核后展示。<small>评论系统 · 规划上线</small></div>
+            <div class="t">系统字体栈</div>
+            <div class="d">PingFang SC / HarmonyOS Sans / Microsoft YaHei / SF Mono 等系统自带字体，零外部字体请求。<small>无字体依赖</small></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 08 · 3 代码所有权与引用 -->
+      <div class="block reveal" id="license">
+        <div class="block-head"><span class="bn">08 · 3</span><h3>代码所有权与引用</h3></div>
+        <div class="card">
+          <p><em>所有权：</em>本站全部 HTML / CSS / JS 原创代码（含页面设计、文案与交互逻辑）归站长 Wanderers.小石头 所有，© 2026。AI 辅助生成的部分经站长逐行审校、修改与验收后才进入本站，其整理与发布责任由站长承担。源码可在 GitHub 仓库 <a class="mono" href="https://github.com/wanderwrs/wanderwrs.github.io" target="_blank" rel="noopener">wanderwrs/wanderwrs.github.io</a> 查看。</p>
+          <p><em>引用与转载：</em>非商业用途可在署名（Wanderers.小石头 + 本站链接）的前提下自由引用与转载；商业用途请先联系站长获得许可。</p>
+          <p><em>第三方资源：</em>satellite.js（MIT License）、CelesTrak 轨道数据、jsDelivr CDN 均按其各自许可与条款使用，感谢上游项目的维护者。除上述标注外，页面中出现的文章、图片与音频均为站长本人创作，请勿将本站内容用于未经授权的 AI 训练。</p>
+        </div>
+      </div>
+
+      <!-- 08 · 4 友情链接说明 -->
+      <div class="block reveal" id="friends-rule">
+        <div class="block-head"><span class="bn">08 · 4</span><h3>友情链接说明</h3></div>
+        <div class="card">
+          <p>友链页面在「其他 → 07 友情链接」，目前收录的是电台与技术圈朋友的站点。交换与维护遵循几条简单的约定：</p>
+          <ul class="rule-list">
+            <li><b>先友后链：</b>通常是通联过、合作过或长期互相关注的朋友，业余无线电爱好者与技术博客优先。</li>
+            <li><b>内容底线：</b>站点需内容合法合规、长期可访问，不接受纯广告与采集站。</li>
+            <li><b>申请方式：</b>通过 <a class="mono" href="https://www.qrz.com/db/BI9CIR" target="_blank" rel="noopener">QRZ.com 站内信</a>或 <a class="mono" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub</a> 联系站长，附上站点名称、地址与简介。</li>
+            <li><b>维护：</b>友链顺序按结识时间排列、不分先后；站点连续六个月无法访问会先尝试联系站长，无回应则下线链接。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 08 · 5 其他事项 -->
+      <div class="block reveal" id="misc">
+        <div class="block-head"><span class="bn">08 · 5</span><h3>其他事项</h3></div>
+        <div class="card">
+          <p><em>内容边界：</em>站内文章与随笔为个人记录，观点仅代表站长本人；工程与技术内容以当时的认知为准，随时间推移可能过时，欢迎指正。</p>
+          <p><em>留言：</em>留言板上线后，所有留言经审核展示，不收集邮箱等敏感信息；如希望删除自己的留言，可通过上述渠道联系站长。</p>
+          <p><em>联系：</em>呼号 BI9CIR（QRZ.com 有详细通联信息），GitHub 同名 wanderwrs——电波与代码，两个渠道都在。</p>
+          <div class="about-links">
+            <a href="https://www.qrz.com/db/BI9CIR" target="_blank" rel="noopener">QRZ · BI9CIR ↗</a>
+            <a href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub · wanderwrs ↗</a>
+            <a href="https://www.jjwxc.net/onebook.php?novelid=8489776" target="_blank" rel="noopener">晋江文学城 · 连载小说 ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 Wanderers.小石头 · <a href="index.html">返回主页</a> · <a href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a></p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  document.querySelectorAll('.nav-drop').forEach(function (drop) {
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  });
+</script>
+
+</body>
+</html>
