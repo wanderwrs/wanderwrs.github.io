@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wanderers.小石头的文学原创作品：工程人的随笔与技术实验记——写代码，也写句子。">
+<meta name="theme-color" content="#FAF6EC">
+<title>Wanderers.小石头 · 文学原创作品</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #FAF6EC;
+    --paper-2: #F4EFE2;
+    --ink: #23302A;
+    --ink-2: #5C6B62;
+    --line: #E7E1D2;
+    --accent: #1F7A5C;
+    --accent-deep: #155C44;
+    --sky: #4E9FCB;
+    --sky-deep: #337FA9;
+    --chip: #F1ECDE;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(78, 159, 203, 0.25); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
+  .brand .dot { color: var(--accent); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+  .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .nav-drop { position: relative; }
+  .nav-drop-btn {
+    appearance: none; background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 0.9rem; color: var(--ink-2);
+    display: flex; align-items: center; gap: 5px; padding: 0;
+  }
+  .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
+  .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
+  .nav-drop.open .nav-drop-btn { color: var(--accent); }
+  .nav-drop.open .caret { transform: rotate(180deg); }
+  .nav-drop-menu {
+    position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px;
+    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px;
+    display: none; flex-direction: column; gap: 2px; z-index: 30;
+  }
+  .nav-drop-menu::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+  .nav-drop.open .nav-drop-menu { display: flex; }
+  .nav-drop-menu a { padding: 7px 12px; border-radius: 6px; font-size: 0.9rem; color: var(--ink-2); }
+  .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
+  .nav-drop-menu a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-drop-menu a.here { color: var(--accent); font-weight: 600; }
+
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 30px; }
+  .sec-head::after { content: ''; order: 2; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent 82%); }
+  .sec-head .no { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
+  .sec-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
+  .works-lead { margin: -4px 0 24px; font-size: 0.9rem; color: var(--ink-2); }
+
+  .lit-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    padding: 28px 30px;
+    margin-bottom: 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .lit-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--sky));
+    opacity: 0.55;
+  }
+  .lit-card .date { font-family: var(--mono); font-size: 0.76rem; color: var(--accent); letter-spacing: 0.06em; }
+  .lit-card h3 { font-size: 1.12rem; font-weight: 700; margin: 6px 0 12px; }
+  .lit-card p { font-size: 0.95rem; color: var(--ink); line-height: 1.95; margin-bottom: 10px; max-width: 660px; }
+  .lit-card p:last-child { margin-bottom: 0; }
+  .lit-card .lit-tag { margin-top: 14px; font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); }
+
+  .lit-more { margin-top: 26px; font-size: 0.88rem; color: var(--ink-2); }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  @media (max-width: 720px) {
+    .nav-links a:not(.keep) { display: none; }
+    .nav-drop { display: none; }
+    .lit-card { padding: 22px 20px; }
+  }
+  .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="index.html#about" class="num" data-n="01">关于</a>
+      <a href="index.html#fields" class="num" data-n="02">领域</a>
+      <a href="index.html#aigc" class="num" data-n="03">AIGC</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="works-literature.html" class="num here" data-n="04·2" aria-current="page">文学原创作品</a>
+          <a href="works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="index.html#notes" class="num" data-n="05">随笔</a>
+          <a href="index.html#radio" class="num" data-n="06">无线电</a>
+          <a href="links.html" class="num" data-n="08">相关链接</a>
+          <a href="friends.html" class="num" data-n="09">友情链接</a>
+        </div>
+      </div>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="literature">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">04 · 2</span><h2>文学原创作品</h2></div>
+      <p class="works-lead reveal">工程人的随笔与技术实验记——写代码，也写句子。文字与作品互为注脚。</p>
+
+      <article class="lit-card reveal">
+        <span class="date">2026-10-22</span>
+        <h3>一个 HTML 文件的程序员节礼物</h3>
+        <p>1024 之前的那个晚上，我把 6 关解谜、隐藏碎片、排行榜和一堆「假蓝屏、假病毒」彩蛋塞进了同一个 HTML 文件。碎片藏在源码注释、Console、隐藏 DOM 和 LocalStorage 里——毕竟这是给程序员玩的解谜，F12 才是正确的打开方式。</p>
+        <p class="lit-tag">TAG · 技术叙事 / 1024 / 单文件游戏</p>
+      </article>
+
+      <article class="lit-card reveal">
+        <span class="date">2026-09-01</span>
+        <h3>让 AI 从零写一个跑酷游戏</h3>
+        <p>pixel-runner 是一次实验：需求只出现在我的描述里，美术、关卡、手感调校全部交给 TraeWork AI 完成。结论是「一个人 + AI」完全可以把一个游戏想法推进到能玩、能上线的程度——前提是你得会提需求，也得懂验收。</p>
+        <p class="lit-tag">TAG · 人机协作 / 游戏开发 / 实验报告</p>
+      </article>
+
+      <article class="lit-card reveal">
+        <span class="date">2026-08-25</span>
+        <h3>给工程计算做一个离线 PWA</h3>
+        <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
+        <p class="lit-tag">TAG · 工程一线 / PWA / 工具哲学</p>
+      </article>
+
+      <p class="lit-more reveal">更多文字作品持续整理中；也可以读一读我在 <a href="links.html">Trae 1024 Builder 名人堂</a>里的故事，或者回<a href="index.html#notes">主页随笔</a>看看近况。</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 Wanderers.小石头 · <a href="index.html">返回主页</a> · <a href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a></p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  document.querySelectorAll('.nav-drop').forEach(function (drop) {
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  });
+</script>
+
+</body>
+</html>
