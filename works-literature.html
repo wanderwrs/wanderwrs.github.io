@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Wanderers.小石头的文学原创作品：工程人的随笔与技术实验记——写代码，也写句子。">
+<meta name="description" content="Wanderers.小石头的文学原创作品：原创架空小说《心境中的孤儿》，晋江文学城连载中。">
 <meta name="theme-color" content="#FAF6EC">
 <title>Wanderers.小石头 · 文学原创作品</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
@@ -109,6 +109,26 @@
 
   .lit-more { margin-top: 26px; font-size: 0.88rem; color: var(--ink-2); }
 
+  /* ---------- 小说展示卡 ---------- */
+  .novel { padding: 32px 34px; }
+  .novel-top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; }
+  .novel-platform { font-family: var(--mono); font-size: 0.74rem; color: var(--sky-deep); letter-spacing: 0.06em; }
+  .novel h3 { font-size: 1.4rem; margin: 8px 0 4px; }
+  .novel .novel-author { font-family: var(--mono); font-size: 0.8rem; color: var(--ink-2); margin: 0 0 14px; max-width: none; }
+  .novel-quote {
+    margin: 18px 0 6px;
+    padding: 14px 20px;
+    border-left: 3px solid var(--sky);
+    background: var(--paper-2);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.9;
+    max-width: 660px;
+  }
+  .novel .novel-cta { margin: 16px 0 0; max-width: none; }
+  .novel .novel-cta a { font-family: var(--mono); font-size: 0.88rem; }
+
   .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) {
@@ -159,30 +179,23 @@
   <section id="literature">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">04 · 2</span><h2>文学原创作品</h2></div>
-      <p class="works-lead reveal">工程人的随笔与技术实验记——写代码，也写句子。文字与作品互为注脚。</p>
+      <p class="works-lead reveal">写代码，也写故事。目前连载原创架空小说《心境中的孤儿》——一个关于告别、执念与时间的故事。</p>
 
-      <article class="lit-card reveal">
-        <span class="date">2026-10-22</span>
-        <h3>一个 HTML 文件的程序员节礼物</h3>
-        <p>1024 之前的那个晚上，我把 6 关解谜、隐藏碎片、排行榜和一堆「假蓝屏、假病毒」彩蛋塞进了同一个 HTML 文件。碎片藏在源码注释、Console、隐藏 DOM 和 LocalStorage 里——毕竟这是给程序员玩的解谜，F12 才是正确的打开方式。</p>
-        <p class="lit-tag">TAG · 技术叙事 / 1024 / 单文件游戏</p>
+      <article class="lit-card novel reveal">
+        <div class="novel-top">
+          <span class="date">原创架空小说 · 连载中</span>
+          <span class="novel-platform">晋江文学城</span>
+        </div>
+        <h3>《心境中的孤儿》</h3>
+        <p class="novel-author">作者：小石头wanderers</p>
+        <p>萧回到故乡北城，整理亡弟东东留下的遗物。2014 年 5 月 17 日，弟弟在那个十字路口推开了一个男童，自己却再没能离开。不久之后，一封署名 K·J·摩根的信抵达，带来一个近乎疯狂的许诺——一次时空穿梭的机会。</p>
+        <p>暗语是「乌云密布」，答语是「是的，暴风雨将来临」，相会之地在乌比诺斯桥。在 tDCS 与 MECT 的仪器声里，在催眠深处那座木偶剧院中，萧一遍遍练习着回到过去的方法。而把这些口述一点点整理下来的人，叫奇奇。</p>
+        <blockquote class="novel-quote">「乌云密布。」<br>「是的，暴风雨将来临。」</blockquote>
+        <p class="novel-cta"><a href="https://www.jjwxc.net/onebook.php?novelid=8489776&chapterid=1" target="_blank" rel="noopener">晋江文学城 · 第一章《初回荆棘》↗</a></p>
+        <p class="lit-tag">TAG · 原创架空 / 都市哀伤 / 时空悬念</p>
       </article>
 
-      <article class="lit-card reveal">
-        <span class="date">2026-09-01</span>
-        <h3>让 AI 从零写一个跑酷游戏</h3>
-        <p>pixel-runner 是一次实验：需求只出现在我的描述里，美术、关卡、手感调校全部交给 TraeWork AI 完成。结论是「一个人 + AI」完全可以把一个游戏想法推进到能玩、能上线的程度——前提是你得会提需求，也得懂验收。</p>
-        <p class="lit-tag">TAG · 人机协作 / 游戏开发 / 实验报告</p>
-      </article>
-
-      <article class="lit-card reveal">
-        <span class="date">2026-08-25</span>
-        <h3>给工程计算做一个离线 PWA</h3>
-        <p>工地上最不缺的就是「没信号」。the MATH office 把常用的公路工程计算器做成纯前端 PWA，装一次就能离线用。好工具的定义很简单：在你最需要它的时候，它一定能打开。</p>
-        <p class="lit-tag">TAG · 工程一线 / PWA / 工具哲学</p>
-      </article>
-
-      <p class="lit-more reveal">更多文字作品持续整理中；也可以读一读我在 <a href="links.html">Trae 1024 Builder 名人堂</a>里的故事，或者回<a href="index.html#notes">主页随笔</a>看看近况。</p>
+      <p class="lit-more reveal">小说持续连载中；也可以读一读我在 <a href="links.html">Trae 1024 Builder 名人堂</a>里的故事，或者回<a href="index.html#notes">主页随笔</a>看看近况。</p>
     </div>
   </section>
 </main>
