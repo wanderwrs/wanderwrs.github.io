@@ -133,6 +133,7 @@
     padding: 0;
   }
   .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
   .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
   .nav-drop.open .nav-drop-btn { color: var(--accent); }
   .nav-drop.open .caret { transform: rotate(180deg); }
@@ -140,7 +141,7 @@
     position: absolute;
     top: calc(100% + 12px);
     right: 0;
-    min-width: 138px;
+    min-width: 176px;
     background: #fff;
     border: 1px solid var(--line);
     border-radius: 9px;
@@ -766,7 +767,15 @@
       <a href="index.html#about" class="num" data-n="01">关于</a>
       <a href="index.html#fields" class="num" data-n="02">领域</a>
       <a href="index.html#aigc" class="num" data-n="03">AIGC</a>
-      <a href="index.html#work" class="num" data-n="04">作品</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="works-literature.html" class="num" data-n="04·2">文学原创作品</a>
+          <a href="works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
       <div class="nav-drop" id="navDrop">
         <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
         <div class="nav-drop-menu">
@@ -828,27 +837,27 @@
     els.forEach(function (el) { io.observe(el); });
   })();
 
-  // 导航折叠栏「其他」
+  // 导航折叠栏（04 作品 / 其他）
   (function () {
-    var drop = document.getElementById('navDrop');
-    if (!drop) return;
-    var btn = drop.querySelector('.nav-drop-btn');
-    function setOpen(open) {
-      drop.classList.toggle('open', open);
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    }
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      setOpen(!drop.classList.contains('open'));
-    });
-    document.addEventListener('click', function (e) {
-      if (!drop.contains(e.target)) setOpen(false);
-    });
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') setOpen(false);
-    });
-    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
-      a.addEventListener('click', function () { setOpen(false); });
+    document.querySelectorAll('.nav-drop').forEach(function (drop) {
+      var btn = drop.querySelector('.nav-drop-btn');
+      function setOpen(open) {
+        drop.classList.toggle('open', open);
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(!drop.classList.contains('open'));
+      });
+      document.addEventListener('click', function (e) {
+        if (!drop.contains(e.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
+      });
+      drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+        a.addEventListener('click', function () { setOpen(false); });
+      });
     });
   })();
 </script>
