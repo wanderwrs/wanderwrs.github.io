@@ -251,6 +251,22 @@
 
   /* ---------- 分区通用 ---------- */
   section { padding: 56px 0; border-top: 1px solid var(--line); }
+
+  /* 01 关于我 → 07 联系我 区间的淡化背景（蒙版渐隐上下边缘） */
+  main { position: relative; }
+  #pageBg {
+    position: absolute;
+    left: 0; right: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url('https://cdn.jsdelivr.net/gh/wanderwrs/wanderwrs.github.io@main/assets/aigc/tk-3.jpg') center 38% / cover no-repeat;
+    opacity: 0.09;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 150px, #000 calc(100% - 150px), transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0, #000 150px, #000 calc(100% - 150px), transparent 100%);
+  }
+  @media (max-width: 720px) {
+    #pageBg { opacity: 0.07; }
+  }
   .sec-head {
     display: flex;
     align-items: baseline;
@@ -688,6 +704,7 @@
 </header>
 
 <main id="top">
+  <div id="pageBg" aria-hidden="true"></div>
 
   <!-- ============ Hero ============ -->
   <div class="hero">
@@ -1229,6 +1246,31 @@
       active = false;
       cube.style.opacity = '0';
     });
+  })();
+
+  // 01 关于我 → 07 联系我：淡化背景层随区间伸缩（CDN 失败回退本地）
+  (function () {
+    var bg = document.getElementById('pageBg');
+    if (!bg) return;
+    var about = document.getElementById('about');
+    var contact = document.getElementById('contact');
+    var mainEl = document.querySelector('main');
+    function place() {
+      var mTop = mainEl.getBoundingClientRect().top + window.pageYOffset;
+      var top = about.getBoundingClientRect().top + window.pageYOffset;
+      var bottom = contact.getBoundingClientRect().bottom + window.pageYOffset;
+      bg.style.top = (top - mTop) + 'px';
+      bg.style.height = Math.max(0, bottom - top) + 'px';
+    }
+    place();
+    window.addEventListener('load', place);
+    window.addEventListener('resize', place);
+    if (document.fonts && document.fonts.ready) { document.fonts.ready.then(place); }
+    var probe = new Image();
+    probe.onerror = function () {
+      bg.style.backgroundImage = "url('assets/aigc/tk-3.jpg')";
+    };
+    probe.src = 'https://cdn.jsdelivr.net/gh/wanderwrs/wanderwrs.github.io@main/assets/aigc/tk-3.jpg';
   })();
 
   // AIGC 轮播：每组 4 幅，箭头 / 圆点 / 触摸滑动切换
