@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wanderers.小石头的铁路技术专栏：铁路工程一线的技术记录，内容整理中。">
+<meta name="theme-color" content="#FAF6EC">
+<title>Wanderers.小石头 · 铁路技术</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #FAF6EC;
+    --paper-2: #F4EFE2;
+    --ink: #23302A;
+    --ink-2: #5C6B62;
+    --line: #E7E1D2;
+    --accent: #1F7A5C;
+    --accent-deep: #155C44;
+    --sky: #4E9FCB;
+    --sky-deep: #337FA9;
+    --chip: #F1ECDE;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(78, 159, 203, 0.25); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
+  .brand .dot { color: var(--accent); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+  .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .nav-drop { position: relative; }
+  .nav-drop-btn {
+    appearance: none; background: none; border: none; cursor: pointer;
+    font-family: inherit; font-size: 0.9rem; color: var(--ink-2);
+    display: flex; align-items: center; gap: 5px; padding: 0;
+  }
+  .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
+  .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
+  .nav-drop.open .nav-drop-btn { color: var(--accent); }
+  .nav-drop.open .caret { transform: rotate(180deg); }
+  .nav-drop-menu {
+    position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px;
+    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px;
+    display: none; flex-direction: column; gap: 2px; z-index: 30;
+  }
+  .nav-drop-menu::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+  .nav-drop.open .nav-drop-menu { display: flex; }
+  .nav-drop-menu a { padding: 7px 12px; border-radius: 6px; font-size: 0.9rem; color: var(--ink-2); }
+  .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
+  .nav-drop-menu a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-drop-menu a.here { color: var(--accent); font-weight: 600; }
+
+  section { padding: 56px 0; border-top: 1px solid var(--line); }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 30px; }
+  .sec-head::after { content: ''; order: 2; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent 82%); }
+  .sec-head .no { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
+  .sec-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
+  .works-lead { margin: -4px 0 24px; font-size: 0.9rem; color: var(--ink-2); }
+
+  .stage {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background:
+      radial-gradient(420px 240px at 16% 0%, rgba(31, 122, 92, 0.10), transparent 64%),
+      radial-gradient(420px 260px at 88% 108%, rgba(78, 159, 203, 0.10), transparent 64%),
+      #fff;
+    padding: 52px 30px;
+    text-align: center;
+  }
+  .rails {
+    width: 150px; height: 54px;
+    margin: 0 auto 26px;
+    border-radius: 4px;
+    background: repeating-linear-gradient(180deg, var(--line) 0 6px, transparent 6px 18px);
+    position: relative;
+  }
+  .rails::before, .rails::after {
+    content: '';
+    position: absolute;
+    top: -4px; bottom: -4px;
+    width: 5px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--sky));
+  }
+  .rails::before { left: 22px; }
+  .rails::after { right: 22px; }
+  .stage h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+  .stage p { max-width: 520px; margin: 0 auto 22px; font-size: 0.94rem; color: var(--ink-2); }
+  .stage-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 26px; }
+  .chip { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-2); background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 3px 12px; }
+  .chip b { color: var(--accent); font-weight: 600; }
+  .stage-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; font-family: var(--mono); font-size: 0.86rem; }
+  .stage-links a::before { content: '→ '; color: var(--accent); }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+  @media (max-width: 720px) {
+    .nav-links a:not(.keep) { display: none; }
+    .nav-drop { display: none; }
+    .stage { padding: 40px 20px; }
+  }
+  .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="index.html#about" class="num" data-n="01">关于</a>
+      <a href="index.html#fields" class="num" data-n="02">领域</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">03</span>综合<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-railway.html" class="num here" data-n="03·1" aria-current="page">铁路技术</a>
+          <a href="works-aviation.html" class="num" data-n="03·2">航空爱好</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="works-literature.html" class="num" data-n="04·2">文学原创作品</a>
+          <a href="works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="index.html#notes" class="num" data-n="05">站点日志</a>
+          <a href="index.html#radio" class="num" data-n="06">无线电</a>
+          <a href="links.html" class="num" data-n="08">相关链接</a>
+          <a href="friends.html" class="num" data-n="09">友情链接</a>
+        </div>
+      </div>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="railway">
+    <div class="wrap">
+      <div class="sec-head reveal"><span class="no">03 · 1</span><h2>铁路技术</h2></div>
+      <p class="works-lead reveal">与职业相关的第一条支线——铁路工程一线的技术记录。</p>
+
+      <div class="stage reveal">
+        <div class="rails" aria-hidden="true"></div>
+        <h3>内容整理中</h3>
+        <p>这里将收录铁路工程一线的技术笔记：勘测设计、工程计算、材料工艺与工地现场。等第一批笔记整理成篇，就会在这里上线。</p>
+        <div class="stage-chips">
+          <span class="chip"><b>铁路</b> 工程</span>
+          <span class="chip">一线记录整理中</span>
+          <span class="chip">敬请期待</span>
+        </div>
+        <div class="stage-links">
+          <a href="works-ai.html">先看看 AI 项目展示</a>
+          <a href="index.html">回主页逛逛</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 Wanderers.小石头 · <a href="index.html">返回主页</a> · <a href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a></p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { io.observe(el); });
+  })();
+
+  document.querySelectorAll('.nav-drop').forEach(function (drop) {
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  });
+</script>
+
+</body>
+</html>
