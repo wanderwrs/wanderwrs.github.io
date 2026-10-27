@@ -450,7 +450,7 @@
             <div class="secret-line" id="secretLine"></div>
           </div>
         </details>
-        <p class="gate-note">说明：本站为纯静态托管，访问闸为演示级防护（凭据以哈希比对、口令本地校验），用于挡住随手访客，请勿视作强安全边界。连续输错 5 次将锁定 60 秒。</p>
+        <p class="gate-note">说明：本站为纯静态托管，访问闸为演示级防护（凭据以哈希比对、口令本地校验），用于挡住随手访客，请勿视作强安全边界。每次打开或刷新本页均需重新验证；连续输错 5 次将锁定 60 秒。</p>
       </div>
 
       <!-- 解锁后的内容 -->
@@ -621,7 +621,6 @@
   }
 
   function unlock() {
-    sessionStorage.setItem('railAuth', '1');
     document.getElementById('railGate').style.display = 'none';
     document.getElementById('railContent').style.display = 'block';
     if (typeof renderMindmap === 'function') renderMindmap();
@@ -662,7 +661,6 @@
   });
 
   document.getElementById('btnLogout').addEventListener('click', function () {
-    sessionStorage.removeItem('railAuth');
     location.reload();
   });
 
@@ -739,12 +737,8 @@
     }
   }
 
-  /* 已验证过则直接进入 */
-  if (sessionStorage.getItem('railAuth') === '1') {
-    unlock();
-  } else {
-    setLockUI();
-  }
+  /* 每次打开或刷新页面都需完整验证，不保留任何登录记录 */
+  setLockUI();
 </script>
 
 </body>
