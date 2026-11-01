@@ -354,91 +354,6 @@
   .viewer-loading .bar i { display: block; width: 40%; height: 100%; background: #ff7a2f; animation: vload 1.1s ease-in-out infinite; }
   @keyframes vload { 0% { transform: translateX(-100%); } 100% { transform: translateX(340%); } }
 
-  /* ---------- 病害图鉴 ---------- */
-  .atlas-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-  .atlas-chip {
-    appearance: none; font: inherit; font-size: 0.8rem; cursor: pointer;
-    padding: 4px 13px; border: 1px solid var(--line); border-radius: 999px;
-    background: var(--chip); color: var(--ink-2); transition: all 0.2s;
-  }
-  .atlas-chip b { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-left: 5px; }
-  .atlas-chip:hover { border-color: var(--accent); color: var(--accent); }
-  .atlas-chip.is-on { background: var(--accent); border-color: var(--accent); color: #fff; }
-  .atlas-chip.is-on b { color: rgba(255, 255, 255, 0.75); }
-  .atlas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 14px; }
-  .atlas-card {
-    appearance: none; font: inherit; text-align: left; padding: 0; cursor: pointer;
-    border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden;
-    display: flex; flex-direction: column; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
-  }
-  .atlas-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(35, 48, 42, 0.1); }
-  .atlas-card img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; background: var(--paper-2); }
-  .atlas-card .ac-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 3px; }
-  .atlas-card .ac-name { font-size: 0.9rem; font-weight: 600; color: var(--ink); }
-  .atlas-card .ac-meta { font-size: 0.74rem; color: var(--ink-2); font-family: var(--mono); }
-  .lv-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
-  .lv-1 { background: #45D483; }
-  .lv-2 { background: #F5B33C; }
-  .lv-3 { background: #FF5A45; }
-
-  /* 病害详情弹窗 */
-  .atlas-overlay {
-    position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center;
-    padding: 24px; background: rgba(23, 32, 28, 0.5);
-    opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s;
-  }
-  .atlas-overlay.show { opacity: 1; visibility: visible; }
-  .atlas-modal {
-    width: 100%; max-width: 760px; max-height: 86vh; display: flex; flex-direction: column;
-    background: #fff; border-radius: 12px; overflow: hidden;
-    transform: scale(0.96); transition: transform 0.2s;
-  }
-  .atlas-overlay.show .atlas-modal { transform: scale(1); }
-  .atlas-modal-head {
-    display: flex; align-items: flex-start; gap: 12px; padding: 16px 20px;
-    border-bottom: 1px solid var(--line); background: var(--paper);
-  }
-  .atlas-modal-head h4 { font-size: 1.02rem; font-weight: 700; }
-  .atlas-modal-head .am-sub { font-size: 0.76rem; color: var(--ink-2); font-family: var(--mono); margin-top: 3px; }
-  .atlas-modal-close {
-    margin-left: auto; appearance: none; border: none; background: none; cursor: pointer;
-    font-size: 1.4rem; line-height: 1; color: var(--ink-2); padding: 0 4px;
-  }
-  .atlas-modal-close:hover { color: #C53030; }
-  .atlas-modal-body { padding: 18px 20px 22px; overflow-y: auto; }
-  .atlas-modal-body img { width: 100%; border-radius: 8px; border: 1px solid var(--line); margin-bottom: 16px; }
-  .afield { margin-bottom: 14px; }
-  .afield .af-k {
-    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em;
-    color: var(--accent); margin-bottom: 3px;
-  }
-  .afield .af-v { font-size: 0.88rem; color: var(--ink); }
-  .afield.fix .af-k { color: var(--sky-deep); }
-  .afield.basis { border-top: 1px dashed var(--line); padding-top: 12px; margin-bottom: 0; }
-  .afield.basis .af-v { font-size: 0.8rem; color: var(--ink-2); }
-
-  /* ---------- 修规速查 ---------- */
-  .rules-layout { display: grid; grid-template-columns: 208px 1fr; gap: 26px; align-items: start; }
-  .rules-nav { display: flex; flex-direction: column; gap: 5px; position: sticky; top: 76px; }
-  .rules-nav button {
-    appearance: none; font: inherit; text-align: left; cursor: pointer;
-    padding: 8px 12px; border: 1px solid transparent; border-left: 2px solid var(--line);
-    background: none; color: var(--ink-2); font-size: 0.88rem; transition: all 0.2s;
-  }
-  .rules-nav button:hover { color: var(--accent); background: var(--chip); }
-  .rules-nav button.is-on { border-left-color: var(--accent); color: var(--accent); font-weight: 600; background: #fff; }
-  .rules-nav button .rn-code { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--ink-2); opacity: 0.85; }
-  .rules-body { border: 1px solid var(--line); border-radius: 12px; background: #fff; padding: 22px 24px 24px; }
-  .rules-body .rb-code { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.06em; }
-  .rules-body h3 { font-size: 1.1rem; font-weight: 700; margin: 5px 0 6px; }
-  .rules-body .rb-desc { font-size: 0.85rem; color: var(--ink-2); margin-bottom: 18px; }
-  .rule-item { padding: 12px 0; border-top: 1px dashed var(--line); }
-  .rule-item:first-of-type { border-top: none; }
-  .rule-item b { display: block; font-size: 0.9rem; margin-bottom: 3px; color: var(--ink); }
-  .rule-item span { font-size: 0.86rem; color: var(--ink-2); display: block; }
-  .rule-item.is-link { cursor: pointer; }
-  .rule-item.is-link:hover b { color: var(--accent); }
-
   .rail-actions { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 
   /* 附录全文弹窗 */
@@ -509,13 +424,6 @@
     .mindmap-info-panel { width: calc(100% - 1.5rem); max-height: 52%; }
     .rail-tab { font-size: 0.82rem; padding: 6px 12px; }
     .viewer-frame iframe { height: 78vh; min-height: 520px; }
-    .atlas-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-    .rules-layout { grid-template-columns: 1fr; gap: 14px; }
-    .rules-nav { position: static; flex-direction: row; flex-wrap: wrap; }
-    .rules-nav button { border-left: none; border-bottom: 2px solid var(--line); padding: 6px 10px; }
-    .rules-nav button.is-on { border-left-color: transparent; border-bottom-color: var(--accent); }
-    .rules-nav button .rn-code { display: none; }
-    .rules-body { padding: 18px 16px 20px; }
   }
   .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
 </style>
@@ -563,7 +471,7 @@
   <section id="railway">
     <div class="wrap">
       <div class="sec-head reveal"><span class="no">03 · 1</span><h2>铁路技术</h2></div>
-      <p class="works-lead reveal">与职业相关的第一条支线——「桥隧工学习平台」按功能分为四个分区：可交互的钢梁桥枕木病害三维检视台；TG/GW 103-2018《普速铁路桥隧建筑物修理规则》9 章 40 节 335 个节点的知识思维导图；29 处桥枕病害图鉴；以及按材质、铺设、检查、失效、修理、更换组织的修规条款速查。</p>
+      <p class="works-lead reveal">与职业相关的第一条支线——「桥隧工学习平台」的两个功能分区：可交互的钢梁桥枕木病害三维检视台（六面检查 · 29 处病害）；以及 TG/GW 103-2018《普速铁路桥隧建筑物修理规则》9 章 40 节、335 个知识节点的知识思维导图。</p>
 
       <!-- 访问闸 -->
       <div class="gate reveal" id="railGate">
@@ -609,8 +517,6 @@
         <nav class="rail-tabs" role="tablist" aria-label="铁路技术功能分区">
           <button type="button" class="rail-tab is-on" role="tab" aria-selected="true" data-tab="viewer"><span class="no">01</span>三维检视</button>
           <button type="button" class="rail-tab" role="tab" aria-selected="false" data-tab="map"><span class="no">02</span>知识体系</button>
-          <button type="button" class="rail-tab" role="tab" aria-selected="false" data-tab="atlas"><span class="no">03</span>病害图鉴</button>
-          <button type="button" class="rail-tab" role="tab" aria-selected="false" data-tab="rules"><span class="no">04</span>修规速查</button>
         </nav>
 
         <!-- 01 三维检视 -->
@@ -661,47 +567,9 @@
           <p class="rail-note">操作提示：拖拽平移 · 滚轮缩放 · 点击节点查看要点与关联 · 点击附录节点弹出全文。</p>
         </div>
 
-        <!-- 03 病害图鉴 -->
-        <div class="rail-panel" id="panel-atlas" role="tabpanel">
-          <div class="rail-panel-head">
-            <h3>桥枕病害图鉴</h3>
-            <p>按病害类别筛选 · 点击查看判定与整治</p>
-            <span class="chip" id="atlasTotal">29 处</span>
-          </div>
-          <div class="atlas-filter" id="atlasFilter"></div>
-          <div class="atlas-grid" id="atlasGrid"></div>
-        </div>
-
-        <!-- 04 修规速查 -->
-        <div class="rail-panel" id="panel-rules" role="tabpanel">
-          <div class="rail-panel-head">
-            <h3>修规条款速查</h3>
-            <p>《普速铁路桥隧建筑物修理规则》明桥面木桥枕</p>
-            <span class="chip">第三章 第一节（二）</span>
-          </div>
-          <div class="rules-layout">
-            <nav class="rules-nav" id="rulesNav" aria-label="修规章节"></nav>
-            <article class="rules-body" id="rulesBody"></article>
-          </div>
-        </div>
-
         <div class="rail-actions">
           <span class="rail-note" style="margin:0;">资料整理自现行修规与现场检查实践，具体作业以现行有效文本为准。</span>
           <button class="btn-logout" id="btnLogout">退出本次访问</button>
-        </div>
-      </div>
-
-      <!-- 病害详情弹窗 -->
-      <div class="atlas-overlay" id="atlasOverlay">
-        <div class="atlas-modal" role="dialog" aria-modal="true" aria-labelledby="atlasTitle">
-          <div class="atlas-modal-head">
-            <div>
-              <h4 id="atlasTitle"></h4>
-              <div class="am-sub" id="atlasSub"></div>
-            </div>
-            <button class="atlas-modal-close" id="atlasClose" aria-label="关闭">×</button>
-          </div>
-          <div class="atlas-modal-body" id="atlasBody"></div>
         </div>
       </div>
 
@@ -727,7 +595,6 @@
 
 <script src="assets/mindmap/qrcode.min.js"></script>
 <script src="assets/mindmap/mqtt.min.js"></script>
-<script src="assets/sleeper3d/module-data.js"></script>
 <script src="assets/mindmap/knowledge-map.js"></script>
 <script src="assets/mindmap/appendix-fulltext.js"></script>
 <script src="assets/mindmap/mindmap.js"></script>
@@ -841,7 +708,7 @@
     loadBusuanzi();
   }
 
-  /* ================= 功能分区：三维检视 / 知识体系 / 病害图鉴 / 修规速查 ================= */
+  /* ================= 功能分区：三维检视 / 知识体系 ================= */
   var tabsInited = false;
   var mindmapReady = false;
   var viewerLoaded = false;
@@ -852,8 +719,6 @@
     document.querySelectorAll('.rail-tab').forEach(function (btn) {
       btn.addEventListener('click', function () { activateTab(btn.getAttribute('data-tab')); });
     });
-    buildAtlas();
-    buildRules();
     loadViewer();
   }
 
@@ -881,118 +746,6 @@
       document.getElementById('viewerLoading').classList.add('hide');
     });
     frame.src = 'assets/sleeper3d/index.html';
-  }
-
-  /* ---------- 病害图鉴 ---------- */
-  var LEVEL_NAME = { 1: '轻微', 2: '中等', 3: '严重' };
-  var atlasFilterCat = '全部';
-
-  function buildAtlas() {
-    var data = window.SLEEPER_DEFECTS || [];
-    var cats = ['全部'];
-    data.forEach(function (d) { if (cats.indexOf(d.category) < 0) cats.push(d.category); });
-    document.getElementById('atlasTotal').textContent = data.length + ' 处';
-
-    var filter = document.getElementById('atlasFilter');
-    filter.innerHTML = cats.map(function (c) {
-      var n = c === '全部' ? data.length : data.filter(function (d) { return d.category === c; }).length;
-      return '<button type="button" class="atlas-chip' + (c === '全部' ? ' is-on' : '') +
-        '" data-cat="' + c + '">' + c + '<b>' + n + '</b></button>';
-    }).join('');
-
-    filter.addEventListener('click', function (e) {
-      var chip = e.target.closest('.atlas-chip');
-      if (!chip) return;
-      atlasFilterCat = chip.getAttribute('data-cat');
-      filter.querySelectorAll('.atlas-chip').forEach(function (c) {
-        c.classList.toggle('is-on', c.getAttribute('data-cat') === atlasFilterCat);
-      });
-      renderAtlas();
-    });
-
-    document.getElementById('atlasGrid').addEventListener('click', function (e) {
-      var card = e.target.closest('.atlas-card');
-      if (!card) return;
-      openAtlas(card.getAttribute('data-id'));
-    });
-
-    renderAtlas();
-  }
-
-  function renderAtlas() {
-    var data = window.SLEEPER_DEFECTS || [];
-    var faces = window.SLEEPER_FACES || {};
-    var list = atlasFilterCat === '全部' ? data : data.filter(function (d) { return d.category === atlasFilterCat; });
-    document.getElementById('atlasGrid').innerHTML = list.map(function (d) {
-      return '<button type="button" class="atlas-card" data-id="' + d.id + '">' +
-        '<img src="' + d.image + '" alt="' + d.name + '" loading="lazy">' +
-        '<span class="ac-body">' +
-        '<span class="ac-name"><i class="lv-dot lv-' + d.level + '"></i>' + d.name + '</span>' +
-        '<span class="ac-meta">' + (faces[d.face] || d.face) + ' · ' + d.category + ' · ' + LEVEL_NAME[d.level] + '</span>' +
-        '</span></button>';
-    }).join('');
-  }
-
-  function openAtlas(id) {
-    var data = window.SLEEPER_DEFECTS || [];
-    var faces = window.SLEEPER_FACES || {};
-    var d = data.filter(function (x) { return x.id === id; })[0];
-    if (!d) return;
-    document.getElementById('atlasTitle').textContent = d.name;
-    document.getElementById('atlasSub').textContent =
-      (faces[d.face] || d.face) + ' · ' + d.category + ' · ' + LEVEL_NAME[d.level] + ' · ' + d.id.toUpperCase();
-    document.getElementById('atlasBody').innerHTML =
-      '<img src="' + d.image + '" alt="' + d.name + '">' +
-      '<div class="afield"><div class="af-k">症状</div><div class="af-v">' + d.symptom + '</div></div>' +
-      '<div class="afield"><div class="af-k">成因</div><div class="af-v">' + d.cause + '</div></div>' +
-      '<div class="afield"><div class="af-k">危害</div><div class="af-v">' + d.risk + '</div></div>' +
-      '<div class="afield fix"><div class="af-k">整治</div><div class="af-v">' + d.fix + '</div></div>' +
-      '<div class="afield basis"><div class="af-k">判定依据</div><div class="af-v">' + d.basis + '</div></div>';
-    document.getElementById('atlasOverlay').classList.add('show');
-  }
-
-  function closeAtlas() {
-    document.getElementById('atlasOverlay').classList.remove('show');
-  }
-
-  document.getElementById('atlasClose').addEventListener('click', closeAtlas);
-  document.getElementById('atlasOverlay').addEventListener('click', function (e) {
-    if (e.target === this) closeAtlas();
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeAtlas();
-  });
-
-  /* ---------- 修规速查 ---------- */
-  function buildRules() {
-    var secs = window.RAIL_RULES || [];
-    var nav = document.getElementById('rulesNav');
-    nav.innerHTML = secs.map(function (s, i) {
-      return '<button type="button" class="' + (i === 0 ? 'is-on' : '') + '" data-i="' + i + '">' +
-        s.short + '<span class="rn-code">' + s.code + '</span></button>';
-    }).join('');
-    nav.addEventListener('click', function (e) {
-      var btn = e.target.closest('button');
-      if (!btn) return;
-      nav.querySelectorAll('button').forEach(function (b) { b.classList.toggle('is-on', b === btn); });
-      renderRule(parseInt(btn.getAttribute('data-i'), 10));
-    });
-    renderRule(0);
-  }
-
-  function renderRule(i) {
-    var secs = window.RAIL_RULES || [];
-    var s = secs[i];
-    if (!s) return;
-    var faces = window.SLEEPER_FACES || {};
-    document.getElementById('rulesBody').innerHTML =
-      '<div class="rb-code">' + s.code + '</div>' +
-      '<h3>' + s.title + '</h3>' +
-      '<p class="rb-desc">' + s.desc + '</p>' +
-      s.items.map(function (it) {
-        return '<div class="rule-item"><b>' + it.label + (it.face ? '（' + (faces[it.face] || it.face) + '）' : '') +
-          '</b><span>' + it.text + '</span></div>';
-      }).join('');
   }
 
   document.getElementById('railLoginForm').addEventListener('submit', function (e) {
