@@ -632,6 +632,91 @@
   }
   footer .mono { font-family: var(--mono); font-size: 0.74rem; }
 
+  /* ---------- 开屏动画（线条 · 航天） ---------- */
+  #splash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(rgba(31, 122, 92, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(31, 122, 92, 0.05) 1px, transparent 1px),
+      radial-gradient(780px 480px at 50% 112%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    background-size: 64px 64px, 64px 64px, auto, auto;
+    cursor: pointer;
+    transition: opacity 0.55s ease, transform 0.55s ease;
+  }
+  #splash.leave { opacity: 0; transform: translateY(-18px); pointer-events: none; }
+  #splash.gone { display: none; }
+  .splash-core { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .sp-stage { width: min(360px, 78vw); height: auto; overflow: visible; }
+  .sp-earth {
+    fill: none;
+    stroke: rgba(35, 48, 42, 0.42);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    animation: sp-draw 0.7s ease 0.15s forwards;
+  }
+  .sp-trail {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 7;
+    stroke-linecap: round;
+    opacity: 0;
+    animation: sp-in 0.5s ease 0.3s forwards;
+  }
+  .sp-rocket { fill: none; stroke: var(--accent-deep); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .sp-star {
+    fill: none;
+    stroke: rgba(78, 159, 203, 0.75);
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sp-twinkle 1.6s ease-in-out infinite, sp-in 0.5s ease forwards;
+  }
+  .sp-star.s2 { stroke: rgba(31, 122, 92, 0.65); animation-delay: 0.5s, 0.55s; }
+  .sp-star.s3 { animation-delay: 1s, 0.7s; }
+  @keyframes sp-draw { to { stroke-dashoffset: 0; } }
+  @keyframes sp-in { to { opacity: 1; } }
+  @keyframes sp-twinkle { 0%, 100% { transform: scale(1); } 50% { transform: scale(0.55); } }
+  .sp-brand { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  .sp-line {
+    display: block; width: 0; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--sky));
+    opacity: 0;
+    animation: sp-line 0.45s ease 1.0s forwards;
+  }
+  @keyframes sp-line { 0% { width: 0; opacity: 0; } 60% { opacity: 1; } 100% { width: 150px; opacity: 1; } }
+  .sp-word {
+    font-family: var(--mono); font-size: 1.06rem; font-weight: 600;
+    color: var(--ink); letter-spacing: 0.3em; white-space: nowrap;
+    opacity: 0; transform: translateY(8px);
+    animation: sp-word 0.5s ease 1.1s forwards;
+  }
+  .sp-word .dot { color: var(--accent); }
+  @keyframes sp-word { to { opacity: 1; transform: none; letter-spacing: 0.06em; } }
+  .sp-sub {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.28em;
+    color: var(--ink-2); white-space: nowrap;
+    opacity: 0;
+    animation: sp-in 0.5s ease 1.35s forwards;
+  }
+  @media (max-width: 720px) {
+    .sp-word { font-size: 0.94rem; }
+    .sp-sub { font-size: 0.62rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #splash { display: none; }
+  }
+
   /* ---------- 入场动效 ---------- */
   .reveal {
     opacity: 0;
@@ -662,6 +747,34 @@
 </style>
 </head>
 <body>
+
+<!-- ============ 开屏动画（线条 · 航天：同会话仅播放一次，点击可跳过） ============ -->
+<div id="splash" role="presentation" title="点击进入">
+  <div class="splash-core">
+    <svg class="sp-stage" viewBox="0 0 320 220" aria-hidden="true">
+      <!-- 十字星 -->
+      <path class="sp-star s1" transform="translate(58,58)" d="M 0 -5 L 0 5 M -5 0 L 5 0" />
+      <path class="sp-star s2" transform="translate(262,46)" d="M 0 -5 L 0 5 M -5 0 L 5 0" />
+      <path class="sp-star s3" transform="translate(210,72)" d="M 0 -4 L 0 4 M -4 0 L 4 0" />
+      <!-- 地平线弧（发射场） -->
+      <path class="sp-earth" d="M 4 206 Q 160 124 316 206" pathLength="300" />
+      <!-- 计划轨道（虚线） -->
+      <path class="sp-trail" d="M 18 204 Q 160 86 302 168" />
+      <!-- 线稿火箭（沿轨道升空入轨） -->
+      <g class="sp-rocket">
+        <animateMotion begin="0.55s" dur="1.2s" fill="freeze" rotate="auto" path="M 18 204 Q 160 86 302 168" />
+        <path d="M 0 0 C 5 -4.5, 11 -4.5, 15 0 C 11 4.5, 5 4.5, 0 0 Z" />
+        <path d="M 15 0 L 24 0 M 16.5 -2 L 21.5 -4.5 M 16.5 2 L 21.5 4.5" />
+        <circle cx="6" cy="0" r="1.3" />
+      </g>
+    </svg>
+    <div class="sp-brand">
+      <span class="sp-line"></span>
+      <p class="sp-word">wanderers<span class="dot">.</span>小石头</p>
+      <p class="sp-sub">GO FOR LAUNCH · PORTFOLIO</p>
+    </div>
+  </div>
+</div>
 
 <header class="topbar">
   <div class="wrap topbar-inner">
@@ -1046,6 +1159,30 @@
 </footer>
 
 <script>
+  // 开屏动画：同会话仅播放一次；点击跳过；尊重系统减弱动效设置
+  (function () {
+    var splash = document.getElementById('splash');
+    if (!splash) return;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var played = false;
+    try { played = sessionStorage.getItem('wxSplash') === '1'; } catch (e) {}
+    if (reduced || played) {
+      splash.parentNode.removeChild(splash);
+      return;
+    }
+    try { sessionStorage.setItem('wxSplash', '1'); } catch (e) {}
+    document.documentElement.style.overflow = 'hidden';
+    var closed = false;
+    function close() {
+      if (closed) return;
+      closed = true;
+      splash.classList.add('leave');
+      document.documentElement.style.overflow = '';
+      setTimeout(function () { splash.classList.add('gone'); }, 600);
+    }
+    splash.addEventListener('click', close);
+    setTimeout(close, 2400);
+  })();
   // 滚动入场动效（尊重系统减弱动效设置）
   (function () {
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
