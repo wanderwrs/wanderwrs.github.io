@@ -360,17 +360,17 @@
     <div class="panel">
       <!-- 准备区 -->
       <section class="card setup-card" id="setupCard">
-        <img class="setup-deco" src="assets/psych/figure-3.jpg" alt="" aria-hidden="true">
+        <img class="setup-deco" src="assets/psych/figure-3.svg" alt="" aria-hidden="true">
         <h3><img class="psy-avatar" id="psyAvatar" alt="当前选择的卡通形象">开始之前</h3>
         <p class="sub">先挑一张卡通形象（仅作装饰，不影响题目与结果），再选择测试方式。</p>
 
         <div class="gender-grid">
           <button type="button" class="gender-opt" data-gender="boy" onclick="selectGender('boy',this)">
-            <img src="assets/psych/figure-1.jpg" alt="卡通形象一" width="128" height="128">
+            <img src="assets/psych/figure-1.svg" alt="卡通形象一" width="128" height="128">
             <span>男生</span>
           </button>
           <button type="button" class="gender-opt" data-gender="girl" onclick="selectGender('girl',this)">
-            <img src="assets/psych/figure-2.jpg" alt="卡通形象二" width="128" height="128">
+            <img src="assets/psych/figure-2.svg" alt="卡通形象二" width="128" height="128">
             <span>女生</span>
           </button>
         </div>
@@ -842,7 +842,7 @@
     });
     var av = $('psyAvatar');
     if (av) {
-      av.src = g === 'girl' ? 'assets/psych/figure-2.jpg' : 'assets/psych/figure-1.jpg';
+      av.src = g === 'girl' ? 'assets/psych/figure-2.svg' : 'assets/psych/figure-1.svg';
       av.classList.add('show');
     }
     $('genderHint').textContent = g === 'girl' ? '当前形象：女生（仅装饰）' : '当前形象：男生（仅装饰）';
