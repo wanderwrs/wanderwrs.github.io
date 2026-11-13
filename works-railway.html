@@ -130,13 +130,6 @@
   .gate .btn-login:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
   .gate .btn-login[disabled] { opacity: 0.5; cursor: not-allowed; }
   .gate .gate-err { min-height: 20px; margin-top: 12px; font-size: 0.84rem; color: #C53030; }
-  .gate details { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
-  .gate summary { cursor: pointer; font-size: 0.86rem; color: var(--accent); }
-  .gate .bind-box { margin-top: 12px; font-size: 0.84rem; color: var(--ink-2); }
-  .gate .bind-box ol { padding-left: 20px; margin: 6px 0 10px; }
-  .gate .bind-box li { margin: 3px 0; }
-  .gate #qrcode { display: flex; justify-content: center; margin: 12px 0; }
-  .gate .secret-line { text-align: center; font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0.12em; color: var(--accent-deep); background: var(--chip); border-radius: 6px; padding: 6px 8px; user-select: all; }
   .gate .gate-note { margin-top: 14px; font-size: 0.74rem; color: var(--ink-2); opacity: 0.8; }
 
   /* ---------- 统计条 ---------- */
@@ -262,18 +255,6 @@
           <button type="submit" class="btn-login" id="btnLogin">验证并进入</button>
           <div class="gate-err" id="gateErr" role="alert"></div>
         </form>
-        <details id="bindDetails">
-          <summary>首次使用？绑定谷歌身份验证器（Google Authenticator）</summary>
-          <div class="bind-box">
-            <ol>
-              <li>手机打开「Google Authenticator」或任一 TOTP 应用（如 Microsoft Authenticator、Aegis）。</li>
-              <li>扫描下方二维码，或选择「手动输入验证码」并抄写密钥。</li>
-              <li>绑定后，每 30 秒会生成一个 6 位动态口令，登录时填入即可。</li>
-            </ol>
-            <div id="qrcode" aria-label="TOTP 绑定二维码"></div>
-            <div class="secret-line" id="secretLine"></div>
-          </div>
-        </details>
         <p class="gate-note">说明：本站为纯静态托管，访问闸为演示级防护（凭据以哈希比对、口令本地校验），用于挡住随手访客，请勿视作强安全边界。每次打开或刷新本页均需重新验证；连续输错 5 次将锁定 60 秒。</p>
       </div>
 
@@ -316,7 +297,6 @@
   </div>
 </footer>
 
-<script src="assets/mindmap/qrcode.min.js"></script>
 <script src="assets/mindmap/mqtt.min.js"></script>
 <script>
   (function () {
@@ -475,17 +455,6 @@
 
   document.getElementById('btnLogout').addEventListener('click', function () {
     location.reload();
-  });
-
-  /* 二维码绑定（首次使用） */
-  var qrRendered = false;
-  document.getElementById('bindDetails').addEventListener('toggle', function () {
-    if (this.open && !qrRendered && typeof QRCode === 'function') {
-      qrRendered = true;
-      var uri = 'otpauth://totp/wanderwrs.github.io:HYY20030315?secret=' + RAIL_AUTH.totpSecret + '&issuer=wanderwrs.github.io&algorithm=SHA1&digits=6&period=30';
-      new QRCode(document.getElementById('qrcode'), { text: uri, width: 170, height: 170, correctLevel: QRCode.CorrectLevel.M });
-      document.getElementById('secretLine').textContent = RAIL_AUTH.totpSecret;
-    }
   });
 
   /* ================= 访问统计：不蒜子（总人数） ================= */
