@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="个人 AIGC 趣味实验：网页版心理自测。纯静态页面，非医疗产品，不具临床诊断意义，答案不具唯一性与参考性。">
+<meta name="description" content="个人 AIGC 实验趣味测试：纯静态页面，非医疗产品，不具临床诊断意义，答案不具唯一性与参考性。凭账号与动态口令访问。">
 <meta name="theme-color" content="#FAF6EC">
-<title>Wanderers.小石头 · 心理自测（趣味实验）</title>
+<title>Wanderers.小石头 · 实验趣味测试</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
 <style>
   :root {
@@ -83,6 +83,75 @@
   }
   .psy-notice b { display: block; font-size: 0.92rem; color: #8A4B12; margin-bottom: 4px; }
   .psy-notice a { color: #8A4B12; text-decoration: underline; }
+
+  /* ---------- 访问验证 ---------- */
+  .gate {
+    max-width: 460px; margin: 26px auto;
+    border: 1px solid var(--line); border-radius: 14px;
+    background:
+      radial-gradient(420px 240px at 16% 0%, rgba(31, 122, 92, 0.10), transparent 64%),
+      #fff;
+    padding: 34px 32px 28px;
+  }
+  .gate h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .gate .gate-sub { font-size: 0.86rem; color: var(--ink-2); margin-bottom: 20px; }
+  .gate label { display: block; font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; color: var(--ink-2); margin: 14px 0 5px; }
+  .gate input {
+    width: 100%; font: inherit; font-size: 0.94rem; padding: 9px 12px;
+    border: 1px solid var(--line); border-radius: 8px; background: var(--paper);
+    color: var(--ink); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gate input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.12); }
+  .gate .code-row input { letter-spacing: 0.3em; font-family: var(--mono); }
+  .btn-login {
+    display: block; width: 100%; margin-top: 22px;
+    font: inherit; font-size: 0.95rem; font-weight: 600; padding: 10px 0;
+    border: 1px solid var(--accent); border-radius: 8px;
+    background: var(--accent); color: #fff; cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .btn-login:hover { background: var(--accent-deep); }
+  .btn-login[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .gate-err { min-height: 20px; margin-top: 12px; font-size: 0.84rem; color: #C53030; }
+  .gate details { margin-top: 18px; border-top: 1px dashed var(--line); padding-top: 14px; }
+  .gate summary { cursor: pointer; font-size: 0.86rem; color: var(--accent); }
+  .gate .bind-box { margin-top: 12px; font-size: 0.84rem; color: var(--ink-2); }
+  .gate .bind-box ol { padding-left: 20px; margin: 6px 0 10px; }
+  .gate .bind-box li { margin: 3px 0; }
+  #qrcode { display: flex; justify-content: center; margin: 12px 0; }
+  .secret-line {
+    text-align: center; font-family: var(--mono); font-size: 0.9rem; letter-spacing: 0.12em;
+    color: var(--accent-deep); background: var(--chip); border-radius: 6px; padding: 6px 8px;
+    user-select: all;
+  }
+  .gate-note { margin-top: 14px; font-size: 0.74rem; color: var(--ink-2); opacity: 0.85; }
+
+  /* ---------- 进入前警告弹窗 ---------- */
+  .warn-overlay {
+    position: fixed; inset: 0; z-index: 120; display: none;
+    align-items: center; justify-content: center; padding: 22px;
+    background: rgba(23, 32, 42, 0.55); backdrop-filter: blur(2px);
+  }
+  .warn-overlay.show { display: flex; }
+  .warn-modal {
+    width: 100%; max-width: 560px; max-height: 88vh; overflow-y: auto;
+    background: #fff; border: 1px solid var(--line); border-radius: 14px;
+    padding: 26px 26px 22px; box-shadow: 0 20px 50px rgba(20, 30, 26, 0.25);
+  }
+  .warn-modal h3 { font-size: 1.06rem; font-weight: 700; margin-bottom: 8px; }
+  .warn-lead { font-size: 0.86rem; color: var(--ink-2); margin-bottom: 12px; line-height: 1.8; }
+  .warn-modal ul { padding-left: 20px; }
+  .warn-modal li { font-size: 0.84rem; color: var(--ink-2); line-height: 1.9; margin-bottom: 9px; }
+  .warn-modal li b { color: var(--ink); }
+  .warn-actions { display: flex; gap: 10px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
+  .btn-warn {
+    appearance: none; font: inherit; font-size: 0.88rem; font-weight: 600;
+    padding: 9px 18px; border: 1px solid var(--accent); border-radius: 8px;
+    background: var(--accent); color: #fff; cursor: pointer; transition: background 0.2s;
+  }
+  .btn-warn:hover { background: var(--accent-deep); }
+  .btn-warn.ghost { background: #fff; color: var(--ink-2); border-color: var(--line); text-decoration: none; }
+  .btn-warn.ghost:hover { color: var(--accent); border-color: var(--accent); }
 
   .panel { max-width: 760px; margin: 0 auto; }
   .card {
@@ -226,7 +295,7 @@
           <a href="works-railway.html" class="num" data-n="03·1">铁路技术</a>
           <a href="works-aviation.html" class="num" data-n="03·2">航空爱好</a>
           <a href="works-satcom.html" class="num" data-n="03·3">U/V 卫星通讯</a>
-          <a href="works-psych.html" class="num here" data-n="03·4" aria-current="page">心理自测</a>
+          <a href="works-psych.html" class="num here" data-n="03·4" aria-current="page">实验趣味测试</a>
         </div>
       </div>
       <div class="nav-drop">
@@ -255,8 +324,8 @@
 
 <main>
   <div class="wrap">
-    <div class="sec-head"><span class="no">03 · 4</span><h2>心理自测（趣味实验）</h2></div>
-    <p class="works-lead">纯静态的网页版自测：题目全部在你的浏览器里作答与计算，没有账号、没有服务器、没有数据上传。它不是心理测评工具，也不能替代任何专业帮助——请先读完下面的提示。</p>
+    <div class="sec-head"><span class="no">03 · 4</span><h2>实验趣味测试</h2></div>
+    <p class="works-lead">纯静态的网页版趣味测试：题目全部在你的浏览器里作答与计算，没有账号体系、没有服务器、没有数据上传。它不是心理测评工具，也不能替代任何专业帮助——请先读完下面的提示。</p>
 
     <div class="psy-notice" role="note">
       <b>请先阅读：这不是医疗或心理诊断工具</b>
@@ -264,11 +333,43 @@
       <a href="#disclaimer">查看完整免责声明 →</a>
     </div>
 
+    <!-- 访问验证 -->
+    <div class="gate" id="psyGate">
+      <h3>实验内容 · 访问验证</h3>
+      <p class="gate-sub">本页内容仅面向授权访问，请输入账号、密码与谷歌身份验证器的实时动态口令。</p>
+      <form id="psyLoginForm" autocomplete="off">
+        <label for="acc">账号</label>
+        <input type="text" id="acc" name="acc" required>
+        <label for="pwd">密码</label>
+        <input type="password" id="pwd" name="pwd" required>
+        <label for="totp">动态口令（6 位 · 30 秒刷新）</label>
+        <div class="code-row">
+          <input type="text" id="totp" name="totp" inputmode="numeric" maxlength="6" required>
+        </div>
+        <button type="submit" class="btn-login" id="btnLogin">验证并进入</button>
+        <div class="gate-err" id="gateErr" role="alert"></div>
+      </form>
+      <details id="bindDetails">
+        <summary>首次使用？绑定谷歌身份验证器（Google Authenticator）</summary>
+        <div class="bind-box">
+          <ol>
+            <li>手机打开「Google Authenticator」或任一 TOTP 应用（如 Microsoft Authenticator、Aegis）。</li>
+            <li>扫描下方二维码，或选择「手动输入验证码」并抄写密钥。</li>
+            <li>绑定后，每 30 秒会生成一个 6 位动态口令，登录时填入即可。</li>
+          </ol>
+          <div id="qrcode" aria-label="TOTP 绑定二维码"></div>
+          <div class="secret-line" id="secretLine"></div>
+        </div>
+      </details>
+      <p class="gate-note">说明：本站为纯静态托管，访问闸为演示级防护（凭据以哈希比对、口令本地校验），用于挡住随手访客，请勿视作强安全边界。每次打开或刷新本页均需重新验证；连续输错 5 次将锁定 60 秒。</p>
+    </div>
+
+    <div id="psyContent" hidden>
     <div class="panel">
       <!-- 准备区 -->
       <section class="card" id="setupCard">
         <h3><span class="psy-avatar" id="psyAvatar" aria-hidden="true"></span>开始之前</h3>
-        <p class="sub">选择一个卡通形象（仅作装饰，不影响题目与结果），然后选择自测方式。</p>
+        <p class="sub">选择一个卡通形象（仅作装饰，不影响题目与结果），然后选择测试方式。</p>
 
         <div class="gender-grid">
           <button type="button" class="gender-opt" data-gender="boy" onclick="selectGender('boy',this)">
@@ -285,12 +386,12 @@
         <div class="mode-grid" style="margin-top:16px;">
           <button type="button" class="mode-btn" onclick="startAssessment('full')">
             <span class="meta">FULL · 505 题</span>
-            <b>完整自评</b>
+            <b>完整测试</b>
             <span>10 个模块、57 个细分维度，逐题作答后给出模块分布小结。约 20–30 分钟。</span>
           </button>
           <button type="button" class="mode-btn" onclick="startAssessment('quick')">
             <span class="meta">QUICK · 20 题</span>
-            <b>快速自测</b>
+            <b>快速测试</b>
             <span>从 200 道题中随机抽取 20 题，约 3–5 分钟，给出维度分布小结。</span>
           </button>
         </div>
@@ -338,8 +439,28 @@
       </ol>
       <p class="crisis">如果你现在就需要帮助：全国统一心理援助热线 <b>12356</b>；紧急医疗救助 <b>120</b>。请不要独自承受。</p>
     </section>
+    </div>
   </div>
 </main>
+
+<!-- 进入前警告弹窗 -->
+<div class="warn-overlay" id="warnOverlay" role="dialog" aria-modal="true" aria-labelledby="warnTitle">
+  <div class="warn-modal">
+    <h3 id="warnTitle">⚠️ 进入前请确认</h3>
+    <p class="warn-lead">接下来的内容是一个 AIGC 趣味实验，不是心理测评，也不是医疗服务。请确认你已理解以下几点：</p>
+    <ul>
+      <li><b>非医疗、非诊断：</b>题目、分数与分布均来自公开题库的拼装改写，<strong>不具有医疗与临床诊断意义</strong>，不能用于判断自己或他人是否患病。</li>
+      <li><b>答案不唯一：</b>没有常模、信度与效度验证，同一人不同时间作答可能得到明显不同的结果，<strong>不具参考性</strong>。</li>
+      <li><b>内容可能引起不适：</b>题目涉及情绪、睡眠、自伤等敏感话题；你可随时点击「退出」停止作答。</li>
+      <li><b>不保存、不上传：</b>作答只存在于当前页面的内存中，刷新即清空，没有账号记录与云端同步。</li>
+      <li><b>需要帮助时：</b>如你正经历持续痛苦或有自伤念头，请立即联系可信任的人、拨打 <b>12356</b>（全国统一心理援助热线）或 <b>120</b>（急救）。本页无法提供紧急支援。</li>
+    </ul>
+    <div class="warn-actions">
+      <button type="button" class="btn-warn" id="warnAgree">我已阅读并理解，进入测试</button>
+      <a class="btn-warn ghost" href="index.html">离开</a>
+    </div>
+  </div>
+</div>
 
 <footer class="site-footer">
   <div class="wrap">
@@ -370,10 +491,136 @@
   });
 </script>
 
+<script src="assets/mindmap/qrcode.min.js"></script>
+<script>
+  /* ================= 访问闸：账号 + 密码 + TOTP（演示级，全本地校验） ================= */
+  var PSY_AUTH = {
+    accHash: "ac2ad1cf810ed9cb06472f5a9c9369de5a0c20204258f9c798a77010ad33da17",
+    pwdHash: "38f0f609df5b2551cdd13c31bc4ebd18f4966c9e0db8398af6cbf6fe2058a4f3",
+    totpSecret: "ZC2XK6R7MXFTIN7N"
+  };
+
+  function sha256Hex(str) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (buf) {
+      var arr = new Uint8Array(buf), out = '';
+      for (var i = 0; i < arr.length; i++) out += ('0' + arr[i].toString(16)).slice(-2);
+      return out;
+    });
+  }
+
+  function b32decode(s) {
+    s = (s || '').replace(/=+$/, '').toUpperCase();
+    var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', bits = 0, val = 0, out = [];
+    for (var i = 0; i < s.length; i++) {
+      var idx = A.indexOf(s.charAt(i));
+      if (idx < 0) continue;
+      val = (val << 5) | idx; bits += 5;
+      if (bits >= 8) { out.push((val >>> (bits - 8)) & 255); bits -= 8; }
+    }
+    return new Uint8Array(out);
+  }
+
+  function totpCode(secret, counter) {
+    var key = b32decode(secret);
+    var buf = new ArrayBuffer(8), dv = new DataView(buf);
+    dv.setUint32(0, Math.floor(counter / 4294967296));
+    dv.setUint32(4, counter >>> 0);
+    return crypto.subtle.importKey('raw', key, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']).then(function (k) {
+      return crypto.subtle.sign('HMAC', k, new Uint8Array(buf));
+    }).then(function (sig) {
+      var s = new Uint8Array(sig), off = s[19] & 15;
+      var code = ((s[off] & 127) << 24) | (s[off + 1] << 16) | (s[off + 2] << 8) | s[off + 3];
+      return ('00000' + (code % 1000000)).slice(-6);
+    });
+  }
+
+  function verifyTotp(code) {
+    var t = Math.floor(Date.now() / 1000), base = Math.floor(t / 30), checks = [];
+    for (var i = -1; i <= 1; i++) checks.push(totpCode(PSY_AUTH.totpSecret, base + i));
+    return Promise.all(checks).then(function (cs) { return cs.indexOf(code) !== -1; });
+  }
+
+  var gateErr = document.getElementById('gateErr');
+  var btnLogin = document.getElementById('btnLogin');
+  var failCount = parseInt(sessionStorage.getItem('psy_fails') || '0', 10);
+  var lockUntil = parseInt(sessionStorage.getItem('psy_lock') || '0', 10);
+
+  function setLockUI() {
+    var left = lockUntil - Date.now();
+    if (left > 0) {
+      btnLogin.disabled = true;
+      gateErr.textContent = '尝试次数过多，已锁定 ' + Math.ceil(left / 1000) + ' 秒。';
+      setTimeout(setLockUI, 500);
+      return false;
+    }
+    btnLogin.disabled = false;
+    return true;
+  }
+
+  function unlock() {
+    document.getElementById('psyGate').style.display = 'none';
+    document.getElementById('warnOverlay').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  document.getElementById('warnAgree').addEventListener('click', function () {
+    document.getElementById('warnOverlay').classList.remove('show');
+    document.body.style.overflow = '';
+    document.getElementById('psyContent').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  });
+
+  document.getElementById('psyLoginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!setLockUI() || btnLogin.disabled) return;
+    var acc = document.getElementById('acc').value.trim();
+    var pwd = document.getElementById('pwd').value;
+    var code = document.getElementById('totp').value.replace(/\D/g, '');
+    if (code.length !== 6) { gateErr.textContent = '动态口令应为 6 位数字。'; return; }
+    btnLogin.disabled = true;
+    Promise.all([sha256Hex(acc), sha256Hex(pwd), verifyTotp(code)]).then(function (r) {
+      if (r[0] === PSY_AUTH.accHash && r[1] === PSY_AUTH.pwdHash && r[2]) {
+        unlock();
+      } else {
+        failCount++;
+        sessionStorage.setItem('psy_fails', failCount);
+        if (failCount >= 5) {
+          lockUntil = Date.now() + 60000;
+          sessionStorage.setItem('psy_lock', lockUntil);
+          failCount = 0;
+          sessionStorage.setItem('psy_fails', '0');
+          setLockUI();
+        } else {
+          var wrong = (r[0] !== PSY_AUTH.accHash || r[1] !== PSY_AUTH.pwdHash) ? '账号、密码或' : '';
+          gateErr.textContent = wrong + '动态口令不正确（剩余 ' + (5 - failCount) + ' 次机会）。';
+          btnLogin.disabled = false;
+        }
+      }
+    }).catch(function () {
+      gateErr.textContent = '校验组件不可用：请通过 https:// 访问本页（浏览器安全要求）。';
+      btnLogin.disabled = false;
+    });
+  });
+
+  /* 二维码绑定 */
+  var qrRendered = false;
+  document.getElementById('bindDetails').addEventListener('toggle', function () {
+    if (this.open && !qrRendered && typeof QRCode === 'function') {
+      qrRendered = true;
+      var uri = 'otpauth://totp/wanderwrs.github.io:SHUN20011204?secret=' + PSY_AUTH.totpSecret +
+        '&issuer=wanderwrs.github.io&algorithm=SHA1&digits=6&period=30';
+      new QRCode(document.getElementById('qrcode'), { text: uri, width: 170, height: 170, correctLevel: QRCode.CorrectLevel.M });
+      document.getElementById('secretLine').textContent = PSY_AUTH.totpSecret;
+    }
+  });
+
+  setLockUI();
+</script>
+
 <script src="assets/psych/questions.js"></script>
 <script>
   /* ============================================================
-     纯静态心理自测
+     纯静态实验趣味测试
      - 无后端、无存储、无网络请求（题库与页面同源加载）
      - 结果只在当前页面内存中计算与展示
      ============================================================ */
