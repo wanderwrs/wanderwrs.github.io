@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="情绪陪伴小植物">
+  <defs>
+    <radialGradient id="bg3" cx="40%" cy="24%" r="82%">
+      <stop offset="0%" stop-color="#FFFDF6"/>
+      <stop offset="100%" stop-color="#F1ECDE"/>
+    </radialGradient>
+    <linearGradient id="leafA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3E9A79"/>
+      <stop offset="100%" stop-color="#1F7A5C"/>
+    </linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D8B48C"/>
+      <stop offset="100%" stop-color="#C09163"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="120" cy="120" r="118" fill="url(#bg3)"/>
+  <circle cx="120" cy="120" r="104" fill="#FAF6EC"/>
+
+  <!-- 叶子 -->
+  <path d="M120 132c0-26 8-44 28-54-2 24-10 42-28 54z" fill="url(#leafA)"/>
+  <path d="M120 132c0-22-8-38-26-46 2 20 9 36 26 46z" fill="#2E8B6E"/>
+  <path d="M120 132v-52" stroke="#175E46" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- 花盆 -->
+  <path d="M84 150h72l-8 62a10 10 0 0 1-10 9H102a10 10 0 0 1-10-9z" fill="url(#pot)"/>
+  <rect x="80" y="140" width="80" height="16" rx="7" fill="#D3A87A"/>
+  <ellipse cx="120" cy="150" rx="33" ry="6" fill="#7A5A3A" opacity="0.35"/>
+
+  <!-- 表情 -->
+  <path d="M105 180c3 4 8 4 11 0" stroke="#2B3A33" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <path d="M124 180c3 4 8 4 11 0" stroke="#2B3A33" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <path d="M112 193c4 5 12 5 16 0" stroke="#8A5B3C" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <circle cx="100" cy="189" r="5" fill="#E7A98D" opacity="0.55"/>
+  <circle cx="140" cy="189" r="5" fill="#E7A98D" opacity="0.55"/>
+
+  <!-- 小光点 -->
+  <circle cx="58" cy="86" r="3.5" fill="#1F7A5C" opacity="0.25"/>
+  <circle cx="184" cy="74" r="4.5" fill="#1F7A5C" opacity="0.18"/>
+  <circle cx="72" cy="196" r="3" fill="#1F7A5C" opacity="0.18"/>
+  <path d="M172 120l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="#C9A227" opacity="0.75"/>
+</svg>
