@@ -154,18 +154,32 @@
   .chip { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-2); background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
 
   /* ---------- 形象选择 ---------- */
+  .setup-card { position: relative; overflow: hidden; }
+  .setup-deco {
+    position: absolute; top: 14px; right: 14px;
+    width: 66px; height: 66px; border-radius: 12px;
+    object-fit: cover; border: 1px solid var(--line);
+    box-shadow: 0 8px 16px rgba(35, 48, 42, 0.12);
+    transform: rotate(5deg); opacity: 0.95; pointer-events: none;
+  }
   .gender-hint { font-size: 0.8rem; color: var(--ink-2); margin-bottom: 12px; }
   .gender-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 4px; }
   .gender-opt {
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 12px 8px; border: 2px solid var(--line); border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: 12px 8px 14px; border: 2px solid var(--line); border-radius: 12px;
     background: #FFFDF8; cursor: pointer; font: inherit; font-size: 0.84rem; color: var(--ink);
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.1s;
   }
   .gender-opt:active { transform: scale(0.98); }
-  .gender-opt img { width: 96px; height: 96px; border-radius: 50%; display: block; }
+  .gender-opt img {
+    width: 100%; max-width: 128px; aspect-ratio: 1 / 1;
+    border-radius: 10px; display: block; object-fit: cover;
+    border: 1px solid var(--line); background: #fff;
+  }
+  .gender-opt span { font-weight: 600; letter-spacing: 0.04em; }
   .gender-opt.selected { border-color: var(--accent); background: #EBF3EF; box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.1); }
-  .psy-avatar { width: 64px; height: 64px; border-radius: 50%; border: 1px solid var(--line); background: #fff; display: none; }
+  .gender-opt.selected img { border-color: var(--accent); }
+  .psy-avatar { width: 60px; height: 60px; border-radius: 12px; border: 1px solid var(--line); background: #fff; display: none; object-fit: cover; }
   .psy-avatar.show { display: block; }
 
   /* ---------- 模式选择 ---------- */
@@ -263,6 +277,7 @@
     .sub-grid { grid-template-columns: 1fr; }
     .bar-label { width: 88px; flex-basis: 88px; }
     .psy-disclaimer { padding: 20px 18px; }
+    .setup-deco { width: 52px; height: 52px; top: 10px; right: 10px; }
   }
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -344,17 +359,18 @@
     <div id="psyContent" hidden>
     <div class="panel">
       <!-- 准备区 -->
-      <section class="card" id="setupCard">
-        <h3><span class="psy-avatar" id="psyAvatar" aria-hidden="true"></span>开始之前</h3>
-        <p class="sub">选择一个卡通形象（仅作装饰，不影响题目与结果），然后选择测试方式。</p>
+      <section class="card setup-card" id="setupCard">
+        <img class="setup-deco" src="assets/psych/figure-3.jpg" alt="" aria-hidden="true">
+        <h3><img class="psy-avatar" id="psyAvatar" alt="当前选择的卡通形象">开始之前</h3>
+        <p class="sub">先挑一张卡通形象（仅作装饰，不影响题目与结果），再选择测试方式。</p>
 
         <div class="gender-grid">
           <button type="button" class="gender-opt" data-gender="boy" onclick="selectGender('boy',this)">
-            <img src="assets/psych/boy.svg" alt="男生卡通形象" width="96" height="96">
+            <img src="assets/psych/figure-1.jpg" alt="卡通形象一" width="128" height="128">
             <span>男生</span>
           </button>
           <button type="button" class="gender-opt" data-gender="girl" onclick="selectGender('girl',this)">
-            <img src="assets/psych/girl.svg" alt="女生卡通形象" width="96" height="96">
+            <img src="assets/psych/figure-2.jpg" alt="卡通形象二" width="128" height="128">
             <span>女生</span>
           </button>
         </div>
@@ -826,7 +842,7 @@
     });
     var av = $('psyAvatar');
     if (av) {
-      av.src = g === 'girl' ? 'assets/psych/girl.svg' : 'assets/psych/boy.svg';
+      av.src = g === 'girl' ? 'assets/psych/figure-2.jpg' : 'assets/psych/figure-1.jpg';
       av.classList.add('show');
     }
     $('genderHint').textContent = g === 'girl' ? '当前形象：女生（仅装饰）' : '当前形象：男生（仅装饰）';
