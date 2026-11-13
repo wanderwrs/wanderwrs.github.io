@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#FAF6EC">
+<title>启封 · 致某人</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="../index.html">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="../index.html#about" class="num" data-n="01">关于</a>
+      <a href="../index.html#fields" class="num" data-n="02">领域</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">03</span>综合<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="../works-railway.html" class="num" data-n="03·1">铁路技术</a>
+          <a href="../works-aviation.html" class="num" data-n="03·2">航空爱好</a>
+          <a href="../works-satcom.html" class="num" data-n="03·3">U/V 卫星通讯</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="../works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="../works-literature.html" class="num" data-n="04·2">文学原创作品</a>
+          <a href="../works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="../works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="../index.html#notes" class="num" data-n="05">站点日志</a>
+          <a href="../links.html" class="num" data-n="06">相关链接</a>
+          <a href="../friends.html" class="num" data-n="07">友情链接</a>
+          <a href="../about.html" class="num" data-n="08">说明</a>
+          <a href="index.html" class="num here" data-n="09" aria-current="page">留信</a>
+        </div>
+      </div>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<!-- 封存状态：暗号输入 -->
+<main id="screen-locked" class="screen screen--locked" data-screen="locked">
+  <div class="seal" aria-hidden="true">
+    <div class="seal__disc">
+      <span class="seal__mark">封</span>
+    </div>
+  </div>
+
+  <header class="screen__head">
+    <h1 class="screen__title">这里有些话</h1>
+    <p class="screen__hint">留给特定的人。<br>下面三道题，答得上来，门就会开。</p>
+  </header>
+
+  <form id="code-form" class="code-form" autocomplete="off" novalidate>
+    <ol class="quiz" id="quiz">
+      <li class="quiz__item">
+        <label class="quiz__label" for="q-nickname">我一般怎么称呼你？</label>
+        <input type="text" id="q-nickname" class="quiz__input" data-q="nickname" autocomplete="off" spellcheck="false">
+      </li>
+      <li class="quiz__item">
+        <label class="quiz__label" for="q-birthday">你的生日（例：20030314）</label>
+        <input type="text" id="q-birthday" class="quiz__input" data-q="birthday" inputmode="numeric" autocomplete="off" spellcheck="false">
+      </li>
+      <li class="quiz__item">
+        <label class="quiz__label" for="q-relation">我跟你之间的关系是什么？</label>
+        <input type="text" id="q-relation" class="quiz__input" data-q="relation" autocomplete="off" spellcheck="false">
+      </li>
+    </ol>
+
+    <button type="submit" class="code-submit" id="code-submit">启封</button>
+    <p id="code-error" class="code-error" role="alert" aria-live="polite" hidden></p>
+  </form>
+
+  <footer class="screen__foot">
+    <a class="screen__back" href="index.html">← 返回前言</a>
+  </footer>
+</main>
+
+<!-- 启封状态：留给那个人的话 -->
+<main id="screen-unlocked" class="screen screen--unlocked" data-screen="unlocked" hidden>
+  <article class="letter" id="letter">
+    <header class="letter__header">
+      <p class="letter__recipient" id="letter-recipient">致</p>
+      <h1 class="letter__title" id="letter-title"></h1>
+    </header>
+
+    <div class="letter__body" id="letter-body" tabindex="0"></div>
+
+    <footer class="letter__footer">
+      <span class="letter__sign" id="letter-sign"></span>
+      <time class="letter__date" id="letter-date"></time>
+    </footer>
+  </article>
+
+  <button type="button" id="seal-again" class="seal-again">重新封存</button>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 Wanderers.小石头 · <a href="../index.html">返回主页</a> · <a href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a></p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.nav-drop').forEach(function (drop) {
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  });
+</script>
+<script src="script.js"></script>
+
+</body>
+</html>
