@@ -1,0 +1,2684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="个人 AIGC 趣味实验：心理自评小工具。非医疗产品，不具临床诊断意义，答案不具唯一性与参考性。">
+<meta name="theme-color" content="#FAF6EC">
+<title>Wanderers.小石头 · 心理自评（趣味实验）</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%231F7A5C'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='%23FAF6EC' font-family='PingFang SC, Microsoft YaHei, sans-serif'%3E石%3C/text%3E%3C/svg%3E">
+<style>
+
+  :root {
+    --paper: #FAF6EC; --paper-2: #F4EFE2; --ink: #23302A; --ink-2: #5C6B62;
+    --line: #E7E1D2; --accent: #1F7A5C; --accent-deep: #155C44;
+    --sky: #4E9FCB; --chip: #F1ECDE;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SFMono-Regular", Menlo, monospace;
+    --sans: -apple-system, "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    color: var(--ink);
+    line-height: 1.75;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(78, 159, 203, 0.25); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  .topbar { position: sticky; top: 0; z-index: 60; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
+  .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
+  .brand .dot { color: var(--accent); }
+  .nav-links { display: flex; gap: 22px; align-items: center; }
+  .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
+  .nav-links a:hover { color: var(--accent); text-decoration: none; }
+  .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+  .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+  .nav-drop { position: relative; }
+  .nav-drop-btn { appearance: none; background: none; border: none; cursor: pointer; font-family: inherit; font-size: 0.9rem; color: var(--ink-2); display: flex; align-items: center; gap: 5px; padding: 0; }
+  .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
+  .nav-drop-btn:hover { color: var(--accent); }
+  .nav-drop-btn .caret { font-size: 0.62rem; transition: transform 0.2s; }
+  .nav-drop.open .nav-drop-btn { color: var(--accent); }
+  .nav-drop.open .caret { transform: rotate(180deg); }
+  .nav-drop-menu { position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px; background: #fff; border: 1px solid var(--line); border-radius: 9px; box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px; display: none; flex-direction: column; gap: 2px; z-index: 70; }
+  .nav-drop-menu::before { content: ''; position: absolute; top: -12px; left: 0; right: 0; height: 12px; }
+  .nav-drop.open .nav-drop-menu { display: flex; }
+  .nav-drop-menu a { padding: 7px 12px; border-radius: 6px; font-size: 0.9rem; color: var(--ink-2); }
+  .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
+  .nav-drop-menu a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
+  .nav-drop-menu a.here { color: var(--accent); font-weight: 600; }
+
+  main { padding: 44px 0 20px; }
+  .sec-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+  .sec-head::after { content: ''; order: 2; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent 82%); }
+  .sec-head .no { font-family: var(--mono); font-size: 0.82rem; color: var(--accent); }
+  .sec-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
+  .works-lead { margin: 0 0 22px; font-size: 0.9rem; color: var(--ink-2); }
+
+  .psy-notice {
+    border: 1px solid #E8C9A8; border-left: 4px solid #C77D2B;
+    background: #FDF7EC; border-radius: 10px; padding: 14px 18px; margin-bottom: 22px;
+    font-size: 0.86rem; color: #6B4A21; line-height: 1.85;
+  }
+  .psy-notice b { display: block; font-size: 0.92rem; color: #8A4B12; margin-bottom: 4px; }
+  .psy-notice a { color: #8A4B12; text-decoration: underline; }
+
+  .psy-shell { position: relative; max-width: 760px; margin: 0 auto; }
+  .psy-strip {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em;
+    color: #8A4B12; background: #FBF2E4; border: 1px dashed #E8C9A8;
+    border-radius: 999px; padding: 6px 14px; margin-bottom: 16px;
+  }
+  .psy-app { max-width: 720px; margin: 0 auto; }
+
+  .psy-disclaimer {
+    max-width: 760px; margin: 44px auto 0; padding: 26px 28px;
+    border: 1px solid var(--line); border-radius: 12px; background: #fff;
+  }
+  .psy-disclaimer h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+  .psy-disclaimer .dis-lead { font-size: 0.84rem; color: var(--ink-2); margin-bottom: 14px; }
+  .psy-disclaimer ol { padding-left: 20px; }
+  .psy-disclaimer li { font-size: 0.85rem; color: var(--ink-2); line-height: 1.95; margin-bottom: 10px; }
+  .psy-disclaimer li b { color: var(--ink); }
+  .psy-disclaimer .crisis {
+    margin-top: 16px; padding: 12px 14px; border-radius: 8px;
+    background: #FDEDEC; border-left: 4px solid #C0392B; font-size: 0.84rem; color: #7A2B22;
+  }
+
+  .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; margin-top: 40px; }
+
+  @media (max-width: 720px) {
+    .nav-links a:not(.keep) { display: none; }
+    .nav-drop { display: none; }
+    main { padding-top: 30px; }
+    .psy-disclaimer { padding: 20px 18px; }
+  }
+
+</style>
+<style>
+/* ===== 原项目样式（保留功能类名） ===== */
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#4F6EF7;--primary-dark:#3B54D4;--danger:#E74C3C;--success:#2ECC71;
+  --warning:#F39C12;--bg:#F0F2F5;--card:#FFF;--text:#2C3E50;--text-light:#7F8C8D;
+  --border:#E0E4E8;--shadow:0 2px 12px rgba(0,0,0,.08);--radius:14px;--radius-sm:10px;
+  --emotion-sad:#5B9BD5;--emotion-angry:#E74C3C;--emotion-calm:#2ECC71;
+  --emotion-down:#95A5A6;--emotion-panic:#9B59B6;--emotion-happy:#F1C40F;
+  --emotion-excited:#E67E22;--emotion-anxious:#E91E63;
+  --nav-height:64px;--safe-bottom:env(safe-area-inset-bottom,16px);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.screen{display:none;padding:16px;padding-bottom:calc(var(--nav-height) + var(--safe-bottom) + 20px);max-width:500px;margin:0 auto;animation:fadeIn .3s ease}
+.screen.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.header{text-align:center;padding:24px 0 16px}
+.header h1{font-size:24px;font-weight:700;color:var(--primary);margin-bottom:4px}
+.header p{font-size:13px;color:var(--text-light)}
+.card{background:var(--card);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-title{font-size:15px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:20px}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;margin:16px 0;overflow:hidden}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease}
+.emotion-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.emotion-btn{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--card);cursor:pointer;transition:all .2s;font-size:12px;color:var(--text);min-height:72px}
+.emotion-btn:active{transform:scale(.95)}
+.emotion-btn.selected{border-color:var(--primary);background:#EBF0FF}
+.emotion-btn .emoji{font-size:28px}
+.slider-group{margin:14px 0}
+.slider-group label{display:flex;justify-content:space-between;font-size:14px;margin-bottom:4px;font-weight:500}
+.slider-group .val{color:var(--primary);font-weight:700}
+input[type=range]{-webkit-appearance:none;width:100%;height:8px;border-radius:4px;background:var(--border);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:0 2px 6px rgba(79,110,247,.4)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 24px;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;width:100%}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:#FFF}
+.btn-success{background:var(--success);color:#FFF}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-danger{background:var(--danger);color:#FFF}
+.btn-sm{padding:8px 16px;font-size:13px;width:auto}
+.quiz-option{display:block;width:100%;text-align:left;padding:14px 16px;margin:8px 0;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--card);font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:active{transform:scale(.98)}
+.quiz-option.correct{border-color:var(--success);background:#E8F8F0}
+.quiz-option.wrong{border-color:var(--danger);background:#FDEDEC}
+.chart-container{position:relative;width:100%;height:280px;margin:10px 0}
+.chart-container canvas{width:100%!important;height:100%!important}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-info{background:#EBF0FF;color:var(--primary)}
+.badge-warn{background:#FEF5E7;color:var(--warning)}
+.badge-danger{background:#FDEDEC;color:var(--danger)}
+.badge-success{background:#E8F8F0;color:var(--success)}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:8px 0 var(--safe-bottom);z-index:100;max-width:500px;margin:0 auto;box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;border:none;background:none;color:var(--text-light);font-size:10px;cursor:pointer;transition:all .2s}
+.nav-item.active{color:var(--primary)}
+.nav-item .nav-icon{font-size:22px}
+.score-display{text-align:center;padding:20px}
+.score-display .big-score{font-size:48px;font-weight:800;color:var(--primary)}
+.score-display .score-label{font-size:13px;color:var(--text-light);margin-top:4px}
+.alert{background:#FEF5E7;border-left:4px solid var(--warning);padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13px;line-height:1.6}
+.alert-danger{background:#FDEDEC;border-left-color:var(--danger)}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-item{background:var(--bg);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.result-item .level{font-size:24px;margin-bottom:4px}
+.result-item .name{font-size:12px;color:var(--text-light)}
+.result-item .score{font-size:20px;font-weight:700;color:var(--primary)}
+.history-item{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--border)}
+.history-item:last-child{border-bottom:none}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-light)}
+.empty-state .icon{font-size:48px;margin-bottom:12px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#FFF;padding:12px 24px;border-radius:24px;font-size:14px;z-index:999;animation:slideUp .3s ease;pointer-events:none}
+.question-counter{font-size:12px;color:var(--text-light);text-align:center;margin:8px 0}
+.bar-row{display:flex;align-items:center;gap:10px;margin:6px 0}
+.bar-row .bar-label{width:70px;font-size:12px;text-align:right}
+.bar-row .bar-track{flex:1;height:20px;background:var(--border);border-radius:10px;overflow:hidden}
+.bar-row .bar-fill{height:100%;border-radius:10px;transition:width .6s ease}
+.tag{display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:500;margin:2px}
+.tag-primary{background:#EBF0FF;color:var(--primary)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .label{font-size:14px}
+.switch{position:relative;width:50px;height:28px}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#CCC;border-radius:28px;transition:.3s}
+.switch .slider:before{content:'';position:absolute;height:22px;width:22px;left:3px;bottom:3px;background:#FFF;border-radius:50%;transition:.3s}
+.switch input:checked+.slider{background:var(--primary)}
+.switch input:checked+.slider:before{transform:translateX(22px)}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:200;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:var(--radius);padding:24px;max-width:90vw;width:340px;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:12px}
+.time-filter{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.time-filter button{padding:6px 14px;border-radius:16px;border:1px solid var(--border);background:var(--card);font-size:12px;cursor:pointer}
+.time-filter button.active{background:var(--primary);color:#FFF;border-color:var(--primary)}
+
+</style>
+<style>
+
+  /* ===== 站点主题覆盖：配色、排版、容器 ===== */
+  :root {
+    --primary: #1F7A5C; --primary-dark: #155C44;
+    --danger: #C0392B; --success: #2E8B6E; --warning: #C77D2B;
+    --bg: #F4EFE2; --card: #FFFFFF; --text: #23302A; --text-light: #5C6B62;
+    --border: #E7E1D2; --shadow: 0 4px 16px rgba(35, 48, 42, 0.07);
+    --radius: 12px; --radius-sm: 9px;
+  }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(720px 420px at 8% -4%, rgba(31, 122, 92, 0.07), transparent 62%),
+      radial-gradient(780px 480px at 97% 103%, rgba(78, 159, 203, 0.09), transparent 62%),
+      var(--paper);
+    background-attachment: fixed;
+    padding-bottom: 0;
+  }
+  body { user-select: text; -webkit-user-select: text; }
+  .screen { max-width: 720px; padding: 0 0 84px; animation: fadeIn .3s ease; }
+  .header { padding: 8px 0 18px; }
+  .header h1 { font-size: 21px; letter-spacing: 0.02em; }
+  .card { border: 1px solid var(--border); box-shadow: var(--shadow); padding: 18px 18px 20px; }
+  .card-title { font-size: 15px; }
+  .btn { border-radius: 9px; font-weight: 600; }
+  .btn-primary { background: var(--primary); }
+  .btn-primary:active { background: var(--primary-dark); }
+  .quiz-option { background: #FFFDF8; }
+  .quiz-option:hover { border-color: var(--primary); }
+  .bottom-nav {
+    position: sticky; bottom: 0; left: auto; right: auto;
+    max-width: 720px; margin: 18px auto 0;
+    background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px);
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: 0 8px 22px rgba(35, 48, 42, 0.08);
+    padding: 6px 0;
+  }
+  .nav-item { border-radius: 8px; padding: 6px 14px; }
+  .nav-item.active { background: #EBF3EF; }
+  .alert { background: #FDF7EC; border-left-color: #C77D2B; }
+  .alert-danger { background: #FDEDEC; }
+
+  /* 卡通形象 */
+  .psy-avatar { width: 68px; height: 68px; border-radius: 50%; border: 1px solid var(--border); background: #fff; margin: 0 auto 10px; display: block; }
+  .psy-avatar[hidden] { display: none; }
+  .psy-gender-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+  .gender-hint { font-size: 12px; color: var(--text-light); margin-bottom: 12px; }
+  .gender-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gender-opt {
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    padding: 12px 8px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+    background: #FFFDF8; cursor: pointer; font: inherit; font-size: 13px; color: var(--text);
+    transition: border-color .2s, background .2s, box-shadow .2s, transform .1s;
+  }
+  .gender-opt:active { transform: scale(.98); }
+  .gender-opt img { width: 104px; height: 104px; border-radius: 50%; display: block; }
+  .gender-opt.selected { border-color: var(--primary); background: #EBF3EF; box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.10); }
+
+  @media (max-width: 720px) {
+    .screen { padding: 0; }
+    .bottom-nav { border-radius: 0; margin-top: 12px; }
+  }
+
+</style>
+</head>
+<body>
+
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="index.html">wanderers<span class="dot">.</span>小石头</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="index.html#about" class="num" data-n="01">关于</a>
+      <a href="index.html#fields" class="num" data-n="02">领域</a>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">03</span>综合<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-railway.html" class="num" data-n="03·1">铁路技术</a>
+          <a href="works-aviation.html" class="num" data-n="03·2">航空爱好</a>
+          <a href="works-satcom.html" class="num" data-n="03·3">U/V 卫星通讯</a>
+          <a href="works-psych.html" class="num here" data-n="03·4" aria-current="page">心理自评</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false"><span class="n">04</span>作品<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="works-images.html" class="num" data-n="04·1">AIGC 图片作品</a>
+          <a href="works-literature.html" class="num" data-n="04·2">文学原创作品</a>
+          <a href="works-ai.html" class="num" data-n="04·3">AI 项目展示</a>
+          <a href="works-music.html" class="num" data-n="04·4">AIGC 音乐作品</a>
+        </div>
+      </div>
+      <div class="nav-drop">
+        <button class="nav-drop-btn" type="button" aria-haspopup="true" aria-expanded="false">其他<span class="caret">▼</span></button>
+        <div class="nav-drop-menu">
+          <a href="index.html#notes" class="num" data-n="05">站点日志</a>
+          <a href="links.html" class="num" data-n="06">相关链接</a>
+          <a href="friends.html" class="num" data-n="07">友情链接</a>
+          <a href="about.html" class="num" data-n="08">说明</a>
+          <a href="letters/index.html" class="num" data-n="09">留信</a>
+        </div>
+      </div>
+      <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+      <div class="sec-head"><span class="no">03 · 4</span><h2>心理自评（趣味实验）</h2></div>
+      <p class="works-lead">这是一个自娱性质的小实验：初次自评、情绪记录、20 题趣味筛查与趋势图，全部在你的浏览器本地运行。它不是心理测评工具，也不能替代任何专业帮助——请先读完下面的提示。</p>
+
+
+      <div class="psy-notice" role="note">
+        <b>请先阅读：这不是医疗或心理诊断工具</b>
+        本页是个人 AIGC 趣味实验项目：题目由公开题库拼装改写，选项与计分为娱乐性设计，<strong>不具有医疗与临床诊断意义</strong>，答案<strong>不具唯一性和参考性</strong>，不能用于判断自己或他人是否患病。若你正经历持续痛苦或有自伤念头，请立即联系身边可信任的人、当地急救（120）或心理援助热线（全国统一心理援助热线 12356）。
+        <a href="#disclaimer">查看完整免责声明 →</a>
+      </div>
+
+      <div class="psy-shell">
+        <div class="psy-strip">趣味实验 · 非医疗用途 · 结果仅供自娱</div>
+        <div class="psy-app">
+<!-- Toast -->
+<div id="toast" class="toast" style="display:none"></div>
+
+<!-- ===== SCREEN: Diagnostic ===== -->
+<div id="screen-diagnostic" class="screen">
+  <div class="header"><h1>初次心理自评</h1><p>以下 505 道题目由公开题库拼装改写，仅用于趣味自测（非临床量表），约需 20-30 分钟</p><p style="font-size:12px;color:var(--text-light);margin-top:4px">10 个模块、57 个子维度，生成的只是自娱式小结，不能作为任何专业判断依据</p></div>
+  <!-- 卡通形象（仅装饰） -->
+  <div class="card gender-card">
+    <div class="card-title"><span class="icon">🎨</span>先选一个卡通形象</div>
+    <p class="gender-hint">仅作页面装饰，不影响题目、计分与任何结果。</p>
+    <div class="gender-grid">
+      <button type="button" class="gender-opt" data-gender="boy" onclick="selectGender('boy',this)">
+        <img src="assets/psych/boy.svg" alt="男生卡通形象" width="104" height="104">
+        <span>男生</span>
+      </button>
+      <button type="button" class="gender-opt" data-gender="girl" onclick="selectGender('girl',this)">
+        <img src="assets/psych/girl.svg" alt="女生卡通形象" width="104" height="104">
+        <span>女生</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span id="diag-q-num">第 1 题</span></div>
+    <p id="diag-question" style="font-size:15px;line-height:1.6;min-height:60px"></p>
+    <div id="diag-options" style="margin-top:12px"></div>
+  </div>
+  <div class="progress-bar"><div id="diag-progress" class="progress-fill" style="width:0%"></div></div>
+  <button id="diag-prev" class="btn btn-outline btn-sm" style="display:none">上一题</button>
+</div>
+
+<!-- ===== SCREEN: Dashboard ===== -->
+<div id="screen-dashboard" class="screen">
+  <div class="header"><img id="psy-avatar" class="psy-avatar" alt="当前选择的卡通形象" hidden><h1 id="greeting-text">心理自评助手</h1><p id="last-rating-time" style="font-size:12px"></p><p id="psy-gender-label" class="psy-gender-label"></p></div>
+
+  <!-- 卡通形象（仅装饰） -->
+  <div class="card gender-card">
+    <div class="card-title"><span class="icon">🎨</span>选择你的卡通形象</div>
+    <p class="gender-hint">仅作页面装饰，不影响题目、计分与任何结果。</p>
+    <div class="gender-grid">
+      <button type="button" class="gender-opt" data-gender="boy" onclick="selectGender('boy',this)">
+        <img src="assets/psych/boy.svg" alt="男生卡通形象" width="104" height="104">
+        <span>男生</span>
+      </button>
+      <button type="button" class="gender-opt" data-gender="girl" onclick="selectGender('girl',this)">
+        <img src="assets/psych/girl.svg" alt="女生卡通形象" width="104" height="104">
+        <span>女生</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 情绪上报 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">😊</span>情绪上报</div>
+    <div class="emotion-grid" id="emotion-grid"></div>
+    <div class="slider-group" style="margin-top:14px">
+      <label>强度 <span class="val" id="intensity-val">5</span>/10</label>
+      <input type="range" min="0" max="10" value="5" id="intensity-slider" oninput="document.getElementById('intensity-val').textContent=this.value">
+    </div>
+    <button class="btn btn-primary" onclick="submitEmotion()" style="margin-top:10px">记录情绪</button>
+  </div>
+
+  <!-- 自我评分 -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span>自我评分 (0-10)</div>
+    <div class="slider-group"><label>理智 <span class="val" id="rational-val">5</span></label><input type="range" min="0" max="10" value="5" id="rational-slider" oninput="document.getElementById('rational-val').textContent=this.value"></div>
+    <div class="slider-group"><label>情绪 <span class="val" id="emotion-val">5</span></label><input type="range" min="0" max="10" value="5" id="emotion-slider" oninput="document.getElementById('emotion-val').textContent=this.value"></div>
+    <div class="slider-group"><label>状态 <span class="val" id="state-val">5</span></label><input type="range" min="0" max="10" value="5" id="state-slider" oninput="document.getElementById('state-val').textContent=this.value"></div>
+    <button class="btn btn-primary" onclick="submitSelfRating()" style="margin-top:10px">提交评分</button>
+  </div>
+</div>
+
+<!-- ===== SCREEN: Quiz ===== -->
+<div id="screen-quiz" class="screen">
+    <div class="header"><h1>心理状态趣味筛查</h1><p>从 200 道趣味题库中随机抽取 20 题，结果仅供娱乐，不构成筛查或评估结论</p></div>
+    <div id="quiz-intro" class="card">
+      <p style="text-align:center;color:var(--text-light);margin:20px 0;line-height:1.6">每次随机抽取 20 道趣味题目，仅用于自娱，不产生任何心理健康评估结论</p>
+      <p class="alert alert-danger" style="text-align:center;font-size:13px">⚠️ 本筛查涉及敏感话题，请在一个安静、私密的环境中完成</p>
+      <button class="btn btn-primary" onclick="startQuiz()">开始筛查</button>
+      <div id="quiz-history-list" style="margin-top:16px"></div>
+    </div>
+    <div id="quiz-active" style="display:none">
+      <div class="card">
+        <div class="question-counter" id="quiz-counter">第 1/20 题</div>
+        <p id="quiz-question" style="font-size:15px;line-height:1.6;min-height:50px"></p>
+        <div id="quiz-options"></div>
+      </div>
+      <div class="progress-bar"><div id="quiz-progress" class="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div id="quiz-result" style="display:none">
+      <div class="card" id="quiz-risk-card"></div>
+      <div class="card" id="quiz-category-card"></div>
+      <div id="quiz-intervention" style="margin:12px 0"></div>
+      <p style="font-size:11px;color:var(--text-light);text-align:center;margin-bottom:12px">⚠️ 本筛查仅供参考，不能替代专业诊断。如有任何不适，请及时寻求专业帮助。</p>
+      <button class="btn btn-primary" onclick="resetQuiz()">重新筛查</button>
+    </div>
+  </div>
+
+<!-- ===== SCREEN: Charts ===== -->
+<div id="screen-charts" class="screen">
+  <div class="header"><h1>趋势分析</h1></div>
+  <div class="time-filter" id="chart-filter">
+    <button class="active" onclick="updateCharts('7d',this)">近7天</button>
+    <button onclick="updateCharts('30d',this)">近30天</button>
+    <button onclick="updateCharts('90d',this)">近90天</button>
+    <button onclick="updateCharts('all',this)">全部</button>
+  </div>
+  <div class="card"><div class="card-title">情绪强度趋势</div><div class="chart-container"><canvas id="chart-emotion"></canvas></div></div>
+  <div class="card" id="ai-analysis-card" style="display:none"></div>
+  <div class="card"><div class="card-title">自我评分趋势</div><div class="chart-container"><canvas id="chart-self"></canvas></div></div>
+  <div class="card"><div class="card-title">风险指数趋势</div><div class="chart-container"><canvas id="chart-quiz-score"></canvas></div></div>
+  <div class="card" id="diag-result-card" style="display:none"><div class="card-title">初次评估结果</div><div id="diag-result-content"></div></div>
+</div>
+
+<!-- ===== SCREEN: Settings ===== -->
+<div id="screen-settings" class="screen">
+  <div class="header"><h1>设置</h1></div>
+  <div class="card">
+    <div class="setting-row">
+      <span class="label">⏰ 每小时提醒自评<br><small style="color:var(--text-light)">23:00-8:00不提醒</small></span>
+      <label class="switch"><input type="checkbox" id="reminder-toggle" onchange="toggleReminder()"><span class="slider"></span></label>
+    </div>
+    <div class="setting-row">
+      <span class="label">📋 重新进行初次评估</span>
+      <button class="btn btn-sm btn-outline" onclick="resetDiagnostic()">重新评估</button>
+    </div>
+    <div class="setting-row">
+      <span class="label">🗑️ 清除所有数据</span>
+      <button class="btn btn-sm btn-danger" onclick="clearAllData()">清除</button>
+    </div>
+    <div class="setting-row">
+      <span class="label">📤 导出数据</span>
+      <button class="btn btn-sm btn-outline" onclick="exportData()">导出JSON</button>
+    </div>
+    <div class="setting-row">
+      <span class="label">📊 评估历史记录<br><small style="color:var(--text-light)">查看历次评估得分</small></span>
+      <button class="btn btn-sm btn-outline" onclick="viewDiagHistory()">查看</button>
+    </div>
+    <div class="setting-row">
+      <span class="label">📥 下载评估记录<br><small style="color:var(--text-light)">导出全部历次得分</small></span>
+      <button class="btn btn-sm btn-outline" onclick="downloadDiagHistory()">下载</button>
+    </div>
+  </div>
+  <div class="card"><p style="font-size:12px;color:var(--text-light);text-align:center">离线心理自评工具 v1.0<br>数据仅存储于本设备，不上传任何服务器</p></div>
+</div>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-screen="dashboard" onclick="switchScreen('dashboard',this)"><span class="nav-icon">🏠</span>首页</button>
+  <button class="nav-item" data-screen="quiz" onclick="switchScreen('quiz',this)"><span class="nav-icon">📝</span>题库</button>
+  <button class="nav-item" data-screen="charts" onclick="switchScreen('charts',this)"><span class="nav-icon">📈</span>趋势</button>
+  <button class="nav-item" data-screen="settings" onclick="switchScreen('settings',this)"><span class="nav-icon">⚙️</span>设置</button>
+</nav>
+        </div>
+      </div>
+
+
+      <section class="psy-disclaimer" id="disclaimer">
+        <h2>免责声明与安全提示</h2>
+        <p class="dis-lead">在开始之前，请完整阅读以下内容。继续使用即表示你已理解并接受这些前提。</p>
+        <ol>
+          <li><b>非医疗产品：</b>本页是个人 AIGC 趣味实验项目，不是医疗器械、心理测评工具或临床辅助系统，未经过任何专业机构的审查、认证或备案。</li>
+          <li><b>不具诊断意义：</b>任何题目、分数、图表与小结均不具有医疗、精神科或临床诊断意义，不能用于自我诊断、判断病情轻重，也不能作为评价他人心理状态的依据。</li>
+          <li><b>答案不唯一：</b>题库来自公开内容的拼装与改写，没有常模、信度与效度验证；同一人不同时间、不同心境作答，结果可能明显不同，答案本身不具唯一性。</li>
+          <li><b>不构成建议：</b>结果不构成用药、治疗、就医、休假、职业或人际关系决策等任何建议，请勿据此改变治疗方案或替代专业意见。</li>
+          <li><b>数据仅存本地：</b>作答与情绪记录保存在你当前浏览器的 IndexedDB 中，不上传服务器；清除浏览器数据或在「设置」中点击「清除所有数据」即会删除，且无法恢复。</li>
+          <li><b>敏感内容提示：</b>题目涉及情绪、睡眠、自我伤害等话题，可能引起不适。请自行判断是否适合继续；任何时候都可以停止作答。</li>
+          <li><b>紧急求助：</b>如你正经历持续的痛苦、失眠、绝望感或自伤、自杀念头，请立即联系身边可信任的人、当地急救（120），或拨打全国统一心理援助热线 12356。本页无法提供紧急支援，也不应被当作求助渠道。</li>
+          <li><b>AIGC 说明：</b>页面文案、题库整理与卡通插画均含 AI 生成或 AI 辅助成分，可能存在错误、偏差与不当表述，请勿作为事实或专业依据引用。</li>
+        </ol>
+        <p class="crisis">如果你现在就需要帮助：全国统一心理援助热线 <b>12356</b>；紧急医疗救助 <b>120</b>。请不要独自承受。</p>
+      </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>© 2026 Wanderers.小石头 · <a href="index.html">返回主页</a> · <a href="https://icp.gov.moe/?keyword=20261208" target="_blank" rel="noopener">萌ICP备20261208号</a></p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.nav-drop').forEach(function (drop) {
+    var btn = drop.querySelector('.nav-drop-btn');
+    function setOpen(open) {
+      drop.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!drop.classList.contains('open'));
+    });
+    document.addEventListener('click', function (e) {
+      if (!drop.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
+    });
+    drop.querySelectorAll('.nav-drop-menu a').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  });
+</script>
+
+<script>
+
+// ============================================================
+// 心理健康初次评估题库 (505题, 10模块, 57子单元)
+// ============================================================
+const DIAG_QUESTIONS = [
+  // ============ A. 效度量表 (60题) ============
+  // --- 1. L谎言量表 (15题) ---
+  {q:"我从不说过任何谎话，哪怕是善意的谎言。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未在背后议论过别人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从来没有迟到过。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未对任何人产生过嫉妒或羡慕。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从来没有做过让自己后悔的事。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从没有过自私的念头。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未对父母或长辈有过不满。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从不生气或感到烦躁。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未在工作中偷懒或敷衍。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从来没有嘲笑过别人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从没说过伤害别人的话。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未在独处时做过不光彩的事。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从来不曾在考试或工作中作过弊。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从没有过不该有的性幻想。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+  {q:"我从未对他人隐瞒过任何事。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"L谎言"},
+
+  // --- 2. F低频症状 (15题) ---
+  {q:"近两周，我听到别人听不到的声音在对我说话。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我感到有人能读取我的思想。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我看到的事物会突然改变形状或颜色。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我确信有组织在监视我的一举一动。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我的思想会被外界力量插入脑中。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我能听到自己脑中两个声音在对话。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我感到身体某部分已经不属于自己。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我闻到别人闻不到的奇怪气味。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我相信自己拥有超自然的能力。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我看到已故的亲人站在我面前。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我感到有人通过电视或电台在向我传递秘密信息。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我的想法会被广播出去让别人听到。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我确信有人在我的食物里下毒。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我能感觉到有东西在我皮肤下爬动。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+  {q:"近两周，我感到时间在倒流或停止。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"效度量表",sub:"F低频"},
+
+  // --- 3. K防御量表 (15题) ---
+  {q:"我几乎从不为日常琐事烦心。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不会因为别人的批评而难过。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不感到疲惫或精力不足。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不在意别人对我的看法。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我几乎从不感到紧张或不安。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从没有过失败的感觉。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不为过去的决定后悔。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不会对他人隐瞒自己的真实感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我几乎从不感到孤独。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不怀疑自己的能力。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不会因为工作压力而失眠。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不和家人发生争吵。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我几乎从不对未来感到担忧。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从没有过尴尬的时刻。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+  {q:"我从不觉得需要向别人倾诉烦恼。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"K防御"},
+
+  // --- 4. 测试认真度 (5题) ---
+  {q:"我认真阅读了问卷中每一道题目的内容。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"认真度"},
+  {q:"我能清晰理解问卷中大多数题目的含义。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"认真度"},
+  {q:"我根据自己的真实情况作答，而非随意选择。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"认真度"},
+  {q:"即使题目相似，我也会逐一认真考虑后再作答。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"认真度"},
+  {q:"我有足够的时间和注意力完整回答整份问卷。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"认真度"},
+
+  // --- 5. 反应风格 (5题) ---
+  {q:"我倾向于直接选择问卷中第一个选项。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"反应风格"},
+  {q:"我倾向于直接选择问卷中最后一个选项。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"反应风格"},
+  {q:"我倾向于不细看题目就选择中间的选项。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"反应风格"},
+  {q:"我作答时倾向于不假思索快速选择。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"反应风格"},
+  {q:"我倾向于不细看题目就选择相同位置的答案。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"效度量表",sub:"反应风格"},
+
+  // --- 6. 社会期望 (5题) ---
+  {q:"我希望自己在别人眼中是个好人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"社会期望"},
+  {q:"我会刻意展现自己积极的一面。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"社会期望"},
+  {q:"我在意别人是否认为我值得信赖。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"社会期望"},
+  {q:"我倾向于给出让自己显得体面的回答。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"社会期望"},
+  {q:"我作答时会考虑答案是否显得我心理正常。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"效度量表",sub:"社会期望"},
+
+  // ============ B. 临床综合征 (170题) ============
+  // --- 7. 抑郁 (30题) ---
+  {q:"近两周，我感到情绪低落、抑郁或绝望。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我对做事提不起兴趣或没有乐趣。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我入睡困难、睡不踏实或睡得过多。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到疲倦或没有精力。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我食欲不振或吃得过多。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我觉得自己是个失败者，或让自己和家人失望。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我难以集中注意力做事，如阅读或看电视。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我的动作或说话速度明显变慢，或相反变得烦躁不安。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我有不如死掉或以某种方式伤害自己的念头。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我早晨醒来时感到心情最差。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我对未来感到悲观。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到自己毫无价值。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我难以做出日常的决定。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我失去了对以往喜爱活动的兴趣。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到胸闷或心里堵得慌。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我容易哭泣或想哭却哭不出来。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我对性生活的兴趣明显下降。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到思维迟缓，脑子像转不动。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我无缘无故地感到身体各处疼痛。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到内疚，反复回想自己的过错。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我与人交往时感到没有话可说。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我对周围的人和事感到麻木、无动于衷。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我的体重明显下降或上升。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到生活没有意义。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我难以体会到快乐或温暖的情绪。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我做事的效率明显下降。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到自己被绝望笼罩。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我反复出现消极的画面或回忆。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我早晨难以起床面对新的一天。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+  {q:"近两周，我感到自己被人抛弃或无人关心。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"抑郁"},
+
+  // --- 8. 焦虑 (30题) ---
+  {q:"近两周，我感到紧张、焦虑或烦躁不安。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我无法停止或控制担忧。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我对各种各样的事情过度担忧。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我难以放松下来。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我坐立不安，难以安静待着。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我容易烦躁或容易被激怒。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到害怕，好像有可怕的事情要发生。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我心跳加快、心慌，没有剧烈运动也如此。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到呼吸急促或憋闷。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我手心出汗或手脚发凉。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到头晕或头重脚轻。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我胃部不适或有恶心感。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我肌肉紧绷或身体某处颤抖。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我难以入睡或睡眠浅。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我容易受惊吓。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到喉咙有异物感或吞咽困难。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我反复检查已经做过的事。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我担心自己会失控或发疯。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我担心身体出了严重问题。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到思维被担忧占据，难以转移注意力。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我在人多场合感到不自在。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我独处时也感到莫名紧张。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我担心发生意外或灾难。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到身体发麻或刺痛。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到脸红或发热。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我难以集中精神做事。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我出现反复想上厕所的情况。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我感到胸口压迫或疼痛。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我对未来感到无法掌控。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+  {q:"近两周，我担心自己会晕倒。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"焦虑"},
+
+  // --- 9. 强迫 (10题) ---
+  {q:"近两周，我反复出现不想有的念头，难以摆脱。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我反复检查门锁、电器或煤气是否关好。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我反复洗手或清洁，超过实际需要。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我必须按特定顺序或对称方式摆放物品。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我反复计数或默念某些数字、词语。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我对污秽或细菌过度担忧。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我需要反复确认已经做过的事情。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我脑子里反复出现伤害他人的画面。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，我被迫执行某些仪式才能安心。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+  {q:"近两周，这些反复行为或念头让我感到痛苦。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"强迫"},
+
+  // --- 10. 躯体化 (10题) ---
+  {q:"近两周，我感到头痛或头胀。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到胃部疼痛或不适。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到背痛或腰酸。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到关节或四肢酸痛。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到胸闷或心悸。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到头晕或眩晕。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到浑身无力。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到消化不良或腹胀。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到尿频或排尿不适。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+  {q:"近两周，我感到身体多处不适，但检查无异常。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"躯体化"},
+
+  // --- 11. 惊恐障碍 (10题) ---
+  {q:"我突然感到强烈恐惧，伴随心跳加快和呼吸困难。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"我出现过毫无预兆的惊恐发作。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作时我感到自己快要死去或失去控制。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作时我感到周围变得不真实。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作时我出现胸痛，担心是心脏病。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作时我手脚发麻或颤抖。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作时我感到窒息或喉咙发紧。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"我因为担心再次发作而回避某些场合。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作来得快，几分钟内达到顶峰。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+  {q:"发作后我感到精疲力竭。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"惊恐"},
+
+  // --- 12. 偏执 (10题) ---
+  {q:"我觉得有人在暗中针对我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"别人的一举一动似乎都和我有关。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我难以相信别人会真心对我好。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我觉得有人在背后说我坏话。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我常常怀疑别人的动机不纯。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我感到自己被人监视或跟踪。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"别人似乎总能看穿我的心思。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我觉得别人会利用我说的话来对付我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"我难以向他人袒露真实想法，怕被利用。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+  {q:"即使是亲近的人，我也难以完全信任。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"临床综合征",sub:"偏执"},
+
+  // --- 13. 精神病性 (20题) ---
+  {q:"近两周，我听到别人听不到的声音。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我看到别人看不到的东西或人。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到有人在控制我的思想或行为。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我的想法似乎不是自己的。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到有人要伤害我。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我难以分辨现实与想象。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到周围的世界变得陌生或不真实。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到自己在镜中不是自己。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我听到声音在评论我的行为。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我听到声音在互相交谈。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到别人能知道我在想什么。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到自己的想法被广播给别人听到。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到外界力量把想法塞进我脑中。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到自己的想法被抽走。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我闻到别人闻不到的气味。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到皮肤下有东西在动。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我相信自己被赋予了特殊使命。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到身体某部分失去了知觉或不受控制。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我难以组织语言，说话让人听不懂。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+  {q:"近两周，我感到情感与所想的事情脱节。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"精神病性"},
+
+  // --- 14. 躁狂 (20题) ---
+  {q:"我曾有一段时间感到异常兴奋或情绪高涨。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间异常易怒或暴躁。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间精力异常充沛，不需要睡眠也不觉得累。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间话特别多，说个不停。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间思维飞快，念头一个接一个。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间注意力容易被各种事情吸引。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间做事明显增多，活动量异常大。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间冒险做事，事后后悔。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间花钱或挥霍明显超出平常。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间性欲异常增强。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间觉得自己能力超强，能做成任何事。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间睡眠需要明显减少却不疲倦。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间社交活动异常频繁。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间制定宏大计划却难以完成。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间对人过度热情或过分亲近。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间不停打电话或联系他人。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间难以安静坐下，不停走动。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间大笑或开玩笑明显增多。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间判断力下降，做了冲动决定。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+  {q:"我曾有一段时间这些表现同时出现，且持续数日。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"躁狂"},
+
+  // --- 15. 双相抑郁 (10题) ---
+  {q:"我曾有过情绪在极度低落和异常高涨之间反复波动。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我的低落情绪常突然转为异常兴奋。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我在抑郁期间也曾出现精力异常旺盛的阶段。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我的情绪波动让身边的人感到难以适应。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我曾因情绪剧烈波动影响工作或学习。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我的情绪转换没有明显的外界原因。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我在情绪高涨时做出过让自己后悔的决定。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我在情绪低落时曾有过自伤或自杀念头。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"我的情绪变化速度以天或小时计。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+  {q:"家人曾建议我因情绪波动就医。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"临床综合征",sub:"双相抑郁"},
+
+  // --- 16. PTSD创伤后应激 (20题) ---
+  {q:"近两周，我反复想起或梦见一段痛苦的经历。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，痛苦经历的画面会突然闯入我的脑海。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我会因某些情境突然想起创伤事件而强烈反应。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我刻意回避与创伤相关的地方、人或事物。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我避免谈论那段痛苦的经历。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我对曾经喜爱的事失去兴趣。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我感到与周围人疏远。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我难以体验到正向情绪。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我对危险过度警觉。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我容易被惊吓或受刺激。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我常因噩梦或惊醒而难以入睡。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我容易发怒或烦躁。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我难以集中注意力。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我过度自责或责怪他人关于那段经历。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我对未来感到悲观，觉得没有长远的期待。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我感到持续的不安或恐惧。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我出现与创伤相关的身体反应（如心悸、出汗）。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我努力不去想那段经历却还是想到。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，我感到自己的安全受到威胁。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+  {q:"近两周，那段经历让我觉得自己变了个不同的人。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"临床综合征",sub:"PTSD"},
+
+  // ============ C. 解离与边缘 (40题) ============
+  // --- 17. 解离症状 (20题) ---
+  {q:"我发现自己做某事时，回想不起来是怎么开始的。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己好像站在自身之外观察自己的行为。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到周围的人或事物变得不真实。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己的身体某部分不属于自己。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我听到别人叫我时反应不过来。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我发现自己对刚才发生的事完全没有记忆。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我看着镜子时感到不认识自己。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己像是身处电影或梦境中。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我对熟悉的人感到陌生。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我对熟悉的地方感到陌生。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己与自己的情感脱节。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到时间流逝的方式变得奇怪。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我发现自己去了某地却不记得怎么到那里的。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己的意识似乎游离在身体之外。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我对过去发生的事感到不真实或像没发生过。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己活在一个泡泡或壳里。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我做事时完全沉浸，事后像不记得过程。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己的记忆有空白或断层。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我对疼痛的感觉变得迟钝或异常。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+  {q:"我感到自己的身份好像发生了变化。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"解离"},
+
+  // --- 18. 边缘型人格 (10题) ---
+  {q:"我害怕被亲近的人抛弃。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我的人际关系总是在理想化和贬低之间摇摆。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我对自己的认识模糊，不清楚自己是怎样的人。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我的情绪会在短时间内剧烈波动。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我难以控制愤怒，容易爆发。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我有过自伤或威胁自伤的行为。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我曾有过自杀的念头或尝试。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我的情绪常感到空虚或无聊。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我在压力下会出现偏执或解离的感觉。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+  {q:"我会冲动地做有风险的事（如挥霍、暴食、危险性行为）。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"边缘人格"},
+
+  // --- 19. 现实感丧失 (5题) ---
+  {q:"我感到周围的世界变得不真实或像在做梦。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"现实感丧失"},
+  {q:"我感到熟悉的环境变得陌生或遥远。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"现实感丧失"},
+  {q:"我看到的东西似乎失去了色彩或变得扁平。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"现实感丧失"},
+  {q:"我感到自己与周围隔着一层玻璃。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"现实感丧失"},
+  {q:"我感到时间在变慢或加速，不像真实发生。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"现实感丧失"},
+
+  // --- 20. 人格解体 (5题) ---
+  {q:"我感到自己的身体不属于自己。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"人格解体"},
+  {q:"我感到自己在远处观察自己的言行。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"人格解体"},
+  {q:"我感到自己的情感变得麻木或像别人的。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"人格解体"},
+  {q:"我看镜子时感到那是另一个人。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"人格解体"},
+  {q:"我感到自己的肢体变大了或变小了。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"解离与边缘",sub:"人格解体"},
+
+  // ============ D. 人格障碍 (50题) ============
+  // --- 21. 偏执型人格 (5题) ---
+  {q:"我习惯性地怀疑别人在利用或欺骗我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"偏执型人格"},
+  {q:"我对朋友的忠诚也会反复怀疑。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"偏执型人格"},
+  {q:"我对他人无意的话特别敏感，觉得在暗示自己。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"偏执型人格"},
+  {q:"我难以原谅自己认为的冒犯，会长期记恨。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"偏执型人格"},
+  {q:"我没有充分理由也会怀疑配偶或伴侣的忠诚。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"偏执型人格"},
+
+  // --- 22. 分裂样人格 (5题) ---
+  {q:"我对建立亲密关系几乎没兴趣。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂样人格"},
+  {q:"我独自一人时感到更自在。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂样人格"},
+  {q:"我对性活动几乎没有兴趣。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂样人格"},
+  {q:"我很少从活动中体会到乐趣。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂样人格"},
+  {q:"我对别人的赞扬或批评都显得不在乎。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂样人格"},
+
+  // --- 23. 分裂型人格 (5题) ---
+  {q:"我常有别人觉得奇怪的想法或信念。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂型人格"},
+  {q:"我常感到有超感官知觉或第六感。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂型人格"},
+  {q:"我说话内容常让人难以理解。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂型人格"},
+  {q:"我在社交场合极度焦虑，难以建立关系。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂型人格"},
+  {q:"我常怀疑别人在背后议论或针对我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"分裂型人格"},
+
+  // --- 24. 反社会人格 (5题) ---
+  {q:"我曾反复欺骗他人以谋取利益或满足。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"反社会人格"},
+  {q:"我冲动行事，不顾后果。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"反社会人格"},
+  {q:"我容易因小事与人发生肢体冲突。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"反社会人格"},
+  {q:"我对伤害他人或偷窃缺乏愧疚感。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"反社会人格"},
+  {q:"我难以遵守社会规则，常违反法律或规范。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"反社会人格"},
+
+  // --- 25. 表演型人格 (5题) ---
+  {q:"我在人群中总想成为注意的中心。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"表演型人格"},
+  {q:"我的情绪表达夸张且变化快。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"表演型人格"},
+  {q:"我常用外表吸引他人注意。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"表演型人格"},
+  {q:"我说话带有戏剧性，但缺乏细节。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"表演型人格"},
+  {q:"我容易受他人或情境影响而改变态度。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"表演型人格"},
+
+  // --- 26. NPD自恋 (10题) ---
+  {q:"我觉得自己比别人更优秀，应该受到特殊对待。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我常幻想拥有无限权力、成功或美貌。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我需要别人不断的赞美和崇拜。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我觉得自己有资格获得别人没有的优待。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我会利用他人来达到自己的目的。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我对别人缺乏共情，难以理解他们的感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我常嫉妒别人或相信别人嫉妒我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我表现出傲慢或高人一等的态度。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"当别人没给我足够关注时，我会感到愤怒或羞辱。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+  {q:"我夸大自己的成就和才能。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"NPD自恋"},
+
+  // --- 27. 回避型人格 (5题) ---
+  {q:"我回避需要与人接触的工作或活动。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"回避型人格"},
+  {q:"我不愿与人建立关系，怕被拒绝或批评。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"回避型人格"},
+  {q:"我在亲密关系中常感到拘谨或不安。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"回避型人格"},
+  {q:"我总觉得自己在社交上不如别人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"回避型人格"},
+  {q:"我害怕难堪而很少尝试新事物。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"回避型人格"},
+
+  // --- 28. 依赖型人格 (5题) ---
+  {q:"我难以独立做决定，需要别人反复保证。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"依赖型人格"},
+  {q:"我希望别人为我安排生活中的大部分事情。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"依赖型人格"},
+  {q:"我害怕表达不同意见，怕失去对方支持。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"依赖型人格"},
+  {q:"我难以独立开始或完成任务。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"依赖型人格"},
+  {q:"我会为了得到照顾而委屈自己忍受不愉快的关系。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"依赖型人格"},
+
+  // --- 29. 强迫型人格 (5题) ---
+  {q:"我对秩序、规则和清单过度执着。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"强迫型人格"},
+  {q:"我追求完美，常因达不到标准而影响完成任务。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"强迫型人格"},
+  {q:"我把工作放在人际关系之上。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"强迫型人格"},
+  {q:"我对道德和价值观过分刻板。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"强迫型人格"},
+  {q:"我难以丢弃无用的旧物，即使没有价值。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"人格障碍",sub:"强迫型人格"},
+
+  // ============ E. 依恋类型 (35题) ============
+  // --- 30. 安全型依恋 (5题) ---
+  {q:"我相信亲近的人会在需要时支持我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"安全型依恋"},
+  {q:"我能自在地向他人表达自己的情感需要。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"安全型依恋"},
+  {q:"我对亲密关系感到安心，不过度担忧。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"安全型依恋"},
+  {q:"我相信自己值得被爱和被关心。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"安全型依恋"},
+  {q:"我能在依赖他人和独立之间取得平衡。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"安全型依恋"},
+
+  // --- 31. 焦虑型依恋 (10题) ---
+  {q:"我担心亲近的人并不真心爱我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我害怕被伴侣或朋友抛弃。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我需要对方不断表达关心才能安心。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"对方不回消息时我会感到焦虑。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我常觉得自己付出比对方多。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我难以忍受与亲近的人分离。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我会反复确认对方对我的感情。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我担心自己的需求会让对方厌烦。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我在关系中常感到不安和不踏实。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+  {q:"我希望与对方保持非常亲密、几乎不分彼此的关系。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"焦虑型依恋"},
+
+  // --- 32. 回避型依恋 (10题) ---
+  {q:"我感到独立和自给自足很重要。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我不喜欢过分亲近他人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我难以完全信任他人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我希望亲近的人给我更多空间。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"别人想更亲密时我会感到不舒服。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我更愿意自己解决问题，而不是寻求帮助。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我与他人的关系保持一定距离才舒服。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我难以向他人展示自己脆弱的一面。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"我觉得依赖别人是软弱的表现。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+  {q:"在亲密关系中我感到拘束或想逃离。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"回避型依恋"},
+
+  // --- 33. 恐惧型依恋 (10题) ---
+  {q:"我既渴望亲近又害怕被伤害。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我想建立亲密关系，又本能地想推开对方。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我担心一旦靠近，对方会发现我的缺点而离开。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我在关系中常感到矛盾和混乱。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我害怕自己投入太多而被抛弃。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"当关系变近时，我反而想疏远。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我难以相信别人会一直留在我身边。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我会在亲密和疏离之间反复摇摆。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我对亲密关系既期待又恐惧。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+  {q:"我感到自己在关系中难以得到真正安全。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"依恋类型",sub:"恐惧型依恋"},
+
+  // ============ F. BigFive人格 (35题) ============
+  // --- 34. 神经质 (10题) ---
+  {q:"近两周，我容易感到焦虑或紧张。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我的情绪起伏较大。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我容易感到沮丧或低落。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我会为小事过度担忧。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我容易感到烦躁或愤怒。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我难以从消极情绪中走出。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我对压力敏感，容易感到不堪重负。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我会反复回想让自己不快的事。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我容易感到自我怀疑。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+  {q:"近两周，我感到内心难以平静。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"BigFive人格",sub:"神经质"},
+
+  // --- 35. 外向性 (10题) ---
+  {q:"我主动与人交谈。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我在人群中感到充满活力。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我乐于成为关注的中心。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我主动发起聚会或活动。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我表达情感时毫不拘束。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我对生活抱有乐观态度。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我主动结交新朋友。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我说话时声音洪亮、热情。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我做事雷厉风行，节奏快。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+  {q:"我对新事物充满好奇和热情。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"外向性"},
+
+  // --- 36. 开放性 (5题) ---
+  {q:"我对艺术、音乐或文学有浓厚兴趣。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"开放性"},
+  {q:"我喜欢思考抽象的概念和理念。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"开放性"},
+  {q:"我愿意尝试新奇的想法和做法。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"开放性"},
+  {q:"我常反思自己的内心感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"开放性"},
+  {q:"我对不同文化和价值观持开放态度。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"开放性"},
+
+  // --- 37. 宜人性 (5题) ---
+  {q:"我乐于帮助他人，即使付出代价。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"宜人性"},
+  {q:"我相信大多数人本质上是善良的。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"宜人性"},
+  {q:"我容易体谅他人的处境和感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"宜人性"},
+  {q:"我宁可退让也不与人冲突。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"宜人性"},
+  {q:"我对人真诚，不轻易怀疑他人动机。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"BigFive人格",sub:"宜人性"},
+
+  // --- 38. 尽责性 (5题) ---
+  {q:"我做事有计划、有条理。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"尽责性"},
+  {q:"我按时完成自己交办的任务。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"尽责性"},
+  {q:"我对细节认真负责。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"尽责性"},
+  {q:"我为达成目标坚持努力。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"尽责性"},
+  {q:"我把承诺看得很重，说到做到。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"BigFive人格",sub:"尽责性"},
+
+  // ============ G. 自杀自伤 (35题) ============
+  // --- 39. 自杀意念 (10题) ---
+  {q:"近两周，我曾有过想死的念头。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我觉得活着没有意义。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我希望自己不要再醒来。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我曾想过如果自己不在了，别人会怎样。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我感到生活痛苦多于快乐。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我脑子里反复出现关于死亡的念头。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我感到自己是别人的负担。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我觉得未来没有希望。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我感到被困住，看不到出路。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+  {q:"近两周，我考虑过结束自己生命的可能。",opts:["从不","有几天","超过一半天数","几乎每天"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意念"},
+
+  // --- 40. 自杀计划 (5题) ---
+  {q:"我曾具体思考过用何种方式结束生命。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀计划"},
+  {q:"我曾考虑过何时实施自杀。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀计划"},
+  {q:"我曾考虑过在哪里实施自杀。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀计划"},
+  {q:"我曾为自杀做过具体准备（如积攒药物）。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀计划"},
+  {q:"我曾把自己的东西分送给别人，仿佛在交代后事。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀计划"},
+
+  // --- 41. 自杀意图 (5题) ---
+  {q:"我有意在近期结束自己的生命。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意图"},
+  {q:"我相信自杀是解决目前困境的合理方式。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意图"},
+  {q:"我已下定决心实施自杀计划。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意图"},
+  {q:"我觉得如果不实施自杀，问题就无解。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意图"},
+  {q:"我相信别人最终会理解我选择自杀。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自杀意图"},
+
+  // --- 42. 自伤行为 (10题) ---
+  {q:"我曾故意割伤或烫伤自己。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾用力抓伤或掐伤自己。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾用头撞墙或撞击物体。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾故意让自己挨饿或暴食到不适。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾故意饮酒或服药到危险程度。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾故意阻止伤口愈合。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾通过自伤来缓解情绪痛苦。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾用自伤来惩罚自己。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾感到无法控制自伤的冲动。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+  {q:"我曾在自伤后感到短暂轻松，随后又想再次进行。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤行为"},
+
+  // --- 43. 自伤冲动 (5题) ---
+  {q:"我感到想要伤害自己的冲动。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤冲动"},
+  {q:"我难以抑制自伤的念头。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤冲动"},
+  {q:"看到刀具或尖锐物时，我会产生自伤想法。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤冲动"},
+  {q:"我感到自伤能让自己感觉好一些。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤冲动"},
+  {q:"我感到自伤冲动近来越发强烈。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"自杀自伤",sub:"自伤冲动"},
+
+  // ============ H. 物质使用 (20题) ============
+  // --- 44. 酒精 (5题) ---
+  {q:"我饮酒。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"酒精"},
+  {q:"我一次饮酒的量超过6个标准杯。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"酒精"},
+  {q:"我酒后难以回忆发生的事。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"酒精"},
+  {q:"我晨起需要饮酒才能正常活动。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"酒精"},
+  {q:"我因饮酒影响了工作或人际关系。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"酒精"},
+
+  // --- 45. 药物 (5题) ---
+  {q:"我使用非处方药物来获得快感或放松。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"药物"},
+  {q:"我使用他人处方药或非法药物。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"药物"},
+  {q:"我曾增加药量以获得同样效果。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"药物"},
+  {q:"我停药时出现不适或戒断症状。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"药物"},
+  {q:"我曾隐瞒自己使用药物的程度。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"药物"},
+
+  // --- 46. 烟草 (5题) ---
+  {q:"我吸烟。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"烟草"},
+  {q:"我早晨醒来后很快就要吸第一支烟。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"烟草"},
+  {q:"我在禁止吸烟的场所也难以忍受。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"烟草"},
+  {q:"我曾尝试戒烟但失败。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"烟草"},
+  {q:"我感到自己对尼古丁依赖。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"烟草"},
+
+  // --- 47. 其他物质 (5题) ---
+  {q:"我使用吸入剂（如胶水、溶剂）来获得快感。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"其他物质"},
+  {q:"我使用合成毒品或新型精神活性物质。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"其他物质"},
+  {q:"我混合使用多种物质以增强效果。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"其他物质"},
+  {q:"我在危险场合（如驾车前）使用物质。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"其他物质"},
+  {q:"我因使用物质出现身体或精神问题。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"物质使用",sub:"其他物质"},
+
+  // ============ I. 性心理 (25题) ============
+  // --- 48. 性取向认同 (5题) ---
+  {q:"我对自己的性取向感到清晰和确定。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性取向认同"},
+  {q:"我对自己的性取向感到困惑。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性取向认同"},
+  {q:"我曾因性取向而感到痛苦或羞耻。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性取向认同"},
+  {q:"我担心别人知道我的性取向后会疏远我。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性取向认同"},
+  {q:"我曾试图改变自己的性取向。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性取向认同"},
+
+  // --- 49. 性认同困惑 (5题) ---
+  {q:"我对自己的性别认同感到困惑。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性认同困惑"},
+  {q:"我感到自己的性别与身体不一致。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性认同困惑"},
+  {q:"我希望自己是另一种性别。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性认同困惑"},
+  {q:"我曾因性别认同问题感到痛苦。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性认同困惑"},
+  {q:"我曾隐藏自己的性别认同感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"性心理",sub:"性认同困惑"},
+
+  // --- 50. 性功能障碍 (5题) ---
+  {q:"我对性生活缺乏兴趣。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"性心理",sub:"性功能"},
+  {q:"我难以产生性兴奋。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"性心理",sub:"性功能"},
+  {q:"我在性生活中感到疼痛或不适。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"性心理",sub:"性功能"},
+  {q:"我难以达到性高潮。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"性心理",sub:"性功能"},
+  {q:"我对性表现感到焦虑。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"性心理",sub:"性功能"},
+
+  // --- 51. 性创伤史 (5题) ---
+  {q:"我曾被迫进行不愿意的性接触。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"性心理",sub:"性创伤"},
+  {q:"我曾在童年遭受过性侵犯。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"性心理",sub:"性创伤"},
+  {q:"我曾因性相关事件感到强烈恐惧或无助。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"性心理",sub:"性创伤"},
+  {q:"我与性相关的回忆让我反复痛苦。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"性心理",sub:"性创伤"},
+  {q:"我曾因性创伤回避亲密关系。",opts:["从未","偶尔","几次","经常"],scores:[0,1,2,3],cat:"性心理",sub:"性创伤"},
+
+  // --- 52. 性成瘾 (5题) ---
+  {q:"我难以控制自己的性行为或性幻想。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"性心理",sub:"性成瘾"},
+  {q:"我花大量时间在性相关活动上。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"性心理",sub:"性成瘾"},
+  {q:"我曾因性行为陷入危险或麻烦。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"性心理",sub:"性成瘾"},
+  {q:"我试图减少性活动却失败。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"性心理",sub:"性成瘾"},
+  {q:"我用性行为来缓解负面情绪。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"性心理",sub:"性成瘾"},
+
+  // ============ J. 状态稳定性 (35题) ============
+  // --- 53. 精神稳定性 (10题) ---
+  {q:"我感到精神状态在短时间内剧烈波动。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我难以预测自己下一刻的情绪。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我在压力下容易出现精神崩溃。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我感到自己的情绪像坐过山车。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我难以维持稳定的心理状态。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我会因为小事情绪失控。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我感到自己难以承受日常压力。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我的情绪变化让身边的人难以适应。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我曾因情绪问题无法正常工作或学习。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+  {q:"我感到自己的精神状态时好时坏。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"精神稳定"},
+
+  // --- 54. 自身稳定性 (10题) ---
+  {q:"我感到自己的身体状态不稳定。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我的食欲和睡眠变化无常。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我容易感到疲惫或精力波动大。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我的体重在短期内明显变化。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我容易感到身体不适却查不出原因。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我难以维持规律的作息。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我感到身体和情绪相互影响剧烈。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我对环境变化适应困难。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我容易因身体不适影响心情。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+  {q:"我感到自己的生理节律紊乱。",opts:["从未","偶尔","经常","几乎持续"],scores:[0,1,2,3],cat:"状态稳定",sub:"自身稳定"},
+
+  // --- 55. 现实检验能力 (5题) ---
+  {q:"我难以区分现实与想象。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"现实检验"},
+  {q:"我有时怀疑自己看到或听到的是否真实。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"现实检验"},
+  {q:"我难以判断别人对我的真实态度。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"现实检验"},
+  {q:"我对自己的判断缺乏信心。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"现实检验"},
+  {q:"我难以理解他人话语的真实含义。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"现实检验"},
+
+  // --- 56. 自我认同 (5题) ---
+  {q:"我对自己的认识模糊，说不清自己是怎样的人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"自我认同"},
+  {q:"我感到自己的价值观和目标不断变化。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"自我认同"},
+  {q:"我难以描述自己的真实感受。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"自我认同"},
+  {q:"我感到自己缺乏稳定的兴趣和追求。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"自我认同"},
+  {q:"我感到自己在不同场合表现得判若两人。",opts:["完全不认同","较少认同","较多认同","完全认同"],scores:[0,1,2,3],cat:"状态稳定",sub:"自我认同"},
+
+  // --- 57. 情绪调节能力 (5题) ---
+  {q:"我难以察觉自己情绪的变化。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"状态稳定",sub:"情绪调节"},
+  {q:"我难以用合理方式表达自己的情绪。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"状态稳定",sub:"情绪调节"},
+  {q:"我在情绪低落时难以自我调节。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"状态稳定",sub:"情绪调节"},
+  {q:"我在压力下难以保持冷静。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"状态稳定",sub:"情绪调节"},
+  {q:"我难以找到方法缓解负面情绪。",opts:["从不","很少","经常","几乎总是"],scores:[0,1,2,3],cat:"状态稳定",sub:"情绪调节"},
+];
+
+// ============================================================
+// 心理健康紧急筛查题库（200道专业筛查题）
+// ============================================================
+const SCREENING_QUESTIONS = [
+    // ==================== 自杀风险 (suicide) - 30题 ====================
+    ["最近两周，你是否觉得活着没有意义？", "完全没有", "偶尔有这种感觉", "经常有这种感觉", "几乎每天都有，且很强烈", "suicide"],
+    ["最近两周，你是否希望自己一觉睡过去不再醒来？", "从来没有", "偶尔闪过这个念头", "经常这样想", "几乎每天都这样想", "suicide"],
+    ["最近两周，你是否有过结束自己生命的念头？", "完全没有", "一闪而过的念头，但不具体", "有过具体想法但没有计划", "有过具体计划或已做准备", "suicide"],
+    ["最近两周，你是否想过如何结束自己的生命？", "完全没有想过", "模糊地想过一次", "想过几次，但不详细", "详细思考过具体方法", "suicide"],
+    ["最近两周，你是否做过自杀相关的准备（如搜集信息、准备工具）？", "完全没有", "仅浏览过相关信息", "搜集过具体方法信息", "已经做了实际准备", "suicide"],
+    ["最近两周，你是否写过遗书或安排后事？", "完全没有", "脑海里想过", "考虑过要写但未行动", "已经写过或正在安排", "suicide"],
+    ["最近两周，你是否觉得别人没了你会过得更好？", "完全不觉得", "偶尔这样想", "经常有这种感觉", "深信不疑", "suicide"],
+    ["最近两周，你是否有过自杀未遂的行为？", "完全没有", "有自伤但没有自杀意图", "有过一次自杀尝试", "有过多次自杀尝试", "suicide"],
+    ["最近两周，你是否感到被困住、无路可走？", "完全没有", "偶尔有这种感觉", "经常觉得走投无路", "持续感到绝望无助", "suicide"],
+    ["最近两周，你是否难以控制想伤害自己的冲动？", "完全没有冲动", "有轻微冲动但能控制", "有较强冲动难以控制", "几乎无法控制", "suicide"],
+    ["最近两周，你是否主动回避可能自杀的机会？", "不适用，没有自杀想法", "有自杀想法但会回避", "回避但不坚定", "主动寻求自杀机会", "suicide"],
+    ["最近两周，你是否故意远离亲友以便实施自杀？", "完全没有", "有疏远但没有自杀目的", "开始疏远有自杀想法", "刻意疏远为自杀做准备", "suicide"],
+    ["最近两周，你是否觉得痛苦永远不会结束？", "不觉得", "偶尔担心", "经常这样想", "深信痛苦永无止境", "suicide"],
+    ["最近两周，你是否认为自己是别人的负担？", "不觉得", "偶尔有这种感觉", "经常有这种感觉", "确信自己是他人的负担", "suicide"],
+    ["最近两周，你对未来的绝望程度如何？", "对生活充满希望", "偶尔感到无望", "经常感到绝望", "完全绝望，看不到任何出路", "suicide"],
+    ["最近两周，当想到自杀时你是否感到解脱？", "完全没有自杀念头", "想到也不觉得解脱", "偶尔有解脱感", "强烈感到自杀是解脱", "suicide"],
+    ["最近两周，你是否制定了具体的自杀时间计划？", "完全没有", "仅有过模糊时间想法", "设想过大致时间", "已确定了具体时间", "suicide"],
+    ["最近两周，你是否告诉过别人你想结束生命？", "没有这种想法", "有想法但没告诉任何人", "曾暗示过他人", "明确告诉过他人", "suicide"],
+    ["最近两周，你是否觉得死亡是逃离痛苦的唯一方式？", "完全不觉得", "偶尔闪过这个念头", "经常这样认为", "深信不疑", "suicide"],
+    ["最近两周，你是否因为心理痛苦想过寻求永久解脱？", "完全没有", "偶尔闪过", "认真考虑过", "已认为是唯一出路", "suicide"],
+    ["最近两周，你是否停止做那些曾经让你快乐的事？", "没有变化", "稍微减少", "明显减少了许多", "几乎什么都不做了", "suicide"],
+    ["最近两周，你是否刻意销毁个人物品或纪念品？", "完全没有", "整理但未销毁", "销毁了部分", "已大量销毁", "suicide"],
+    ["最近两周，你是否觉得没有人真正关心你的死活？", "不觉得", "偶尔这样想", "经常这样想", "完全相信没人关心", "suicide"],
+    ["最近两周，你是否感到情绪痛苦难以忍受？", "没有痛苦", "轻微痛苦可忍受", "中等痛苦难以忍受", "极度痛苦无法承受", "suicide"],
+    ["最近两周，你是否反复出现自杀的画面或想法？", "完全没有", "偶尔出现一次", "经常出现（每周数次）", "持续不断，难以摆脱", "suicide"],
+    ["最近两周，你是否曾经站在高处/轨道旁有过想跳下去的冲动？", "完全没有", "有过一闪而过的念头", "有过较强冲动但忍住了", "有过且几乎无法控制", "suicide"],
+    ["最近两周，你是否故意囤积药物或危险物品？", "完全没有", "想过但未行动", "开始搜集", "已经囤积", "suicide"],
+    ["最近两周，如果遇到挫折你是否会立刻想到自杀？", "完全不会", "偶尔闪过但不持续", "经常会立刻想到", "几乎是条件反射", "suicide"],
+    ["最近两周，你是否隐瞒了你的自杀想法以避免被阻止？", "没有自杀想法", "有想法但未隐瞒", "部分隐瞒", "完全隐瞒不让任何人知道", "suicide"],
+    ["最近两周，你是否在「排练」或想象自杀的过程？", "完全没有", "偶尔想到但没有细节", "详细想象过但未排练", "反复排练或想象具体过程", "suicide"],
+
+    // ==================== 自伤风险 (selfharm) - 15题 ====================
+    ["最近两周，你是否有意伤害自己的身体（如割伤、烫伤、撞击）？", "完全没有", "有过一次冲动但未行动", "有过一次自伤行为", "有过多次自伤行为", "selfharm"],
+    ["最近两周，当你感到极度痛苦时，是否有自伤的冲动？", "完全没有", "偶尔有轻微冲动", "经常有较强冲动", "每次都控制不住自己", "selfharm"],
+    ["最近两周，自伤是否是你应对负面情绪的主要方式？", "不适用，不自伤", "很少用自伤应对", "经常用自伤来应对", "自伤是唯一应对方式", "selfharm"],
+    ["最近两周，你的自伤行为频率如何？", "完全没有", "仅有一次", "每周1-2次", "几乎每天都有", "selfharm"],
+    ["最近两周，自伤后你是否感到短暂的情绪缓解？", "不适用", "缓解不明显", "有明显缓解", "强烈缓解，成为依赖", "selfharm"],
+    ["最近两周，你的自伤行为严重程度如何？", "完全没有", "轻微擦伤/抓挠", "明显割伤或淤青", "严重损伤需医疗处理", "selfharm"],
+    ["最近两周，你是否向他人隐藏了你的自伤痕迹？", "没有自伤", "有自伤但未刻意隐藏", "部分隐藏", "刻意用衣物遮盖/说谎隐瞒", "selfharm"],
+    ["最近两周，你是否在情绪麻木时用自伤来「感受些什么」？", "不适用", "偶尔有这种感觉", "经常为此自伤", "这是自伤的主要原因", "selfharm"],
+    ["最近两周，你是否因为愤怒或惩罚自己而自伤？", "完全没有", "偶尔如此", "经常如此", "几乎每次都如此", "selfharm"],
+    ["最近两周，你是否难以抵制自伤的冲动？", "没有冲动", "有冲动能抗拒", "抗拒困难", "完全无法抗拒", "selfharm"],
+    ["最近两周，你是否在自伤前感到紧张焦虑，自伤后感到放松？", "不适用", "这种模式不明显", "有较明显模式", "模式非常典型和强烈", "selfharm"],
+    ["最近两周，你是否对自伤行为感到羞耻或内疚？", "不适用", "有一点但不强烈", "感到明显羞愧", "极度羞耻但无法停止", "selfharm"],
+    ["最近两周，自伤的想法是否占据了你的大量时间？", "完全没有", "偶尔想到", "经常想到占用较多时间", "几乎持续不断占据脑海", "selfharm"],
+    ["最近两周，你是否尝试过减少或停止自伤但失败了？", "不适用或无需减少", "尝试过且成功", "尝试过但很困难", "多次尝试但完全失败", "selfharm"],
+    ["最近两周，你是否在人际冲突后更容易出现自伤行为？", "不适用", "偶尔有这种关联", "经常与冲突有关", "几乎每次冲突后都会自伤", "selfharm"],
+
+    // ==================== 抑郁 (depression) - 30题 ====================
+    ["最近两周，你做事时是否提不起劲或没有兴趣？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你是否感到情绪低落、沮丧或绝望？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你是否入睡困难、睡不安稳或睡得过多？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你是否感到疲倦或没有精力？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你的食欲是否有明显变化（吃不下或吃得过多）？", "没有变化", "偶尔变化", "一半以上的天数有变化", "几乎每天明显变化", "depression"],
+    ["最近两周，你是否觉得自己很失败或让自己和家人失望了？", "完全不觉得", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你做事情时是否难以集中注意力（如看报纸、看电视）？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你的动作或说话速度是否异常缓慢或异常激动（别人能注意到）？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你早晨醒来时是否感觉情绪最差？", "与平时一样", "偶尔早晨情绪较差", "经常早晨情绪很差", "几乎每天早晨极度低落", "depression"],
+    ["最近两周，你是否经常哭泣或想哭？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "depression"],
+    ["最近两周，你是否对社交活动失去兴趣，回避与人接触？", "没有变化", "偶尔回避", "经常回避", "几乎完全回避", "depression"],
+    ["最近两周，你是否感到自我价值感明显降低？", "没有变化", "偶尔这样感觉", "经常感到没有价值", "持续感到毫无价值", "depression"],
+    ["最近两周，你是否有过不明原因的身体疼痛（如头痛、背痛）？", "完全没有", "偶尔轻微疼痛", "经常有明显疼痛", "持续严重疼痛", "depression"],
+    ["最近两周，你是否觉得生活节奏变慢了？", "没有感觉", "偶尔感觉", "经常有这种感觉", "持续感到一切都变慢了", "depression"],
+    ["最近两周，你是否有无法解释的强烈内疚感？", "完全没有", "偶尔轻微内疚", "经常有明显内疚", "持续强烈的内疚自责", "depression"],
+    ["最近两周，你是否觉得做简单的小事都很费力？", "完全不觉得", "偶尔感觉费力", "经常感觉费力", "几乎做任何事都很费力", "depression"],
+    ["最近两周，你是否对曾经喜欢的事情失去了兴趣（如爱好、运动）？", "没有变化", "稍微减少兴趣", "明显减少兴趣", "完全失去兴趣", "depression"],
+    ["最近两周，你是否感到心情沉重、胸口闷？", "完全没有", "偶尔几天", "经常有这种感觉", "持续感到沉重压抑", "depression"],
+    ["最近两周，你是否觉得自己对他人来说无关紧要？", "不觉得", "偶尔这样想", "经常这样想", "确信自己无关紧要", "depression"],
+    ["最近两周，你是否对性失去了兴趣？", "没有变化", "稍微减少", "明显减少", "完全失去兴趣", "depression"],
+    ["最近两周，你是否很难做出决定，哪怕是小事？", "没有困难", "偶尔犹豫", "经常难以决定", "几乎无法做任何决定", "depression"],
+    ["最近两周，你是否觉得自己的思维变迟钝了？", "没有感觉", "偶尔感觉", "经常感觉思维迟缓", "持续感到思维停滞", "depression"],
+    ["最近两周，你是否觉得没有人在意你的感受？", "不觉得", "偶尔这样想", "经常这样想", "确信没人在意", "depression"],
+    ["最近两周，你是否经常想起过去的失败和遗憾？", "很少想起", "偶尔想起", "经常想起难以放下", "持续不断反复回想", "depression"],
+    ["最近两周，你是否对个人卫生和外表不再关心？", "没有变化", "稍微不如以前", "明显不关心", "完全放弃个人打理", "depression"],
+    ["最近两周，你是否有早醒（比平时早醒2小时以上）且无法再入睡？", "完全没有", "偶尔一两天", "一半以上的天数", "几乎每天都早醒", "depression"],
+    ["最近两周，你是否感觉一天中情绪有明显波动但总体偏低？", "情绪稳定", "偶尔波动", "经常波动但整体偏低", "持续低落且波动大", "depression"],
+    ["最近两周，你是否觉得自己被孤独感包围？", "不觉得", "偶尔感到孤独", "经常感到孤独", "持续深刻的孤独感", "depression"],
+    ["最近两周，你是否觉得一切都没有意义？", "完全不觉得", "偶尔有这种感觉", "经常有这种感觉", "持续感到一切虚无", "depression"],
+    ["最近两周，你对日常活动的参与度是否显著下降？", "没有变化", "稍微减少", "明显减少", "几乎完全停止参与", "depression"],
+
+    // ==================== 焦虑 (anxiety) - 25题 ====================
+    ["最近两周，你是否感到紧张、焦虑或烦躁不安？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否无法停止或控制担忧？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否对各种各样的事情过度担忧？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否感到难以放松？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否坐立不安，感觉像「热锅上的蚂蚁」？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否变得容易烦躁或易怒？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否感到害怕，好像有可怕的事情要发生？", "完全没有", "偶尔几天", "一半以上的天数", "几乎每天", "anxiety"],
+    ["最近两周，你是否感到心慌、心跳加速？", "完全没有", "偶尔几天", "经常出现", "几乎持续存在", "anxiety"],
+    ["最近两周，你是否有不明原因的肌肉紧张或酸痛？", "完全没有", "轻微偶尔", "经常明显紧张", "持续严重紧张疼痛", "anxiety"],
+    ["最近两周，你是否因为担忧而回避某些场合或活动？", "完全没有", "偶尔回避", "经常回避", "几乎总是回避", "anxiety"],
+    ["最近两周，你是否入睡困难是因为脑中不断涌现担忧？", "没有这个问题", "偶尔如此", "经常如此", "几乎每晚如此", "anxiety"],
+    ["最近两周，你是否感到头晕、发麻或呼吸急促？", "完全没有", "偶尔轻微", "经常出现", "频繁发作且严重", "anxiety"],
+    ["最近两周，你是否反复检查事情（如门锁、电器）？", "没有", "偶尔检查一两次", "经常反复检查", "检查行为严重影响生活", "anxiety"],
+    ["最近两周，你是否在社交场合感到极度不适或恐惧？", "完全没有", "偶尔在特定场合", "经常在社交中感到不适", "几乎完全回避社交", "anxiety"],
+    ["最近两周，你是否感到胃部不适（如恶心、腹泻）与紧张有关？", "完全没有", "偶尔出现", "经常出现", "持续存在且严重", "anxiety"],
+    ["最近两周，你是否难以集中注意力因为过度担忧？", "完全没有", "偶尔受影响", "经常受影响", "几乎无法集中注意力", "anxiety"],
+    ["最近两周，你是否对小事也感到极为不安？", "不会", "偶尔", "经常如此", "几乎对所有小事都过度反应", "anxiety"],
+    ["最近两周，你是否有无法控制的恐慌发作（强烈恐惧伴随身体症状）？", "完全没有", "有过一次轻微发作", "有过几次明显发作", "频繁发作严重影响生活", "anxiety"],
+    ["最近两周，你是否经常预想最坏的结果？", "不会", "偶尔如此", "经常如此", "几乎总是往最坏处想", "anxiety"],
+    ["最近两周，你是否感到自己快要「失控」或「发疯」？", "完全没有", "偶尔有这种恐惧", "经常有这种恐惧", "持续感到即将失控", "anxiety"],
+    ["最近两周，你是否因为焦虑而感觉身体某些部位发热或发冷？", "完全没有", "偶尔出现", "经常出现", "持续存在伴随其他症状", "anxiety"],
+    ["最近两周，你是否觉得担忧已经影响了你的工作/学习能力？", "没有影响", "轻微影响", "明显影响", "严重影响无法正常进行", "anxiety"],
+    ["最近两周，你是否对分离或被抛弃有强烈恐惧？", "完全没有", "偶尔担心", "经常担心", "持续恐惧且严重干扰生活", "anxiety"],
+    ["最近两周，你是否因为焦虑而出现过手心出汗、颤抖？", "完全没有", "偶尔轻微", "经常明显", "持续严重且引人注意", "anxiety"],
+    ["最近两周，你是否觉得自己需要百分之百确定才能安心？", "不需要", "偶尔需要", "经常需要确定性", "无法接受任何不确定性", "anxiety"],
+
+    // ==================== 双相情感障碍 (bipolar) - 25题 ====================
+    ["最近两周，你是否有过情绪异常高涨或容易激惹的时期？", "完全没有", "有过几天但很轻微", "有过明显高涨持续数天", "持续超过一周且显著", "bipolar"],
+    ["最近两周，你是否觉得自己精力异常充沛，不太需要睡眠？", "完全没有", "偶尔精力较高", "明显精力过剩睡眠减少", "几乎不睡但不觉疲倦", "bipolar"],
+    ["最近两周，你是否说话比平时更快或更多，别人说停不下来？", "没有变化", "稍微比以前话多", "明显话多语速快", "滔滔不绝他人难以打断", "bipolar"],
+    ["最近两周，你是否思绪飞转，想法一个接一个跳出来？", "没有", "偶尔思维活跃", "明显思绪飞转", "想法爆炸无法控制", "bipolar"],
+    ["最近两周，你是否注意力很容易被无关的事情吸引？", "没有变化", "轻微容易分心", "明显容易分心", "完全无法集中注意力", "bipolar"],
+    ["最近两周，你是否目标导向活动明显增多（如疯狂工作、社交或学习）？", "没有变化", "稍微增加", "明显增多", "活动量极大且缺乏节制", "bipolar"],
+    ["最近两周，你是否做了过度冒险的事情（如挥霍金钱、不当性行为、危险驾驶）？", "完全没有", "有过一两次轻微冒险", "明显增加冒险行为", "严重冒险行为后果严重", "bipolar"],
+    ["最近两周，你是否觉得自己特别重要或有特殊能力/使命？", "没有这种感觉", "偶尔自信心增强", "明显自我评价过高", "有夸大妄想倾向", "bipolar"],
+    ["最近两周，你是否睡眠时间明显减少但白天仍精力旺盛？", "睡眠正常", "睡眠稍少但精力尚可", "睡眠明显减少（<5h）精力旺盛", "几乎不睡（<3h）仍精力充沛", "bipolar"],
+    ["最近两周，你是否容易因为小事暴怒或情绪失控？", "没有", "偶尔烦躁", "经常易怒发火", "频繁暴怒难以自制", "bipolar"],
+    ["最近两周，你是否同时开始很多项目但无法完成？", "没有", "偶尔如此", "经常如此", "几乎总是如此", "bipolar"],
+    ["最近两周，你是否感觉自己的情绪在「高处」和「低处」之间快速切换？", "没有", "偶尔轻微波动", "明显情绪摇摆", "剧烈波动类似过山车", "bipolar"],
+    ["最近两周，你是否对人过度热情或社交活动异常频繁？", "没有变化", "稍微比平时活跃", "明显过度社交", "不停地联系所有人", "bipolar"],
+    ["最近两周，你是否觉得自己不需要任何人的帮助，自己能搞定一切？", "没有", "偶尔自信增强", "明显过度自信", "坚信自己无所不能", "bipolar"],
+    ["最近两周，你是否有过冲动购物的行为，花了不该花的钱？", "完全没有", "有过一次冲动消费", "多次冲动消费", "严重挥霍造成财务问题", "bipolar"],
+    ["最近两周，你是否感到性欲异常亢进？", "没有变化", "轻微增加", "明显增加", "极度亢进行为失控", "bipolar"],
+    ["最近两周，你是否在情绪高涨后突然跌入抑郁？", "没有", "偶尔轻微波动", "有明显高低转换", "剧烈转换且频繁发生", "bipolar"],
+    ["最近两周，你是否经常改变计划或目标，想法瞬息万变？", "没有", "偶尔改变主意", "经常改变目标和计划", "几乎无法坚持任何计划", "bipolar"],
+    ["最近两周，你是否在情绪高涨时期感到自己「思维极其清晰」？", "没有", "偶尔有此感觉", "经常感觉思维加速", "持续感觉异常清晰但实际混乱", "bipolar"],
+    ["最近两周，你是否行为冲动不计后果（如突然辞工作、断绝关系）？", "完全没有", "有过一次冲动决定", "多次冲动行为", "严重冲动造成重大后果", "bipolar"],
+    ["最近两周，你是否感到自己情绪波动已经影响了人际关系？", "没有影响", "轻微影响", "明显影响了关系", "严重破坏人际关系", "bipolar"],
+    ["最近两周，你是否有过持续数天的情绪异常高涨而不觉异常？", "没有", "家人反映有但我没察觉", "自己能察觉情绪异常高涨", "持续高涨且不认为有问题", "bipolar"],
+    ["最近两周，你是否感到身体里能量过多需要释放？", "没有", "偶尔精力充沛", "经常精力过剩需要释放", "持续极度亢奋坐卧不宁", "bipolar"],
+    ["最近两周，你是否穿着打扮或行为方式突然变得夸张或不合时宜？", "没有变化", "稍微比平时大胆", "明显变化引人注意", "完全不合时宜或怪诞", "bipolar"],
+    ["最近两周，你是否在情绪高涨时感到不需要休息，可以一直做下去？", "没有", "偶尔感觉精力充沛", "经常感觉不需要休息", "持续亢奋完全不需要休息", "bipolar"],
+
+    // ==================== 解离症 (dissociation) - 20题 ====================
+    ["最近两周，你是否感到自己像是在看电影一样观看自己的生活？", "从来没有", "偶尔有过一次", "经常有这种感觉", "几乎持续存在", "dissociation"],
+    ["最近两周，你是否感觉周围的现实世界不真实，像在梦里？", "从来没有", "偶尔有过", "经常有这种感觉", "持续感到不真实", "dissociation"],
+    ["最近两周，你是否出现记忆空白，对做过的事完全没印象？", "从来没有", "偶尔短暂遗忘", "经常有明显记忆缺失", "频繁严重失忆影响生活", "dissociation"],
+    ["最近两周，你是否感觉自己与身体「分离」了，好像不属于自己？", "从来没有", "偶尔有这种感觉", "经常有这种感觉", "持续感到身心分离", "dissociation"],
+    ["最近两周，你是否认不出镜子里的自己？", "从来没有", "偶尔有陌生感", "经常感到镜子中的自己很陌生", "完全认不出或感到恐惧", "dissociation"],
+    ["最近两周，你是否感到时间感扭曲（时间过得太快或太慢）？", "没有", "偶尔感觉", "经常感觉时间不对", "持续感到时间严重扭曲", "dissociation"],
+    ["最近两周，你是否在一个地方醒来却不知道是怎么来的？", "从来没有", "有过一次", "发生过几次", "频繁发生", "dissociation"],
+    ["最近两周，你是否感到自己对疼痛的感知变得迟钝了？", "没有变化", "偶尔感觉迟钝", "经常感觉不到疼痛", "完全丧失痛觉", "dissociation"],
+    ["最近两周，你是否感觉声音从远方传来，或自己说话声不像自己的？", "从来没有", "偶尔有这种感觉", "经常有这种感觉", "持续存在", "dissociation"],
+    ["最近两周，你是否发现身上有不明来由的伤痕却不知怎么来的？", "从来没有", "有过一两次", "发生过多次", "频繁出现", "dissociation"],
+    ["最近两周，你是否感到自己在「自动驾驶」模式下生活？", "没有", "偶尔有这种感觉", "经常如此", "几乎一直如此", "dissociation"],
+    ["最近两周，你是否听到脑中存在不同的声音或对话？", "从来没有", "偶尔感到内心有不同声音", "经常听到内部不同声音", "持续存在多个声音", "dissociation"],
+    ["最近两周，你是否感觉自己同时是不同的人？", "完全没有", "偶尔有身份混乱感", "经常感到身份困惑", "持续感到多重身份", "dissociation"],
+    ["最近两周，你是否对曾经熟悉的环境突然感到陌生？", "从来没有", "偶尔有过", "经常有这种感觉", "频繁且严重影响生活", "dissociation"],
+    ["最近两周，你是否感到自己的思想被「插入」或「抽走」？", "从来没有", "偶尔有古怪感觉", "经常有这种感觉", "持续存在且令人痛苦", "dissociation"],
+    ["最近两周，你是否在情绪激动时感觉「灵魂出窍」？", "从来没有", "有过一两次", "多次发生", "频繁发生", "dissociation"],
+    ["最近两周，你周围的人是否说你和平时「判若两人」？", "没有人说过", "有人偶尔提到", "多人多次提到", "经常如此且他人感到困惑", "dissociation"],
+    ["最近两周，你是否感到自己的情感变得麻木，像隔了一层玻璃？", "没有", "偶尔感觉情感不真实", "经常感到情感隔离", "持续感到情感完全麻木", "dissociation"],
+    ["最近两周，你是否对身体的某些部位感到不属于自己？", "完全没有", "偶尔对某部位有陌生感", "经常感到某些部位不属于自己", "持续感到身体不是自己的", "dissociation"],
+    ["最近两周，你是否在紧张或受刺激时出现短暂的「空白」状态？", "从来没有", "偶尔短暂走神", "经常出现明显空白状态", "频繁出现长时间空白且无法控制", "dissociation"],
+
+    // ==================== 创伤后应激 (ptsd) - 20题 ====================
+    ["最近两周，你是否反复不由自主地回想起创伤性事件？", "完全没有", "偶尔想起但能控制", "经常想起难以控制", "持续闯入性回忆无法摆脱", "ptsd"],
+    ["最近两周，你是否做过与创伤事件有关的噩梦？", "完全没有", "偶尔做过一两次", "经常做噩梦", "几乎每晚都有噩梦", "ptsd"],
+    ["最近两周，你是否在遇到与创伤相关的提示物时感到极度痛苦？", "完全没有", "轻微不适", "明显痛苦反应", "极度痛苦甚至身体反应", "ptsd"],
+    ["最近两周，你是否在遇到与创伤相关的提示物时出现身体反应（如心慌、出汗）？", "完全没有", "轻微身体反应", "明显身体反应", "强烈生理反应类似创伤重现", "ptsd"],
+    ["最近两周，你是否努力回避与创伤相关的想法、感受或回忆？", "没有回避", "偶尔回避", "经常努力回避", "极力回避但仍无法摆脱", "ptsd"],
+    ["最近两周，你是否回避与创伤有关的人、地点或活动？", "没有回避", "偶尔回避特定场景", "经常回避相关人或地点", "完全回避严重影响生活", "ptsd"],
+    ["最近两周，你是否对创伤事件的重要部分出现记忆缺失？", "记忆完整", "部分细节模糊", "明显记忆空白", "大量关键部分完全忘记", "ptsd"],
+    ["最近两周，你是否对曾经喜欢的活动失去兴趣？", "没有变化", "稍微减少", "明显减少", "完全失去兴趣", "ptsd"],
+    ["最近两周，你是否感到与别人疏离或隔阂？", "没有感觉", "偶尔有距离感", "经常感到与他人隔绝", "完全感到与世隔绝", "ptsd"],
+    ["最近两周，你是否难以体验积极情绪（如快乐、爱意）？", "没有困难", "偶尔难以感受", "经常感受不到", "完全无法体验积极情绪", "ptsd"],
+    ["最近两周，你是否容易受到惊吓或持续保持警觉？", "没有变化", "偶尔过度警觉", "经常处于警觉状态", "持续高度警觉不得安宁", "ptsd"],
+    ["最近两周，你是否难以入睡或睡眠不深（与创伤后的高警觉有关）？", "睡眠正常", "偶尔失眠或易醒", "经常失眠难以入睡", "严重失眠几乎无法安睡", "ptsd"],
+    ["最近两周，你是否容易发怒或出现攻击性行为？", "没有变化", "偶尔易怒", "经常发怒且难以控制", "频繁暴怒或出现攻击行为", "ptsd"],
+    ["最近两周，你是否难以集中注意力（与高警觉状态有关）？", "没有困难", "偶尔分心", "经常难以集中", "几乎无法专注", "ptsd"],
+    ["最近两周，你是否出现过「闪回」，感觉创伤事件正在再次发生？", "完全没有", "偶尔有短暂感觉", "经常出现生动的重现感", "频繁出现严重的再体验", "ptsd"],
+    ["最近两周，你是否对自己或世界持有持续的负面信念（如「我不安全」）？", "没有", "偶尔消极想法", "经常有负面信念", "持续深信世界充满危险", "ptsd"],
+    ["最近两周，你是否过度自责或责怪他人导致了创伤事件？", "没有", "偶尔会想这些", "经常自责或责怪他人", "持续沉浸在责备中", "ptsd"],
+    ["最近两周，你是否持续感到恐惧、愤怒、内疚或羞耻？", "没有", "偶尔有这些情绪", "经常有强烈负面情绪", "持续被负面情绪淹没", "ptsd"],
+    ["最近两周，你是否出现鲁莽或自毁行为（与创伤后的麻木/高警觉有关）？", "完全没有", "偶尔有冲动行为", "多次出现冒险行为", "频繁严重自毁行为", "ptsd"],
+    ["最近两周，你是否感到未来缩短了（觉得自己活不长、不会结婚生子等）？", "没有这种感觉", "偶尔有这种想法", "经常感到未来无望", "深信未来已被剥夺", "ptsd"],
+
+    // ==================== 精神病性 (psychosis) - 20题 ====================
+    ["最近两周，你是否听到过别人听不到的声音？", "从来没有", "听到过一两次但不确定", "多次清晰听到", "频繁听到且非常真实", "psychosis"],
+    ["最近两周，你是否看到过别人看不到的东西？", "从来没有", "看到过一次难以解释", "多次看到异常影像", "频繁出现视幻觉", "psychosis"],
+    ["最近两周，你是否相信有某种力量在控制你的思想或行为？", "完全不这样认为", "偶尔有过古怪想法", "经常有被控制的感觉", "坚信自己被外力控制", "psychosis"],
+    ["最近两周，你是否觉得别人能读到你的想法或你能读别人的想法？", "完全不这样认为", "偶尔有过这种怀疑", "经常有这种感觉", "坚信不疑", "psychosis"],
+    ["最近两周，你是否觉得电视、广播或报纸中有专门给你的特殊信息？", "完全没有", "有过一两次怀疑", "经常注意到「特殊信息」", "确信到处都是给我的信息", "psychosis"],
+    ["最近两周，你是否觉得有人在监视你、跟踪你或在背后议论你？", "完全没有", "偶尔有这种怀疑", "经常感到被针对", "坚信被迫害并影响生活", "psychosis"],
+    ["最近两周，你是否觉得自己的思维被广播出去，别人都能听到？", "完全没有", "偶尔有过古怪想法", "经常有这种感觉", "确信思维被传播", "psychosis"],
+    ["最近两周，你是否说话颠三倒四或别人说听不懂你在说什么？", "没有", "偶尔表达不清", "经常别人反馈听不懂", "言语完全混乱无法沟通", "psychosis"],
+    ["最近两周，你是否感到身上有异常感觉（如皮肤下有虫爬）？", "完全没有", "偶尔有奇怪感觉", "经常有明显异常感觉", "持续存在深信有东西在体内", "psychosis"],
+    ["最近两周，你是否坚信自己拥有特殊能力（如预测未来、心灵感应）？", "没有", "偶尔有夸大想法", "经常相信有特殊能力", "坚信有超自然能力且深信不疑", "psychosis"],
+    ["最近两周，你是否回避社交因为你感到别人在针对你？", "没有回避", "偶尔回避", "经常因猜疑而回避", "完全自我隔离", "psychosis"],
+    ["最近两周，你是否感到自己的情绪表达变得平淡或不协调？", "没有变化", "偶尔感觉情感变淡", "明显情感淡漠或不当", "几乎完全情感缺失或怪异", "psychosis"],
+    ["最近两周，你是否说话内容离题、绕圈子或语无伦次？", "没有", "偶尔跑题", "经常语无伦次", "完全思维散漫无法逻辑对话", "psychosis"],
+    ["最近两周，你是否感到日常生活中的人或事隐藏着特殊含义？", "没有", "偶尔感到不对劲", "经常发现「隐藏含义」", "持续感到处处有特殊含义", "psychosis"],
+    ["最近两周，你是否长时间保持怪异的姿势或动作？", "完全没有", "偶尔刻板动作", "经常出现怪异行为", "持续存在怪异或僵直行为", "psychosis"],
+    ["最近两周，你是否缺乏做事的动机或意愿，基本自理都困难？", "没有", "偶尔缺乏动力", "经常什么也不想做", "完全缺乏动机无法自理", "psychosis"],
+    ["最近两周，你是否怀疑家人或朋友想要害你或欺骗你？", "完全没有", "偶尔有不安全感", "经常怀疑身边人", "坚信亲友都在害自己", "psychosis"],
+    ["最近两周，你是否感到嗅觉、味觉出现无法解释的异常？", "完全没有", "偶尔有异味/怪味", "经常有明显异常感觉", "持续存在且相信是外部投毒等", "psychosis"],
+    ["最近两周，你是否觉得自己的身体或外貌发生了奇怪的改变？", "没有", "偶尔感到奇怪", "经常感到身体不对劲", "坚信身体发生了异常变化", "psychosis"],
+    ["最近两周，你是否对声音或光线异常敏感？", "没有异常", "偶尔有些敏感", "经常过度敏感", "持续极度敏感无法忍受", "psychosis"],
+
+    // ==================== 物质使用 (substance) - 15题 ====================
+    ["最近两周，你是否饮酒量超过了你原本计划的量？", "没有饮酒", "偶尔超过一点", "经常超过计划量", "几乎每次都失控", "substance"],
+    ["最近两周，你是否想要减少饮酒或用药但无法做到？", "没有使用", "尝试过且成功了", "尝试过但很困难", "多次尝试均失败", "substance"],
+    ["最近两周，你是否花大量时间获取、使用物质或从物质效果中恢复？", "没有", "偶尔花时间", "花相当多时间", "大部分时间都花在这上面", "substance"],
+    ["最近两周，你是否对物质有强烈渴求（心瘾）？", "完全没有", "偶尔有轻微渴求", "经常有强烈渴求", "持续渴求无法抗拒", "substance"],
+    ["最近两周，物质使用是否影响了你的工作、学习或家庭责任？", "没有使用", "轻微影响", "明显影响了", "导致严重失职或家庭破裂", "substance"],
+    ["最近两周，你是否在危险场合使用物质（如驾驶前饮酒吸毒）？", "没有", "有过一次", "有过多次", "频繁在危险场合使用", "substance"],
+    ["最近两周，你是否因为物质使用而减少或放弃重要活动？", "没有放弃", "稍微减少", "明显减少", "完全放弃一切只专注物质", "substance"],
+    ["最近两周，你的人际关系是否因物质使用而出现问题？", "没有影响", "偶有矛盾", "经常发生冲突", "严重损害导致关系破裂", "substance"],
+    ["最近两周，你是否需要更大剂量才能达到同样效果（耐受性增加）？", "不适用", "稍有耐受但未加量", "明显耐受需要加量", "急剧增加剂量", "substance"],
+    ["最近两周，停止或减少使用时是否出现戒断症状（如焦虑、出汗、颤抖）？", "不适用", "轻微不适", "明显戒断症状", "严重戒断反应难以忍受", "substance"],
+    ["最近两周，你是否用物质来缓解负面情绪或心理痛苦？", "不使用", "偶尔如此", "经常依赖物质缓解", "物质是唯一应对方式", "substance"],
+    ["最近两周，你是否对家人或朋友隐瞒了物质使用情况？", "没有使用或无需隐瞒", "偶尔隐瞒", "经常刻意隐瞒", "完全说谎掩盖使用", "substance"],
+    ["最近两周，你是否早晨醒来就需饮酒或用药来稳定自己？", "没有", "有过一两次", "经常需要", "每天早晨都必须", "substance"],
+    ["最近两周，你是否有过因物质导致记忆中断（blackout）？", "没有", "有过一次", "发生过多次", "频繁发生记忆中断", "substance"],
+    ["最近两周，你是否使用处方药超过医嘱剂量或使用非处方药来获得快感？", "没有", "偶尔超过一点点", "经常超量使用", "严重滥用已无法自控", "substance"]
+];
+
+// ============================================================
+// 情绪配置
+// ============================================================
+const EMOTIONS = [
+  {name:"悲伤",emoji:"😢",color:"var(--emotion-sad)"},
+  {name:"愤怒",emoji:"😡",color:"var(--emotion-angry)"},
+  {name:"平静",emoji:"😌",color:"var(--emotion-calm)"},
+  {name:"低落",emoji:"😞",color:"var(--emotion-down)"},
+  {name:"惊恐",emoji:"😨",color:"var(--emotion-panic)"},
+  {name:"开心",emoji:"😊",color:"var(--emotion-happy)"},
+  {name:"兴奋",emoji:"🤩",color:"var(--emotion-excited)"},
+  {name:"焦虑",emoji:"😰",color:"var(--emotion-anxious)"}
+];
+
+// ============================================================
+// 全局状态
+// ============================================================
+let selectedEmotion = null;
+let currentScreen = 'dashboard';
+let diagStep = 0;
+let diagAnswers = new Array(DIAG_QUESTIONS.length).fill(null);
+let quizQuestions = [];
+let quizStep = 0;
+let quizTotalScore = 0;
+let quizCategoryScores = {};
+let reminderInterval = null;
+let chartTimeRange = '7d';
+
+// ============================================================
+// IndexedDB
+// ============================================================
+const DB_NAME = 'mental_health_db';
+const DB_VERSION = 3;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const d = e.target.result;
+      if (!d.objectStoreNames.contains('diagnostic')) d.createObjectStore('diagnostic', {keyPath:'id'});
+      if (!d.objectStoreNames.contains('emotion_logs')) d.createObjectStore('emotion_logs', {keyPath:'id', autoIncrement:true});
+      if (!d.objectStoreNames.contains('self_ratings')) d.createObjectStore('self_ratings', {keyPath:'id', autoIncrement:true});
+      if (!d.objectStoreNames.contains('quiz_results')) d.createObjectStore('quiz_results', {keyPath:'id', autoIncrement:true});
+      if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings', {keyPath:'key'});
+      if (!d.objectStoreNames.contains('diag_history')) d.createObjectStore('diag_history', {keyPath:'id', autoIncrement:true});
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbPut(store, data) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).put(data);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function dbGetAll(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbGet(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbDelete(store, key) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).delete(key);
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+function dbClear(store) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, 'readwrite');
+    tx.objectStore(store).clear();
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+// 自动备份兜底（Web/Android 版无 pywebview API）
+function autoBackup() {}
+
+// ============================================================
+// Toast
+// ============================================================
+function showToast(msg, duration=2000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  t.style.animation = 'none';
+  t.offsetHeight;
+  t.style.animation = 'slideUp .3s ease';
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(() => t.style.display = 'none', duration);
+}
+
+// ============================================================
+// 屏幕切换
+// ============================================================
+function switchScreen(name, navBtn) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('screen-' + name);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (navBtn) navBtn.classList.add('active');
+  currentScreen = name;
+  if (name === 'charts') renderCharts();
+  if (name === 'quiz') loadQuizHistory();
+  if (name === 'dashboard') updateLastRatingTime();
+}
+
+// ============================================================
+// 提醒功能
+// ============================================================
+async function toggleReminder() {
+  const enabled = document.getElementById('reminder-toggle').checked;
+  await dbPut('settings', {key:'reminder_enabled', value:enabled});
+  if (enabled) {
+    if (Notification.permission === 'default') {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { document.getElementById('reminder-toggle').checked = false; showToast('需要通知权限才能使用提醒'); return; }
+    }
+    startReminder();
+    showToast('每小时提醒已开启 (23:00-8:00不提醒)');
+  } else {
+    stopReminder();
+    showToast('提醒已关闭');
+  }
+}
+
+function startReminder() {
+  stopReminder();
+  reminderInterval = setInterval(checkReminder, 60000);
+  checkReminder();
+}
+
+function stopReminder() {
+  if (reminderInterval) { clearInterval(reminderInterval); reminderInterval = null; }
+}
+
+async function checkReminder() {
+  const h = new Date().getHours();
+  if (h >= 23 || h < 8) return;
+  const last = await dbGet('settings', 'last_rating_time');
+  const now = Date.now();
+  if (last && (now - last.value) < 3600000) return;
+  if (Notification.permission === 'granted') {
+    new Notification('心理自评提醒', {body:'该进行自我评分了~ (理智/情绪/状态)',icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%234F6EF7" width="100" height="100" rx="20"/><text x="50" y="68" text-anchor="middle" fill="white" font-size="48">🧠</text></svg>',tag:'mental-reminder'});
+  }
+}
+
+// ============================================================
+// 情绪上报
+// ============================================================
+function renderEmotionGrid() {
+  const grid = document.getElementById('emotion-grid');
+  grid.innerHTML = EMOTIONS.map((e,i) =>
+    `<div class="emotion-btn" data-idx="${i}" onclick="selectEmotion(${i},this)">
+      <span class="emoji">${e.emoji}</span><span>${e.name}</span></div>`
+  ).join('');
+}
+
+function selectEmotion(idx, el) {
+  document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedEmotion = idx;
+}
+
+async function submitEmotion() {
+  if (selectedEmotion === null) { showToast('请先选择一种情绪'); return; }
+
+  // 频率限制：10分钟内最多2次
+  const now = Date.now();
+  const tenMinAgo = now - 10 * 60 * 1000;
+  const allEmotions = await dbGetAll('emotion_logs');
+  const recentCount = allEmotions.filter(e => e.timestamp >= tenMinAgo).length;
+  if (recentCount >= 2) {
+    const oldestRecent = Math.min(...allEmotions.filter(e => e.timestamp >= tenMinAgo).map(e => e.timestamp));
+    const waitMs = (oldestRecent + 10 * 60 * 1000) - now;
+    const waitMin = Math.ceil(waitMs / 60000);
+    showToast(`10分钟内仅可提交2次，请${waitMin}分钟后再试`);
+    return;
+  }
+
+  const intensity = parseInt(document.getElementById('intensity-slider').value);
+  const emotion = EMOTIONS[selectedEmotion];
+  await dbPut('emotion_logs', {
+    timestamp: Date.now(),
+    emotion: emotion.name,
+    intensity: intensity
+  });
+  await dbPut('settings', {key:'last_rating_time', value: Date.now()});
+  selectedEmotion = null;
+  document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
+  updateLastRatingTime();
+
+  // 触发AI分析（10次后第一次，之后每5次更新）
+  const totalCount = (await dbGetAll('emotion_logs')).length;
+  if (totalCount === 10 || (totalCount > 10 && (totalCount - 10) % 5 === 0)) {
+    await analyzeEmotionTrends();
+  }
+
+  showToast(`已记录: ${emotion.emoji} ${emotion.name} (强度${intensity}/10)`);
+}
+
+// ============================================================
+// 自我评分
+// ============================================================
+async function submitSelfRating() {
+  const rational = parseInt(document.getElementById('rational-slider').value);
+  const emotion = parseInt(document.getElementById('emotion-slider').value);
+  const state = parseInt(document.getElementById('state-slider').value);
+  await dbPut('self_ratings', {
+    timestamp: Date.now(),
+    rational, emotion, state
+  });
+  await dbPut('settings', {key:'last_rating_time', value: Date.now()});
+  updateLastRatingTime();
+  showToast(`已记录评分: 理智${rational} 情绪${emotion} 状态${state}`);
+}
+
+async function updateLastRatingTime() {
+  const el = document.getElementById('last-rating-time');
+  const last = await dbGet('settings', 'last_rating_time');
+  if (last && last.value) {
+    const d = new Date(last.value);
+    el.textContent = `上次自评: ${d.toLocaleString('zh-CN')}`;
+  } else {
+    el.textContent = '尚未进行自评';
+  }
+}
+
+// ============================================================
+// 诊断评估
+// ============================================================
+function renderDiagQuestion() {
+  if (diagStep >= DIAG_QUESTIONS.length) {
+    finishDiagnostic();
+    return;
+  }
+  const q = DIAG_QUESTIONS[diagStep];
+  document.getElementById('diag-q-num').textContent = `第 ${diagStep+1}/${DIAG_QUESTIONS.length} 题`;
+  document.getElementById('diag-question').textContent = q.q;
+  document.getElementById('diag-progress').style.width = ((diagStep)/DIAG_QUESTIONS.length*100) + '%';
+  document.getElementById('diag-prev').style.display = diagStep > 0 ? 'inline-flex' : 'none';
+
+  const optsDiv = document.getElementById('diag-options');
+  optsDiv.innerHTML = q.opts.map((o,i) => {
+    const selected = diagAnswers[diagStep] === i;
+    return `<button class="quiz-option${selected?' selected':''}" style="${selected?'border-color:var(--primary);background:#EBF0FF':''}" onclick="answerDiag(${i})">${o}</button>`;
+  }).join('');
+}
+
+function answerDiag(idx) {
+  diagAnswers[diagStep] = idx;
+  setTimeout(() => { diagStep++; renderDiagQuestion(); }, 200);
+}
+
+function prevDiag() {
+  if (diagStep > 0) { diagStep--; renderDiagQuestion(); }
+}
+
+async function finishDiagnostic() {
+  // 按 cat/sub 分组计算57个子单元得分
+  const healthDetails = {};
+  DIAG_QUESTIONS.forEach((q, i) => {
+    const ans = diagAnswers[i];
+    if (ans === null || ans === undefined) return;
+    const score = q.scores[ans];
+    const key = q.cat + '/' + q.sub;
+    if (!healthDetails[key]) {
+      healthDetails[key] = { cat: q.cat, sub: q.sub, score: 0, maxScore: 0, count: 0, questions: [] };
+    }
+    healthDetails[key].score += score;
+    healthDetails[key].maxScore += 3;  // 每题最高3分
+    healthDetails[key].count++;
+    if (score >= 2) healthDetails[key].questions.push({ q: q.q, score });
+  });
+
+  // 计算每个子单元的pct、level
+  // level: 低<33%, 中33-66%, 高>66%
+  Object.keys(healthDetails).forEach(key => {
+    const h = healthDetails[key];
+    h.pct = Math.round(h.score / h.maxScore * 100);
+    if (h.pct < 33) h.level = '低';
+    else if (h.pct < 67) h.level = '中';
+    else h.level = '高';
+  });
+
+  // 10大模块汇总（用于顶部摘要）
+  const moduleSummary = {};
+  Object.values(healthDetails).forEach(h => {
+    if (!moduleSummary[h.cat]) {
+      moduleSummary[h.cat] = { cat: h.cat, totalScore: 0, totalMax: 0, subs: [] };
+    }
+    moduleSummary[h.cat].totalScore += h.score;
+    moduleSummary[h.cat].totalMax += h.maxScore;
+    moduleSummary[h.cat].subs.push(h);
+  });
+
+  // 计算每个模块的总pct
+  Object.values(moduleSummary).forEach(m => {
+    m.pct = Math.round(m.totalScore / m.totalMax * 100);
+  });
+
+  await dbPut('diagnostic', {
+    id: 'latest',
+    results: diagAnswers,
+    healthDetails,   // 57子单元详细
+    moduleSummary,    // 10模块汇总
+    timestamp: Date.now()
+  });
+  // 保存到历史记录（只记得分，不记原始答案）
+  await dbPut('diag_history', {
+    timestamp: Date.now(),
+    healthDetails,
+    moduleSummary
+  });
+  autoBackup();
+
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-dashboard').classList.add('active');
+  currentScreen = 'dashboard';
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-screen="dashboard"]').classList.add('active');
+
+  await showDiagResultModal(healthDetails, moduleSummary);
+  renderGreeting();
+}
+
+async function showDiagResultModal(healthDetails, moduleSummary) {
+  // 如果未传入，从数据库读取
+  if (!healthDetails) {
+    const data = await dbGet('diagnostic', 'latest');
+    if (!data) return;
+    healthDetails = data.healthDetails;
+    moduleSummary = data.moduleSummary;
+  }
+  if (!healthDetails || !moduleSummary) return;
+
+  // 10大模块展示顺序
+  const moduleOrder = [
+    '效度量表', '临床综合征', '解离与边缘', '人格障碍',
+    '依恋类型', 'BigFive人格', '自杀自伤', '物质使用',
+    '性心理', '状态稳定'
+  ];
+
+  const moduleName = {
+    '效度量表': '📋 效度量表（评估问卷有效性）',
+    '临床综合征': '🩺 临床综合征',
+    '解离与边缘': '🌀 解离与边缘',
+    '人格障碍': '🎭 人格障碍倾向',
+    '依恋类型': '💕 依恋类型',
+    'BigFive人格': '🧠 Big Five人格特质',
+    '自杀自伤': '⚠️ 自杀自伤风险',
+    '物质使用': '💊 物质使用',
+    '性心理': '💗 性心理',
+    '状态稳定': '⚖️ 状态稳定性'
+  };
+
+  // 57个子单元描述
+  const subDescription = {
+    'L谎言': '测量被试是否故意让自己显得完美无瑕。高分提示回答不真实',
+    'F低频': '测量不认真或夸大回答的倾向。高分提示回答夸大或不认真',
+    'K防御': '测量主观抗拒问卷程度。高分提示防御性高，可能隐瞒问题',
+    '认真度': '评估对问卷的认真程度',
+    '反应风格': '检测是否存在全选某一项的倾向',
+    '社会期望': '测量按社会期望回答的倾向',
+    '抑郁': '抑郁症状严重程度（参考PHQ-9）',
+    '焦虑': '焦虑症状严重程度（参考GAD-7）',
+    '强迫': '强迫思维与行为',
+    '躯体化': '躯体化症状（躯体不适无器质性原因）',
+    '惊恐': '惊恐发作频率与严重度',
+    '偏执': '偏执观念',
+    '精神病性': '精神病性症状（参考MMPI精分分量表）',
+    '躁狂': '躁狂发作（参考MDQ）',
+    '双相抑郁': '双相障碍抑郁相',
+    'PTSD': '创伤后应激障碍症状',
+    '解离': '解离症状（参考DES）',
+    '边缘人格': '边缘型人格障碍倾向',
+    '现实感丧失': '现实感丧失',
+    '人格解体': '人格解体症状',
+    '偏执型人格': '偏执型人格障碍倾向',
+    '分裂样人格': '分裂样人格障碍倾向',
+    '分裂型人格': '分裂型人格障碍倾向',
+    '反社会人格': '反社会型人格障碍倾向',
+    '表演型人格': '表演型人格障碍倾向',
+    'NPD自恋': '自恋型人格障碍(NPD)倾向',
+    '回避型人格': '回避型人格障碍倾向',
+    '依赖型人格': '依赖型人格障碍倾向',
+    '强迫型人格': '强迫型人格障碍倾向',
+    '安全型依恋': '安全型依恋（高分=健康）',
+    '焦虑型依恋': '焦虑型依恋',
+    '回避型依恋': '回避型依恋',
+    '恐惧型依恋': '恐惧型依恋',
+    '神经质': '神经质倾向（情绪稳定性反向）',
+    '外向性': '外向性',
+    '开放性': '开放性',
+    '宜人性': '宜人性',
+    '尽责性': '尽责性',
+    '自杀意念': '自杀意念频率',
+    '自杀计划': '自杀计划程度',
+    '自杀意图': '自杀意图强度',
+    '自伤行为': '自伤行为频率',
+    '自伤冲动': '自伤冲动强度',
+    '酒精': '酒精使用障碍',
+    '药物': '药物滥用',
+    '烟草': '烟草依赖',
+    '其他物质': '其他物质使用',
+    '性取向认同': '性取向认同困惑',
+    '性认同困惑': '性别认同困惑',
+    '性功能': '性功能障碍',
+    '性创伤': '性创伤史',
+    '性成瘾': '性成瘾倾向',
+    '精神稳定': '精神状态稳定性',
+    '自身稳定': '自身认同与稳定',
+    '现实检验': '现实检验能力',
+    '自我认同': '自我认同感',
+    '情绪调节': '情绪调节能力'
+  };
+
+  // 57个子单元建议
+  const subAdvice = {
+    'L谎言': '请以更诚实、客观的态度重新评估，避免选择极端选项',
+    'F低频': '请认真阅读题目，根据实际状况作答',
+    'K防御': '尝试放下防御，承认自己也有脆弱的一面',
+    '认真度': '建议在安静环境下重新评估，确保认真作答',
+    '反应风格': '建议作答时根据每题实际情况选择，避免固定模式',
+    '社会期望': '尝试以真实自我作答，不必追求社会认可',
+    '抑郁': '建议增加日照和运动（每周3次有氧运动可显著改善抑郁），主动联系亲友，必要时寻求专业评估',
+    '焦虑': '尝试腹式呼吸（4-7-8呼吸法）、正念冥想；减少咖啡因摄入；如影响睡眠建议咨询专业人士',
+    '强迫': '建议寻求认知行为治疗（CBT），学习ERP暴露反应预防技术',
+    '躯体化': '建议先排除器质性病因，必要时寻求心身医学科评估',
+    '惊恐': '学习惊恐发作的应对技巧（如5-4-3-2-1接地法），必要时寻求精神科评估',
+    '偏执': '建议寻求专业心理评估，明确症状性质',
+    '精神病性': '⚠️ 建议尽快前往精神科就诊，进行专业评估和治疗',
+    '躁狂': '建议寻求精神科评估，排除双相障碍躁狂发作',
+    '双相抑郁': '建议寻求精神科评估，明确双相障碍诊断并接受规范治疗',
+    'PTSD': '建议寻求EMDR或创伤聚焦CBT等专业创伤治疗',
+    '解离': '建议寻求创伤导向的心理治疗，学习接地技术',
+    '边缘人格': '建议寻求DBT辩证行为疗法，这是目前对BPD最有效的循证治疗',
+    '现实感丧失': '学习接地技术（如5-4-3-2-1感官法），减少压力源',
+    '人格解体': '建议寻求专业心理治疗，排查潜在创伤',
+    '偏执型人格': '建议长期心理治疗改善人际信任',
+    '分裂样人格': '如影响社会功能建议寻求心理治疗',
+    '分裂型人格': '建议精神科评估，必要时药物联合心理治疗',
+    '反社会人格': '建议寻求认知行为治疗，重点改善行为控制',
+    '表演型人格': '建议心理治疗改善情绪调节与人际关系',
+    'NPD自恋': '建议长期心理治疗改善自大与共情能力',
+    '回避型人格': '建议CBT逐步暴露训练，改善社交回避',
+    '依赖型人格': '建议心理治疗提升自主性与决策能力',
+    '强迫型人格': '建议心理治疗提升灵活性与放松能力',
+    '安全型依恋': '继续保持健康的人际互动模式',
+    '焦虑型依恋': '建议通过心理治疗提升自我安抚能力与安全感',
+    '回避型依恋': '建议通过心理治疗探索回避背后的恐惧，逐步建立亲密关系',
+    '恐惧型依恋': '建议寻求创伤导向心理治疗，建立安全感',
+    '神经质': '建议通过正念冥想、规律运动提升情绪稳定性',
+    '外向性': '根据自身节奏平衡社交与独处时间',
+    '开放性': '继续保持对新体验的开放态度',
+    '宜人性': '在保持善良的同时注意设立个人边界',
+    '尽责性': '继续保持良好的自我管理与规划习惯',
+    '自杀意念': '⚠️ 立即拨打全国心理援助热线 400-161-9995 寻求专业帮助',
+    '自杀计划': '⚠️ 立即拨打生命热线 400-821-1215 或前往最近精神科急诊',
+    '自杀意图': '⚠️ 立即拨打北京心理危机干预中心 010-82951332',
+    '自伤行为': '请寻求专业心理治疗，DBT辩证行为疗法对自伤行为有效',
+    '自伤冲动': '建议学习DBT情绪调节与痛苦耐受技能，寻求专业支持',
+    '酒精': '建议减少饮酒，必要时寻求成瘾科或AA互助会帮助',
+    '药物': '建议寻求成瘾专科门诊评估与治疗',
+    '烟草': '建议戒烟，可使用尼古丁替代疗法或戒烟门诊',
+    '其他物质': '建议寻求成瘾专科评估与治疗',
+    '性取向认同': '如感困惑可寻求LGBTQ友善心理咨询',
+    '性认同困惑': '建议寻求性别认同专科心理咨询',
+    '性功能': '建议咨询泌尿/妇科或性心理咨询师',
+    '性创伤': '建议寻求创伤导向心理治疗（如EMDR）',
+    '性成瘾': '建议寻求性成瘾专科心理治疗',
+    '精神稳定': '建议寻求专业评估，排查情绪障碍',
+    '自身稳定': '建议规律作息，必要时寻求心身医学科评估',
+    '现实检验': '⚠️ 建议尽快前往精神科就诊，进行专业评估',
+    '自我认同': '建议通过心理咨询探索自我认同',
+    '情绪调节': '建议学习DBT情绪调节技能或正念冥想',
+    '_default_low': '当前处于健康范围，继续保持良好的生活习惯',
+    '_default_mid': '建议关注相关症状，必要时寻求专业评估',
+    '_default_high': '建议尽快预约精神科医生或心理治疗师进行专业评估和治疗'
+  };
+
+  // 构建 HTML
+  let html = `
+    <h3>初次心理评估报告</h3>
+    <p style="font-size:12px;color:var(--text-light);margin-bottom:8px">基于505题57子单元的多维度综合评估</p>
+    <div style="font-size:11px;color:var(--text-light);margin:8px 0;padding:8px;background:#FFF8E1;border-radius:4px">⚠️ 本评估仅供参考，不能替代专业临床诊断</div>
+  `;
+
+  // 效度量表特殊提示
+  const validityL = healthDetails['效度量表/L谎言'];
+  const validityF = healthDetails['效度量表/F低频'];
+  const validityK = healthDetails['效度量表/K防御'];
+
+  if (validityL && validityL.pct >= 50) {
+    html += `<div class="alert alert-danger" style="margin:8px 0">⚠️ 检测到回答可能不够真实（L谎言量表得分${validityL.pct}%），本次评估结果可靠性降低，建议以更客观的态度重新评估</div>`;
+  }
+  if (validityF && validityF.pct >= 50) {
+    html += `<div class="alert alert-danger" style="margin:8px 0">⚠️ 检测到可能存在夸大倾向（F量表得分${validityF.pct}%），请确认是否认真作答</div>`;
+  }
+  if (validityK && validityK.pct >= 60) {
+    html += `<div class="alert" style="margin:8px 0;background:#FFF3E0">📋 检测到防御性较高（K量表得分${validityK.pct}%），可能隐瞒了部分问题</div>`;
+  }
+
+  // 高风险预警（自杀/自伤）
+  const suicideRisk = ['自杀自伤/自杀意念', '自杀自伤/自杀计划', '自杀自伤/自杀意图', '自杀自伤/自伤行为', '自杀自伤/自伤冲动'];
+  const highRiskItems = suicideRisk.filter(k => healthDetails[k] && healthDetails[k].pct >= 50);
+  if (highRiskItems.length > 0) {
+    html += `
+      <div class="alert alert-danger" style="margin:8px 0;line-height:1.8">
+        <strong>🚨 紧急预警：检测到自杀自伤高风险</strong><br><br>
+        <strong>请立即寻求帮助：</strong><br>
+        🔴 全国心理援助热线：<strong>400-161-9995</strong>（24小时）<br>
+        🔴 北京心理危机干预中心：<strong>010-82951332</strong><br>
+        🔴 生命热线：<strong>400-821-1215</strong><br><br>
+        <strong>建议行动：</strong><br>
+        1. 立即告诉身边信任的人（家人/朋友/老师）<br>
+        2. 远离可能伤害自己的物品<br>
+        3. 前往最近的精神卫生中心急诊<br>
+        4. 不要独自承受，您不是一个人
+      </div>
+    `;
+  }
+
+  // 10大模块详情
+  for (const cat of moduleOrder) {
+    const m = moduleSummary[cat];
+    if (!m) continue;
+    const modulePct = m.pct;
+    const moduleColor = modulePct < 33 ? 'var(--success)' : modulePct < 67 ? 'var(--warning)' : 'var(--danger)';
+
+    html += `
+      <div class="card" style="margin:12px 0;padding:14px">
+        <div class="card-title" style="margin-bottom:8px">${moduleName[cat] || cat} <span class="badge" style="background:${moduleColor};color:white;margin-left:8px">${modulePct}%</span></div>
+        <div class="bar-row" style="margin:8px 0">
+          <div class="bar-track"><div class="bar-fill" style="width:${modulePct}%;background:${moduleColor}"></div></div>
+        </div>
+    `;
+
+    // 子单元列表
+    m.subs.forEach(sub => {
+      const subColor = sub.pct < 33 ? 'var(--success)' : sub.pct < 67 ? 'var(--warning)' : 'var(--danger)';
+      const advice = subAdvice[sub.sub] || (sub.level === '低' ? subAdvice._default_low : sub.level === '中' ? subAdvice._default_mid : subAdvice._default_high);
+      const desc = subDescription[sub.sub] || sub.sub;
+
+      html += `
+        <details style="margin:6px 0;border:1px solid var(--border);border-radius:6px;padding:6px">
+          <summary style="cursor:pointer;font-weight:600;font-size:13px">
+            <span>${sub.sub}</span>
+            <span class="badge" style="background:${subColor};color:white;margin-left:8px;font-size:11px">${sub.level} ${sub.pct}%</span>
+          </summary>
+          <div style="margin-top:6px;padding:4px;font-size:12px">
+            <p style="color:var(--text-light);margin:4px 0">${desc}</p>
+            <div class="bar-row" style="margin:4px 0">
+              <span class="bar-label" style="font-size:10px">得分</span>
+              <div class="bar-track" style="height:8px"><div class="bar-fill" style="width:${sub.pct}%;background:${subColor}"></div></div>
+              <span style="font-size:10px">${sub.score}/${sub.maxScore}</span>
+            </div>
+            ${sub.questions.length > 0 ? `<div style="margin:4px 0"><strong style="font-size:11px">命中症状项：</strong><ul style="margin:4px 0 4px 16px;font-size:11px;color:var(--text-light)">${sub.questions.slice(0,3).map(q => `<li>${q.q}</li>`).join('')}</ul></div>` : ''}
+            <div style="background:var(--bg);padding:4px;border-radius:4px;font-size:11px;margin-top:4px"><strong>建议：</strong>${advice}</div>
+          </div>
+        </details>
+      `;
+    });
+
+    html += `</div>`;
+  }
+
+  html += `<button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="closeDiagModal()">我知道了</button>`;
+
+  // 使用现有 overlay 或创建新的
+  let overlay = document.getElementById('diag-modal');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'diag-modal';
+    overlay.className = 'modal-overlay';
+    document.body.appendChild(overlay);
+  }
+  // 宽屏展示，支持滚动
+  overlay.innerHTML = `<div class="modal" style="max-width:800px;width:90vw;max-height:90vh;overflow-y:auto">${html}</div>`;
+  overlay.classList.add('show');
+}
+
+function closeDiagModal() {
+  const m = document.getElementById('diag-modal');
+  if (m) m.remove();
+}
+
+async function resetDiagnostic() {
+  if (!confirm('确定要重新进行初次评估吗？之前的评估结果将被覆盖。')) return;
+  diagStep = 0;
+  diagAnswers = new Array(DIAG_QUESTIONS.length).fill(null);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-diagnostic').classList.add('active');
+  currentScreen = 'diagnostic';
+  renderDiagQuestion();
+}
+
+// ============================================================
+// 题库（心理健康紧急筛查）
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; }
+  return a;
+}
+
+function startQuiz() {
+  const shuffled = shuffle(SCREENING_QUESTIONS);
+  quizQuestions = shuffled.slice(0, 20);
+  quizStep = 0;
+  quizTotalScore = 0;
+  quizCategoryScores = {};
+  document.getElementById('quiz-intro').style.display = 'none';
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('quiz-result').style.display = 'none';
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion() {
+  if (quizStep >= quizQuestions.length) { finishQuiz(); return; }
+  const q = quizQuestions[quizStep];
+  document.getElementById('quiz-counter').textContent = `第 ${quizStep+1}/20 题`;
+  document.getElementById('quiz-question').textContent = q[0];
+  document.getElementById('quiz-progress').style.width = (quizStep/20*100) + '%';
+
+  const optsDiv = document.getElementById('quiz-options');
+  optsDiv.innerHTML = [q[1], q[2], q[3], q[4]].map((label, i) =>
+    `<button class="quiz-option" onclick="answerQuiz(${i},this)">${label}</button>`
+  ).join('');
+}
+
+function answerQuiz(idx, el) {
+  if (quizStep >= quizQuestions.length) return;
+  const q = quizQuestions[quizStep];
+  if (!q) return;
+  const category = q[5];
+  quizTotalScore += idx;
+  if (!quizCategoryScores[category]) {
+    quizCategoryScores[category] = {total: 0, count: 0};
+  }
+  quizCategoryScores[category].total += idx;
+  quizCategoryScores[category].count++;
+
+  document.querySelectorAll('#quiz-options .quiz-option').forEach(b => {
+    b.style.pointerEvents = 'none';
+  });
+  el.style.borderColor = 'var(--primary)';
+  el.style.background = '#EBF0FF';
+
+  setTimeout(() => { quizStep++; renderQuizQuestion(); }, 400);
+}
+
+async function finishQuiz() {
+  document.getElementById('quiz-active').style.display = 'none';
+  document.getElementById('quiz-result').style.display = 'block';
+
+  const maxScore = 60;
+  let riskLevel, riskColor, riskText;
+  const riskPercent = Math.round(quizTotalScore / maxScore * 100);
+
+  if (quizTotalScore <= 15) {
+    riskLevel = 'low'; riskColor = 'var(--success)'; riskText = '低风险';
+  } else if (quizTotalScore <= 30) {
+    riskLevel = 'medium'; riskColor = 'var(--warning)'; riskText = '中风险';
+  } else if (quizTotalScore <= 45) {
+    riskLevel = 'high'; riskColor = '#E67E22'; riskText = '高风险';
+  } else {
+    riskLevel = 'urgent'; riskColor = 'var(--danger)'; riskText = '紧急';
+  }
+
+  const riskCard = document.getElementById('quiz-risk-card');
+  riskCard.innerHTML = `<div class="score-display"><div class="big-score" style="color:${riskColor}">${riskText}</div><div class="score-label">综合风险指数</div></div><div class="bar-row" style="margin-top:12px"><span class="bar-label" style="font-size:11px">风险指数</span><div class="bar-track" style="height:14px"><div class="bar-fill" style="width:${riskPercent}%;background:${riskColor};height:100%;border-radius:10px;transition:width .8s ease"></div></div><span style="font-size:12px;font-weight:600;color:${riskColor}">${riskPercent}%</span></div>`;
+
+  const catNames = {
+    suicide:'自杀风险', selfharm:'自伤行为', depression:'抑郁症状', anxiety:'焦虑症状',
+    bipolar:'双相倾向', dissociation:'解离症状', ptsd:'创伤应激', psychosis:'精神病性', substance:'物质滥用'
+  };
+  const catColors = {
+    suicide:'#E74C3C', selfharm:'#E91E63', depression:'#5B9BD5', anxiety:'#F39C12',
+    bipolar:'#9B59B6', dissociation:'#1ABC9C', ptsd:'#E67E22', psychosis:'#C0392B', substance:'#7F8C8D'
+  };
+
+  const catCard = document.getElementById('quiz-category-card');
+  catCard.innerHTML = '<div class="card-title"><span class="icon">📊</span>各维度风险指数</div>' +
+    Object.entries(quizCategoryScores).sort((a,b) => {
+      return Math.round(b[1].total/(b[1].count*3)*100) - Math.round(a[1].total/(a[1].count*3)*100);
+    }).map(([cat, data]) => {
+      const catPct = Math.round(data.total / (data.count * 3) * 100);
+      const color = catColors[cat] || 'var(--primary)';
+      const lc = catPct >= 67 ? 'var(--danger)' : catPct >= 34 ? 'var(--warning)' : 'var(--success)';
+      return `<div class="bar-row"><span class="bar-label">${catNames[cat]||cat}</span><div class="bar-track"><div class="bar-fill" style="width:${catPct}%;background:${color}"></div></div><span style="font-size:11px;font-weight:600;color:${lc}">${catPct}%</span></div>`;
+    }).join('');
+
+  const interventionDiv = document.getElementById('quiz-intervention');
+  if (riskLevel === 'high' || riskLevel === 'urgent') {
+    interventionDiv.innerHTML = `<div class="alert alert-danger" style="line-height:1.8"><strong>⚠️ 您的筛查结果显示较高风险，建议尽快寻求专业帮助。</strong><br><br><strong>🔴 全国心理援助热线：</strong>400-161-9995<br><strong>🔴 北京心理危机干预中心：</strong>010-82951332<br><strong>🔴 生命热线：</strong>400-821-1215<br><br><span style="font-size:12px">以上热线均为24小时免费服务，请在有需要时随时拨打。</span></div><div class="alert" style="line-height:1.6;margin-top:8px"><strong>📋 建议下一步行动：</strong><br>1. 尽快预约精神科医生或心理咨询师进行专业评估<br>2. 向信任的家人或朋友倾诉您的感受<br>3. 如果出现自杀或自伤念头，请立即拨打以上热线<br>4. 避免独自承受，您不是一个人在战斗</div>`;
+  } else if (riskLevel === 'medium') {
+    interventionDiv.innerHTML = `<div class="alert" style="line-height:1.6"><strong>📋 您的筛查结果显示中等风险</strong><br>建议关注自身心理健康，可考虑进行专业的心理咨询评估。<br>保持良好的作息、运动和社交习惯有助于心理健康。<br>如有需要，可拨打全国心理援助热线：400-161-9995</div>`;
+  } else {
+    interventionDiv.innerHTML = '';
+  }
+
+  await dbPut('quiz_results', {
+    id: 'latest', timestamp: Date.now(), score: quizTotalScore,
+    maxScore: maxScore, riskPercent: riskPercent,
+    categoryScores: quizCategoryScores, riskLevel: riskLevel
+  });
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('quiz-intro').style.display = 'block';
+  loadQuizHistory();
+}
+
+async function loadQuizHistory() {
+  const results = await dbGetAll('quiz_results');
+  const list = document.getElementById('quiz-history-list');
+  const validResults = results.filter(r => r.riskLevel);
+  if (validResults.length === 0) { list.innerHTML = ''; return; }
+  validResults.sort((a,b) => b.timestamp - a.timestamp);
+  const lv = {low:'低风险', medium:'中风险', high:'高风险', urgent:'紧急'};
+  const lc = {low:'success', medium:'warn', high:'warn', urgent:'danger'};
+  list.innerHTML = '<div class="card-title" style="margin-top:8px">📋 筛查历史</div>' +
+    validResults.slice(0, 5).map(r => {
+      const d = new Date(r.timestamp);
+      const rp = r.riskPercent !== undefined ? r.riskPercent : Math.round(r.score/60*100);
+      return `<div class="history-item"><span>${d.toLocaleDateString('zh-CN')} ${d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}</span><span class="badge badge-${lc[r.riskLevel]||'info'}">${lv[r.riskLevel]||r.riskLevel} ${rp}%</span></div>`;
+    }).join('');
+}
+
+// ============================================================
+// 图表绘制
+// ============================================================
+function filterByTimeRange(data, range) {
+  if (!data || data.length === 0) return [];
+  const now = Date.now();
+  let cutoff;
+  switch(range) {
+    case '7d': cutoff = now - 7*86400000; break;
+    case '30d': cutoff = now - 30*86400000; break;
+    case '90d': cutoff = now - 90*86400000; break;
+    default: return data;
+  }
+  return data.filter(d => d.timestamp >= cutoff);
+}
+
+function drawLineChart(canvas, datasets, labels, title, maxValue=10) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width * dpr;
+  const H = 280 * dpr;
+  canvas.width = W;
+  canvas.height = H;
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = '280px';
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width, h = 280;
+  const pad = {top:30, right:20, bottom:40, left:45};
+  const pw = w - pad.left - pad.right;
+  const ph = h - pad.top - pad.bottom;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background
+  ctx.fillStyle = '#FAFBFC';
+  ctx.fillRect(pad.left, pad.top, pw, ph);
+
+  // Grid lines
+  ctx.strokeStyle = '#E8ECF0';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + (ph / 5) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(w - pad.right, y); ctx.stroke();
+    ctx.fillStyle = '#7F8C8D';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxValue - i*(maxValue/5)), pad.left - 8, y + 4);
+  }
+
+  if (labels.length === 0) {
+    ctx.fillStyle = '#7F8C8D';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('暂无数据', w/2, h/2);
+    return;
+  }
+
+  // X labels
+  const maxLabels = Math.min(labels.length, 8);
+  const step = Math.max(1, Math.floor(labels.length / maxLabels));
+  ctx.fillStyle = '#7F8C8D';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < labels.length; i += step) {
+    const x = pad.left + (pw / Math.max(labels.length-1,1)) * i;
+    ctx.fillText(labels[i], x, h - pad.bottom + 16);
+  }
+
+  // Lines
+  const colors = ['#4F6EF7','#E74C3C','#2ECC71','#F39C12','#9B59B6'];
+  datasets.forEach((ds, di) => {
+    if (ds.data.length < 2) return;
+    const color = ds.color || colors[di % colors.length];
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ds.data.forEach((v,i) => {
+      const x = pad.left + (pw / Math.max(ds.data.length-1,1)) * i;
+      const y = pad.top + ph - (v / maxValue * ph);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Dots
+    ds.data.forEach((v,i) => {
+      const x = pad.left + (pw / Math.max(ds.data.length-1,1)) * i;
+      const y = pad.top + ph - (v / maxValue * ph);
+      ctx.fillStyle = color;
+      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#FFF';
+      ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI*2); ctx.fill();
+    });
+  });
+
+  // Legend
+  let lx = pad.left;
+  datasets.forEach((ds, i) => {
+    if (!ds.label) return;
+    const color = ds.color || colors[i % colors.length];
+    ctx.fillStyle = color;
+    ctx.fillRect(lx, 10, 12, 12);
+    ctx.fillStyle = '#2C3E50';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(ds.label, lx + 16, 21);
+    lx += ctx.measureText(ds.label).width + 40;
+  });
+
+  // Title
+  if (title) {
+    ctx.fillStyle = '#2C3E50';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, w/2, h - 8);
+  }
+}
+
+// ============================================================
+// AI 情绪趋势分析
+// ============================================================
+async function analyzeEmotionTrends() {
+  const emotions = await dbGetAll('emotion_logs');
+  if (emotions.length < 10) return null;
+
+  emotions.sort((a, b) => a.timestamp - b.timestamp);
+
+  // 取最近10条（或全部，如果<10）
+  const recent = emotions.slice(-10);
+
+  // 1. 主导情绪
+  const emotionCounts = {};
+  recent.forEach(e => { emotionCounts[e.emotion] = (emotionCounts[e.emotion] || 0) + 1; });
+  const dominantEmotion = Object.entries(emotionCounts).sort((a,b) => b[1] - a[1])[0][0];
+
+  // 2. 平均强度
+  const avgIntensity = recent.reduce((sum, e) => sum + e.intensity, 0) / recent.length;
+
+  // 3. 强度趋势（前5条 vs 后5条对比）
+  const firstHalfAvg = recent.slice(0, Math.floor(recent.length/2)).reduce((s,e) => s + e.intensity, 0) / Math.floor(recent.length/2);
+  const secondHalfAvg = recent.slice(Math.floor(recent.length/2)).reduce((s,e) => s + e.intensity, 0) / (recent.length - Math.floor(recent.length/2));
+  const trend = secondHalfAvg - firstHalfAvg;  // 正数=上升，负数=下降
+
+  // 4. 波动性（标准差）
+  const variance = recent.reduce((sum, e) => sum + Math.pow(e.intensity - avgIntensity, 2), 0) / recent.length;
+  const stdDev = Math.sqrt(variance);
+
+  // 5. 生成评价文本
+  let assessment = '';
+  let advice = '';
+
+  // 基于主导情绪
+  const emotionAdviceMap = {
+    '开心': { desc: '整体情绪偏向积极，呈现出较好的心理状态', advice: '继续保持当前的活动和社交节奏，记录让自己开心的事，建立正向反馈循环。' },
+    '兴奋': { desc: '近期情绪较为高涨，精力充沛', advice: '注意适当休息，避免过度消耗；可把当前精力用于创造性活动或长期目标。' },
+    '平静': { desc: '近期情绪平稳，处于相对稳定的状态', advice: '维持当前节奏，可尝试新的兴趣拓展，丰富日常生活。' },
+    '低落': { desc: '近期情绪持续偏低，可能存在抑郁倾向', advice: '建议增加日照和运动（每周3次有氧运动可显著改善抑郁），主动联系亲友，必要时寻求专业评估。' },
+    '悲伤': { desc: '近期情绪偏向悲伤，可能正在经历情绪困扰', advice: '允许自己悲伤，但尝试与信任的人倾诉；进行温和的活动如散步、听舒缓音乐。' },
+    '焦虑': { desc: '近期焦虑情绪较多，可能存在广泛性焦虑倾向', advice: '尝试腹式呼吸（4-7-8呼吸法）、正念冥想；减少咖啡因摄入；如影响睡眠建议咨询专业人士。' },
+    '愤怒': { desc: '近期愤怒情绪较多，情绪调节可能存在困难', advice: '识别触发因素，尝试延迟反应（数到10）；规律运动有助于释放愤怒；学习非暴力沟通技巧。' },
+    '恐惧': { desc: '近期恐惧情绪较多，可能存在特定恐惧或创伤反应', advice: '避免独自承受，建议寻求专业心理评估； grounding技术可缓解急性恐惧发作。' },
+    '厌恶': { desc: '近期厌恶情绪较多，可能与特定人或环境有关', advice: '识别厌恶的具体来源，评估是否可调整环境或心态；如涉及创伤建议咨询专业人士。' },
+    '惊恐': { desc: '近期惊恐情绪较多，可能存在惊恐发作倾向', advice: '学习腹式呼吸与 grounding 技术，识别惊恐发作的早期信号；如频繁发作建议咨询精神科医生。' }
+  };
+
+  const ea = emotionAdviceMap[dominantEmotion] || { desc: '情绪状态多样化', advice: '保持情绪觉察，记录触发事件有助于自我理解。' };
+  assessment = `最近${recent.length}次记录中，主导情绪为「${dominantEmotion}」(占比${Math.round(emotionCounts[dominantEmotion]/recent.length*100)}%)，平均情绪强度${avgIntensity.toFixed(1)}/10。${ea.desc}。`;
+
+  // 加入趋势和波动分析
+  if (Math.abs(trend) >= 1.5) {
+    assessment += trend > 0 ? ` 强度呈上升态势(+${trend.toFixed(1)})，情绪反应加剧。` : ` 强度呈下降态势(${trend.toFixed(1)})，情绪有所缓和。`;
+  } else {
+    assessment += ' 强度整体保持稳定。';
+  }
+
+  if (stdDev >= 2) {
+    assessment += ` 情绪波动较大(标准差${stdDev.toFixed(1)})，提示情绪调节可能不够稳定。`;
+  } else {
+    assessment += ` 情绪波动较小(标准差${stdDev.toFixed(1)})，状态较为稳定。`;
+  }
+
+  advice = ea.advice;
+
+  // 高风险预警
+  if (avgIntensity >= 7 && ['低落','悲伤','焦虑','愤怒','恐惧','厌恶','惊恐'].includes(dominantEmotion)) {
+    advice += ' ⚠️ 您的情绪强度较高且为负向情绪，建议立即联系全国心理援助热线 400-161-9995 寻求专业帮助。';
+  }
+
+  const result = {
+    analysisTime: Date.now(),
+    sampleSize: recent.length,
+    dominantEmotion,
+    avgIntensity: Number(avgIntensity.toFixed(2)),
+    trend: Number(trend.toFixed(2)),
+    stdDev: Number(stdDev.toFixed(2)),
+    assessment,
+    advice,
+    recordCount: emotions.length
+  };
+
+  await dbPut('settings', { key: 'emotion_analysis', value: result });
+  return result;
+}
+
+async function renderCharts() {
+  const emotions = await dbGetAll('emotion_logs');
+  const ratings = await dbGetAll('self_ratings');
+  const quizzes = await dbGetAll('quiz_results');
+
+  const femotions = filterByTimeRange(emotions, chartTimeRange);
+  const fratings = filterByTimeRange(ratings, chartTimeRange);
+  const fquizzes = filterByTimeRange(quizzes, chartTimeRange);
+
+  // Emotion chart
+  const eLabels = femotions.map(e => {
+    const d = new Date(e.timestamp);
+    return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  });
+  const eData = femotions.map(e => e.intensity);
+  drawLineChart(document.getElementById('chart-emotion'),
+    [{label:'情绪强度', data:eData, color:'#4F6EF7'}], eLabels, '情绪强度趋势');
+
+  // Self rating chart
+  const sLabels = fratings.map(r => {
+    const d = new Date(r.timestamp);
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  });
+  drawLineChart(document.getElementById('chart-self'), [
+    {label:'理智', data:fratings.map(r=>r.rational), color:'#4F6EF7'},
+    {label:'情绪', data:fratings.map(r=>r.emotion), color:'#E74C3C'},
+    {label:'状态', data:fratings.map(r=>r.state), color:'#2ECC71'}
+  ], sLabels, '自我评分趋势');
+
+  // Quiz chart —— 风险指数趋势
+  const qLabels = fquizzes.map(q => {
+    const d = new Date(q.timestamp);
+    return `${d.getMonth()+1}/${d.getDate()}`;
+  });
+  const qData = fquizzes.map(q => {
+    if (q.riskPercent !== undefined) return q.riskPercent;
+    if (q.maxScore) return Math.round(q.score / q.maxScore * 100);
+    return 0;
+  });
+  drawLineChart(document.getElementById('chart-quiz-score'),
+    [{label:'风险指数', data:qData, color:'#E74C3C'}], qLabels, '风险指数趋势 (数值越高风险越大)', 100);
+
+  // Diagnostic results
+  const diag = await dbGet('diagnostic', 'latest');
+  const diagCard = document.getElementById('diag-result-card');
+  const diagContent = document.getElementById('diag-result-content');
+  if (diag && diag.moduleSummary) {
+    diagCard.style.display = 'block';
+    const moduleOrder = ['效度量表','临床综合征','解离与边缘','人格障碍','依恋类型','BigFive人格','自杀自伤','物质使用','性心理','状态稳定'];
+    diagContent.innerHTML = moduleOrder.filter(c => diag.moduleSummary[c]).map(c => {
+      const m = diag.moduleSummary[c];
+      const color = m.pct < 33 ? 'var(--success)' : m.pct < 67 ? 'var(--warning)' : 'var(--danger)';
+      return `<div class="bar-row"><span class="bar-label" style="font-size:11px">${c}</span><div class="bar-track"><div class="bar-fill" style="width:${m.pct}%;background:${color}"></div></div><span style="font-size:11px">${m.pct}%</span></div>`;
+    }).join('') + '<p style="font-size:11px;color:var(--text-light);margin-top:8px;text-align:center">⚠️ 本评估仅供参考，不能替代专业诊断</p>';
+  }
+
+  // AI 情绪分析卡片
+  const analysisSetting = await dbGet('settings', 'emotion_analysis');
+  const aiCard = document.getElementById('ai-analysis-card');
+  if (analysisSetting && analysisSetting.value) {
+    const a = analysisSetting.value;
+    const trendColor = a.trend > 1.5 ? 'var(--danger)' : a.trend < -1.5 ? 'var(--success)' : 'var(--text-light)';
+    aiCard.innerHTML = `
+      <div class="card-title"><span class="icon">🤖</span>AI 情绪分析</div>
+      <p style="font-size:12px;color:var(--text-light);margin-bottom:8px">基于最近${a.sampleSize}次记录（共${a.recordCount}次）</p>
+      <div style="display:flex;gap:8px;margin:8px 0;flex-wrap:wrap">
+        <span class="badge badge-info">主导：${a.dominantEmotion}</span>
+        <span class="badge badge-info">均强度：${a.avgIntensity}</span>
+        <span class="badge" style="background:${trendColor};color:white">趋势：${a.trend > 0 ? '+' : ''}${a.trend}</span>
+        <span class="badge badge-info">波动：${a.stdDev}</span>
+      </div>
+      <p style="font-size:13px;line-height:1.6;margin:8px 0">${a.assessment}</p>
+      <div class="alert" style="font-size:13px;line-height:1.6"><strong>建议：</strong>${a.advice}</div>
+      <p style="font-size:11px;color:var(--text-light);text-align:right;margin-top:6px">更新于 ${new Date(a.analysisTime).toLocaleString('zh-CN')}</p>
+    `;
+    aiCard.style.display = 'block';
+  } else {
+    if (aiCard) aiCard.style.display = 'none';
+  }
+}
+
+function updateCharts(range, btn) {
+  chartTimeRange = range;
+  document.querySelectorAll('#chart-filter button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCharts();
+}
+
+// ============================================================
+// 数据管理
+// ============================================================
+async function clearAllData() {
+  if (!confirm('确定要清除所有数据吗？此操作不可恢复！')) return;
+  await dbClear('diagnostic');
+  await dbClear('diag_history');
+  await dbClear('emotion_logs');
+  await dbClear('self_ratings');
+  await dbClear('quiz_results');
+  await dbPut('settings', {key:'reminder_enabled', value:false});
+  document.getElementById('reminder-toggle').checked = false;
+  stopReminder();
+  showToast('所有数据已清除');
+  diagStep = 0;
+  diagAnswers = new Array(DIAG_QUESTIONS.length).fill(null);
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-diagnostic').classList.add('active');
+  currentScreen = 'diagnostic';
+  renderDiagQuestion();
+}
+
+// ============================================================
+// 评估历史记录（只记得分）
+// ============================================================
+async function viewDiagHistory() {
+  const records = await dbGetAll('diag_history');
+  if (!records || records.length === 0) {
+    showToast('暂无评估历史记录');
+    return;
+  }
+  records.sort((a, b) => b.timestamp - a.timestamp);
+
+  let html = `<h3>📊 评估历史记录</h3><p style="font-size:12px;color:var(--text-light);margin-bottom:8px">共 ${records.length} 次评估（仅保存得分）</p>`;
+
+  records.forEach(r => {
+    const dateStr = new Date(r.timestamp).toLocaleString('zh-CN');
+    const modules = r.moduleSummary || {};
+    const moduleValues = Object.values(modules);
+    const avgPct = moduleValues.length > 0
+      ? Math.round(moduleValues.reduce((s, m) => s + m.pct, 0) / moduleValues.length)
+      : 0;
+    const highRiskSubs = [];
+    Object.values(r.healthDetails || {}).forEach(h => { if (h.pct >= 67) highRiskSubs.push(h.sub); });
+    const overallColor = avgPct < 33 ? 'var(--success)' : avgPct < 67 ? 'var(--warning)' : 'var(--danger)';
+
+    html += `
+      <details style="margin:8px 0;border:1px solid var(--border);border-radius:6px;padding:8px">
+        <summary style="cursor:pointer;font-weight:600;font-size:13px">
+          <span>📅 ${dateStr}</span>
+          <span class="badge" style="background:${overallColor};color:white;margin-left:8px;font-size:11px">综合 ${avgPct}%</span>
+        </summary>
+        <div style="margin-top:8px;font-size:12px">
+          <div class="bar-row" style="margin:4px 0">
+            <span class="bar-label">综合得分</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${avgPct}%;background:${overallColor}"></div></div>
+            <span style="font-size:10px">${avgPct}%</span>
+          </div>
+          ${highRiskSubs.length > 0 ? `<div style="color:var(--danger);margin:4px 0">⚠️ 高风险项：${highRiskSubs.join('、')}</div>` : '<div style="color:var(--success);margin:4px 0">✅ 无高风险项</div>'}
+          <details style="margin:4px 0">
+            <summary style="font-size:11px;color:var(--text-light)">查看10大模块得分</summary>
+            <ul style="margin:4px 0 4px 16px;font-size:11px">
+              ${moduleValues.map(m => `<li>${m.cat}：${m.pct}%</li>`).join('')}
+            </ul>
+          </details>
+          <details style="margin:4px 0">
+            <summary style="font-size:11px;color:var(--text-light)">查看57个子单元得分</summary>
+            <ul style="margin:4px 0 4px 16px;font-size:11px">
+              ${Object.values(r.healthDetails || {}).map(h => {
+                const icon = h.pct < 33 ? '✅' : h.pct < 67 ? '⚠️' : '🔴';
+                return `<li>${icon} ${h.sub}：${h.pct}% (${h.score}/${h.maxScore})</li>`;
+              }).join('')}
+            </ul>
+          </details>
+        </div>
+      </details>
+    `;
+  });
+
+  html += `<button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="closeDiagModal()">关闭</button>`;
+
+  let overlay = document.getElementById('diag-modal');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'diag-modal';
+    overlay.className = 'modal-overlay';
+    document.body.appendChild(overlay);
+  }
+  overlay.innerHTML = `<div class="modal" style="max-width:800px;width:90vw;max-height:90vh;overflow-y:auto">${html}</div>`;
+  overlay.classList.add('show');
+}
+
+async function downloadDiagHistory() {
+  const records = await dbGetAll('diag_history');
+  if (!records || records.length === 0) {
+    showToast('暂无评估历史记录');
+    return;
+  }
+  records.sort((a, b) => a.timestamp - b.timestamp);
+
+  const exportRecords = records.map(r => {
+    const record = {
+      评估时间: new Date(r.timestamp).toLocaleString('zh-CN'),
+      timestamp: r.timestamp,
+      模块得分: {},
+      子单元得分: {}
+    };
+    Object.values(r.moduleSummary || {}).forEach(m => {
+      record.模块得分[m.cat] = `${m.pct}% (${m.totalScore}/${m.totalMax})`;
+    });
+    Object.values(r.healthDetails || {}).forEach(h => {
+      record.子单元得分[h.sub] = `${h.pct}% (${h.score}/${h.maxScore}) [${h.level}]`;
+    });
+    return record;
+  });
+
+  const data = {
+    title: '心理健康评估历史记录',
+    total_records: records.length,
+    exported_at: new Date().toISOString(),
+    records: exportRecords
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `diag_history_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`已导出 ${records.length} 条评估记录`);
+}
+
+async function exportData() {
+  const data = {
+    diagnostic: await dbGet('diagnostic', 'latest'),
+    emotion_logs: await dbGetAll('emotion_logs'),
+    self_ratings: await dbGetAll('self_ratings'),
+    quiz_results: await dbGetAll('quiz_results'),
+    exported_at: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `mental_health_export_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('数据已导出');
+}
+
+// ============================================================
+// 问候语
+// ============================================================
+function renderGreeting() {
+  const h = new Date().getHours();
+  let g;
+  if (h < 6) g = '夜深了，注意休息 🌙';
+  else if (h < 9) g = '早上好，新的一天开始了 ☀️';
+  else if (h < 12) g = '上午好，保持好心情 🌤️';
+  else if (h < 14) g = '中午好，记得适当休息 🌻';
+  else if (h < 18) g = '下午好，继续加油 💪';
+  else if (h < 22) g = '晚上好，放松一下 🌆';
+  else g = '夜深了，准备休息吧 🌙';
+  document.getElementById('greeting-text').textContent = g;
+}
+
+// ============================================================
+// 初始化
+// ============================================================
+async function init() {
+  await openDB();
+  renderEmotionGrid();
+  renderGreeting();
+
+  // Check if diagnostic done
+  const diag = await dbGet('diagnostic', 'latest');
+  if (!diag) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-diagnostic').classList.add('active');
+    currentScreen = 'diagnostic';
+    renderDiagQuestion();
+  } else {
+    document.getElementById('screen-dashboard').classList.add('active');
+    currentScreen = 'dashboard';
+  }
+
+  // Restore reminder setting
+  const reminderSetting = await dbGet('settings', 'reminder_enabled');
+  if (reminderSetting && reminderSetting.value) {
+    document.getElementById('reminder-toggle').checked = true;
+    if (Notification.permission === 'granted') startReminder();
+  }
+
+  updateLastRatingTime();
+
+  // Previous button for diagnostic
+  document.getElementById('diag-prev').addEventListener('click', prevDiag);
+}
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+init();
+
+</script>
+
+<script>
+
+  /* ---------- 卡通形象选择（仅本地、仅装饰） ---------- */
+  function selectGender(g, btn) {
+    try { localStorage.setItem('psy_gender', g); } catch (e) {}
+    document.querySelectorAll('.gender-opt').forEach(function (b) {
+      b.classList.toggle('selected', b === btn);
+    });
+    var av = document.getElementById('psy-avatar');
+    if (av) {
+      av.src = g === 'girl' ? 'assets/psych/girl.svg' : 'assets/psych/boy.svg';
+      av.hidden = false;
+    }
+    var lb = document.getElementById('psy-gender-label');
+    if (lb) lb.textContent = g === 'girl' ? '当前形象：女生' : '当前形象：男生';
+  }
+  (function initGender() {
+    var g = null;
+    try { g = localStorage.getItem('psy_gender'); } catch (e) {}
+    if (!g) return;
+    var btn = document.querySelector('.gender-opt[data-gender="' + g + '"]');
+    if (btn) selectGender(g, btn);
+  })();
+
+</script>
+
+</body>
+</html>
