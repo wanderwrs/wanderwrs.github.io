@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <rect width="240" height="240" rx="120" fill="#F1ECDE"/>
+  <circle cx="120" cy="120" r="104" fill="#FAF6EC"/>
+  <!-- 肩颈 -->
+  <path d="M52 240c0-38 30-62 68-62s68 24 68 62z" fill="#2E8B6E"/>
+  <path d="M104 172h32v20a16 16 0 0 1-32 0z" fill="#EFC7A8"/>
+  <!-- 头发（后层） -->
+  <path d="M62 128c0-42 24-66 58-66s58 24 58 66c0 22-6 38-14 48H76c-8-10-14-26-14-48z" fill="#3A2C28"/>
+  <!-- 头 -->
+  <ellipse cx="120" cy="118" rx="43" ry="48" fill="#F3D3B5"/>
+  <!-- 刘海 -->
+  <path d="M77 110c0-28 19-46 43-46s43 18 43 46c0 4-1 8-3 11-3-15-9-23-19-27-8-3-17-2-25 2-9 4-15 13-18 25-12-2-18-5-21-11z" fill="#3A2C28"/>
+  <path d="M77 110c-3 12-2 24 2 32-9-6-13-20-11-30z" fill="#3A2C28"/>
+  <path d="M163 110c3 12 2 24-2 32 9-6 13-20 11-30z" fill="#3A2C28"/>
+  <!-- 五官 -->
+  <circle cx="104" cy="118" r="3.6" fill="#23302A"/>
+  <circle cx="136" cy="118" r="3.6" fill="#23302A"/>
+  <path d="M101 100c4-4 10-5 14-3M125 97c4-2 10-1 14 3" stroke="#3A2C28" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M109 136c4 5 18 5 22 0" stroke="#B4695A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <circle cx="94" cy="130" r="6" fill="#EFBFA8" opacity="0.75"/>
+  <circle cx="146" cy="130" r="6" fill="#EFBFA8" opacity="0.75"/>
+  <!-- 发夹 -->
+  <path d="M150 82l10 6-10 6z" fill="#C9A227"/>
+  <!-- 衣领 -->
+  <path d="M94 178l26 16 26-16 6 10-32 20-32-20z" fill="#1F7A5C"/>
+</svg>
