@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240" role="img" aria-label="安静的女生卡通形象">
+  <defs>
+    <radialGradient id="bg2" cx="38%" cy="26%" r="80%">
+      <stop offset="0%" stop-color="#FFFDF6"/>
+      <stop offset="100%" stop-color="#F1ECDE"/>
+    </radialGradient>
+    <linearGradient id="sweater2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2E8B6E"/>
+      <stop offset="100%" stop-color="#25755C"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="120" cy="120" r="118" fill="url(#bg2)"/>
+  <circle cx="120" cy="120" r="104" fill="#FAF6EC"/>
+
+  <!-- 后层头发 -->
+  <path d="M64 118c0-40 25-62 56-62s56 22 56 62c0 26-6 44-14 56H78c-8-12-14-30-14-56z" fill="#3A2C28"/>
+
+  <!-- 身体 -->
+  <path d="M44 240c0-44 32-68 76-68s76 24 76 68z" fill="url(#sweater2)"/>
+  <path d="M96 176l24 18 24-18 7 9-31 22-31-22z" fill="#1F7A5C"/>
+  <path d="M116 194h8v46h-8z" fill="#FAF6EC" opacity="0.55"/>
+
+  <!-- 脖子 -->
+  <rect x="106" y="146" width="28" height="30" rx="13" fill="#EFC7A8"/>
+
+  <!-- 头 -->
+  <ellipse cx="120" cy="112" rx="44" ry="48" fill="#F3D3B5"/>
+
+  <!-- 刘海 -->
+  <path d="M76 108c0-34 19-54 44-54s44 20 44 54c0 5-1 9-3 13-3-16-9-26-19-31-9-4-20-3-29 2-10 5-17 15-20 29-12-2-17-6-17-13z" fill="#3A2C28"/>
+  <path d="M76 108c-3 13-2 26 3 34-10-7-14-22-12-32z" fill="#3A2C28"/>
+  <path d="M164 108c3 13 2 26-3 34 10-7 14-22 12-32z" fill="#3A2C28"/>
+  <path d="M96 72c6-8 16-12 26-11" stroke="#4A3A34" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.7"/>
+
+  <!-- 发夹 -->
+  <rect x="150" y="76" width="16" height="7" rx="3.5" fill="#C9A227" transform="rotate(18 158 79.5)"/>
+
+  <!-- 眉毛 -->
+  <path d="M99 98c4-4 11-5 16-3" stroke="#3A2C28" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+  <path d="M125 95c5-2 12-1 16 3" stroke="#3A2C28" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+
+  <!-- 闭眼微笑 -->
+  <path d="M98 116c4 5 10 5 14 0" stroke="#23302A" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+  <path d="M128 116c4 5 10 5 14 0" stroke="#23302A" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+
+  <!-- 腮红与嘴 -->
+  <circle cx="90" cy="131" r="6" fill="#EFBFA8" opacity="0.72"/>
+  <circle cx="150" cy="131" r="6" fill="#EFBFA8" opacity="0.72"/>
+  <path d="M110 134c4 6 16 6 20 0" stroke="#B4695A" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+
+  <!-- 装饰 -->
+  <circle cx="48" cy="72" r="3" fill="#1F7A5C" opacity="0.22"/>
+  <circle cx="194" cy="164" r="4" fill="#1F7A5C" opacity="0.16"/>
+</svg>
