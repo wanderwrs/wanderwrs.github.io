@@ -42,7 +42,7 @@ a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-
 .wrap { max-width: 980px; margin: 0 auto; padding: 0 24px; }
 
 /* ---------- 顶部导航（与站点其他页面一致） ---------- */
-.topbar { position: sticky; top: 0; z-index: 20; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topbar { position: sticky; top: 0; z-index: 20; background: var(--glass); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
 .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
 .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
 .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
@@ -51,7 +51,7 @@ a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-
 .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
 .nav-links a:hover { color: var(--accent); text-decoration: none; }
 .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
-.nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+.nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: var(--panel); transition: border-color 0.2s, color 0.2s; }
 .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
 .nav-drop { position: relative; }
@@ -67,7 +67,7 @@ a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-
 .nav-drop.open .caret { transform: rotate(180deg); }
 .nav-drop-menu {
   position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px;
-  background: #fff; border: 1px solid var(--line); border-radius: 9px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
   box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px;
   display: none; flex-direction: column; gap: 2px; z-index: 30;
 }
@@ -192,7 +192,7 @@ a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 .quiz__input::placeholder { color: #A99E8C; }
-.quiz__input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.12); }
+.quiz__input:focus { border-color: var(--accent); background: var(--panel); box-shadow: 0 0 0 3px rgba(31, 122, 92, 0.12); }
 
 .code-submit {
   width: 100%;
@@ -258,7 +258,7 @@ a:hover { color: var(--accent-deep); text-decoration: underline; text-underline-
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
-.seal-again:hover { color: var(--accent); border-color: var(--accent); background: #fff; }
+.seal-again:hover { color: var(--accent); border-color: var(--accent); background: var(--panel); }
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 720px) {

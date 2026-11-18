@@ -41,7 +41,7 @@
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 0 24px; }
 
-  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(250, 246, 236, 0.88); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+  .topbar { position: sticky; top: 0; z-index: 20; background: var(--glass); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
   .topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--sky)); opacity: 0.5; }
   .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: 58px; }
   .brand { font-family: var(--mono); font-size: 0.92rem; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
@@ -50,7 +50,7 @@
   .nav-links a { color: var(--ink-2); font-size: 0.9rem; }
   .nav-links a:hover { color: var(--accent); text-decoration: none; }
   .nav-links a.num::before { content: attr(data-n); font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 4px; }
-  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: #fff; transition: border-color 0.2s, color 0.2s; }
+  .nav-github { font-family: var(--mono); font-size: 0.85rem; border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; color: var(--ink); background: var(--panel); transition: border-color 0.2s, color 0.2s; }
   .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
   .nav-drop { position: relative; }
@@ -66,7 +66,7 @@
   .nav-drop.open .caret { transform: rotate(180deg); }
   .nav-drop-menu {
     position: absolute; top: calc(100% + 12px); right: 0; min-width: 176px;
-    background: #fff; border: 1px solid var(--line); border-radius: 9px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
     box-shadow: 0 12px 26px rgba(35, 48, 42, 0.12); padding: 7px;
     display: none; flex-direction: column; gap: 2px; z-index: 30;
   }
@@ -90,7 +90,7 @@
     background:
       radial-gradient(420px 240px at 16% 0%, rgba(78, 159, 203, 0.10), transparent 64%),
       radial-gradient(420px 260px at 88% 108%, rgba(31, 122, 92, 0.10), transparent 64%),
-      #fff;
+      var(--panel);
     padding: 52px 30px;
     text-align: center;
   }
@@ -136,6 +136,65 @@
     .music-stage { padding: 40px 20px; }
   }
   .site-footer { border-top: 1px solid var(--line); padding: 30px 0 40px; color: var(--ink-2); font-size: 0.88rem; }
+</style>
+<script>
+/* 主题预载（防闪烁）：本地记忆 > 系统偏好（wx-enhance） */
+(function(){try{var t=localStorage.getItem('wxTheme');if(t!=='dark'&&t!=='light'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}}catch(e){}})();
+</script>
+<style>
+/* ===== 夜航主题 · 全站增强 ===== */
+:root { --panel: #fff; --glass: rgba(250, 246, 236, 0.92); }
+html[data-theme="dark"] {
+  --paper: #141F1A;
+  --paper-2: #1A2721;
+  --ink: #D8E1DB;
+  --ink-2: #93A49A;
+  --line: #2C3A32;
+  --accent: #3BA37F;
+  --accent-deep: #7BCBA8;
+  --sky: #7CBBD9;
+  --chip: #203028;
+  --panel: #1B2721;
+  --glass: rgba(20, 31, 26, 0.92);
+  color-scheme: dark;
+}
+html[data-theme="dark"] body {
+  background:
+    radial-gradient(720px 420px at 8% -4%, rgba(59, 163, 127, 0.09), transparent 62%),
+    radial-gradient(780px 480px at 97% 103%, rgba(124, 187, 217, 0.08), transparent 62%),
+    var(--paper);
+}
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .gate { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); }
+/* 主题按钮 */
+.theme-btn {
+  appearance: none; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--panel); color: var(--ink);
+  font-family: var(--mono); font-size: 0.9rem; line-height: 1;
+  width: 30px; height: 30px; cursor: pointer; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: border-color 0.2s, color 0.2s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* 阅读进度条 */
+.read-progress {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  width: 0; height: 2px; border-radius: 0 2px 2px 0;
+  background: linear-gradient(90deg, var(--accent), var(--sky));
+  pointer-events: none;
+}
+/* 返回顶部 */
+.back-top {
+  position: fixed; right: 26px; bottom: 26px; z-index: 90;
+  width: 42px; height: 42px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--panel);
+  color: var(--ink-2); font-family: var(--mono); font-size: 1.1rem; cursor: pointer;
+  box-shadow: 0 8px 18px rgba(35, 48, 42, 0.16);
+  opacity: 0; pointer-events: none; transform: translateY(8px);
+  transition: opacity 0.25s, transform 0.25s, color 0.2s, border-color 0.2s;
+}
+.back-top.show { opacity: 1; pointer-events: auto; transform: none; }
+.back-top:hover { color: var(--accent); border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -246,5 +305,44 @@
   });
 </script>
 
+<script>
+/* 全站增强：夜航切换 · 阅读进度 · 返回顶部（wx-enhance） */
+(function () {
+  var de = document.documentElement;
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'theme-btn';
+  btn.title = '切换 夜航 / 白昼 主题';
+  var setIcon = function () { btn.textContent = de.getAttribute('data-theme') === 'dark' ? '☀' : '☾'; };
+  btn.addEventListener('click', function () {
+    var next = de.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    if (next === 'dark') { de.setAttribute('data-theme', 'dark'); } else { de.removeAttribute('data-theme'); }
+    try { localStorage.setItem('wxTheme', next); } catch (e) {}
+    setIcon();
+  });
+  setIcon();
+  var nav = document.querySelector('.nav-links') || document.querySelector('.topbar-inner');
+  if (nav) { nav.appendChild(btn); }
+  var prog = document.createElement('i');
+  prog.className = 'read-progress';
+  document.body.appendChild(prog);
+  var top = document.createElement('button');
+  top.type = 'button';
+  top.className = 'back-top';
+  top.title = '返回顶部';
+  top.textContent = '↑';
+  top.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  document.body.appendChild(top);
+  var upd = function () {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    prog.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+    if (h.scrollTop > 600) { top.classList.add('show'); } else { top.classList.remove('show'); }
+  };
+  window.addEventListener('scroll', upd, { passive: true });
+  window.addEventListener('resize', upd);
+  upd();
+})();
+</script>
 </body>
 </html>
