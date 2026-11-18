@@ -1,0 +1,15 @@
+name: counter-keepalive
+
+# 定时轻触计数服务只读端点，防止其免费实例休眠导致访客计数超时
+# 注意：使用 /get/ 只读端点，不会使计数 +1
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping counter API (read-only)
+        run: curl -sS --max-time 20 "https://abacus.jasoncameron.dev/get/wanderwrs-home/visit" > /dev/null || true
