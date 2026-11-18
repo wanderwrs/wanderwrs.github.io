@@ -162,6 +162,21 @@
   }
   .nav-drop-menu a:hover { background: var(--chip); color: var(--accent); text-decoration: none; }
 
+  /* ---------- 来访计数 ---------- */
+  .nav-count {
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    color: var(--ink-2);
+    letter-spacing: 0.03em;
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .nav-count b { color: var(--accent); font-weight: 600; }
+  @media (max-width: 860px) {
+    .nav-count { display: none !important; }
+  }
+
   /* ---------- Hero ---------- */
   .hero { position: relative; overflow: hidden; padding: 84px 0 72px; }
   .hero > .wrap { position: relative; z-index: 1; }
@@ -811,6 +826,7 @@
         </div>
       </div>
       <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
+      <span class="nav-count" id="busuanzi_container_site_pv" style="display:none">您是第 <b id="busuanzi_value_site_pv"></b> 位来访者</span>
     </nav>
   </div>
 </header>
@@ -1463,5 +1479,20 @@
   })();
 </script>
 
+<!-- 不蒜子计数：主页每次打开计一次，持续累计 -->
+<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script>
+  // 计数千分位显示（例：12345 → 12,345）
+  (function () {
+    var el = document.getElementById('busuanzi_value_site_pv');
+    if (!el) return;
+    new MutationObserver(function () {
+      var t = el.textContent;
+      if (t.indexOf(',') >= 0) return;
+      var n = parseInt(t, 10);
+      if (!isNaN(n)) el.textContent = n.toLocaleString('zh-CN');
+    }).observe(el, { childList: true, characterData: true, subtree: true });
+  })();
+</script>
 </body>
 </html>
