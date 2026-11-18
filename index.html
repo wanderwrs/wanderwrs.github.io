@@ -86,16 +86,20 @@
     font-weight: 600;
     color: var(--ink);
     letter-spacing: 0.02em;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .brand .dot { color: var(--accent); }
   .nav-links {
     display: flex;
-    gap: 22px;
+    gap: 16px;
     align-items: center;
   }
+  .nav-links > * { flex-shrink: 0; }
   .nav-links a {
     color: var(--ink-2);
     font-size: 0.9rem;
+    white-space: nowrap;
   }
   .nav-links a:hover { color: var(--accent); text-decoration: none; }
   .nav-links a.num::before {
@@ -110,10 +114,11 @@
     font-size: 0.85rem;
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 4px 10px;
     color: var(--ink);
     background: var(--panel);
     transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
   }
   .nav-github:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
 
@@ -131,6 +136,7 @@
     align-items: center;
     gap: 5px;
     padding: 0;
+    white-space: nowrap;
   }
   .nav-drop-btn:hover { color: var(--accent); }
   .nav-drop-btn .n { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); margin-right: 2px; }
@@ -167,12 +173,17 @@
     font-family: var(--mono);
     font-size: 0.74rem;
     color: var(--ink-2);
-    letter-spacing: 0.03em;
-    padding-left: 16px;
+    letter-spacing: 0;
+    padding-left: 12px;
     border-left: 1px solid var(--line);
     white-space: nowrap;
   }
   .nav-count b { color: var(--accent); font-weight: 600; }
+  @media (max-width: 1180px) {
+    .nav-links { gap: 12px; }
+    .nav-github { padding-left: 8px; padding-right: 8px; }
+    .nav-count { padding-left: 10px; }
+  }
   @media (max-width: 860px) {
     .nav-count { display: none !important; }
   }
