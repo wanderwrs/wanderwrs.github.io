@@ -826,7 +826,7 @@
         </div>
       </div>
       <a class="nav-github keep" href="https://github.com/wanderwrs" target="_blank" rel="noopener">GitHub ↗</a>
-      <span class="nav-count" id="busuanzi_container_site_pv" style="display:none">您是第 <b id="busuanzi_value_site_pv"></b> 位来访者</span>
+      <span class="nav-count" id="visitBox" hidden>您是第 <b id="visitNum"></b> 位来访者</span>
     </nav>
   </div>
 </header>
@@ -1479,19 +1479,21 @@
   })();
 </script>
 
-<!-- 不蒜子计数：主页每次打开计一次，持续累计 -->
-<script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- 来访计数：每次打开主页 +1，持续累计（Abacus 免费计数服务） -->
 <script>
-  // 计数千分位显示（例：12345 → 12,345）
   (function () {
-    var el = document.getElementById('busuanzi_value_site_pv');
-    if (!el) return;
-    new MutationObserver(function () {
-      var t = el.textContent;
-      if (t.indexOf(',') >= 0) return;
-      var n = parseInt(t, 10);
-      if (!isNaN(n)) el.textContent = n.toLocaleString('zh-CN');
-    }).observe(el, { childList: true, characterData: true, subtree: true });
+    var box = document.getElementById('visitBox');
+    var num = document.getElementById('visitNum');
+    if (!box || !num) return;
+    fetch('https://abacus.jasoncameron.dev/hit/wanderwrs-home/visit')
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (typeof d.value === 'number') {
+          num.textContent = d.value.toLocaleString('zh-CN');
+          box.hidden = false;
+        }
+      })
+      .catch(function () {});
   })();
 </script>
 </body>
