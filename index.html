@@ -1538,21 +1538,38 @@ html[data-theme="dark"] .gate { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35); }
   })();
 </script>
 
-<!-- 来访计数：每次打开主页 +1，持续累计（Abacus 免费计数服务） -->
+<!-- 来访计数：每次打开主页 +1，持续累计（Abacus 免费计数服务；本地缓存兜底 + 失败重试） -->
 <script>
   (function () {
     var box = document.getElementById('visitBox');
     var num = document.getElementById('visitNum');
     if (!box || !num) return;
-    fetch('https://abacus.jasoncameron.dev/hit/wanderwrs-home/visit')
-      .then(function (r) { return r.json(); })
-      .then(function (d) {
-        if (typeof d.value === 'number') {
-          num.textContent = d.value.toLocaleString('zh-CN');
-          box.hidden = false;
-        }
-      })
-      .catch(function () {});
+    var CACHE_KEY = 'wxVisitCount';
+    var show = function (v) {
+      num.textContent = Number(v).toLocaleString('zh-CN');
+      box.hidden = false;
+    };
+    var cached = parseInt('0', 10);
+    try { cached = parseInt(localStorage.getItem(CACHE_KEY), 10); } catch (e) {}
+    if (!isNaN(cached) && cached > 0) show(cached);
+    var fetchCount = function (retried) {
+      var ctrl = ('AbortController' in window) ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 8000) : null;
+      fetch('https://abacus.jasoncameron.dev/hit/wanderwrs-home/visit', ctrl ? { signal: ctrl.signal } : {})
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (timer) clearTimeout(timer);
+          if (typeof d.value === 'number') {
+            show(d.value);
+            try { localStorage.setItem(CACHE_KEY, String(d.value)); } catch (e) {}
+          }
+        })
+        .catch(function () {
+          if (timer) clearTimeout(timer);
+          if (!retried) setTimeout(function () { fetchCount(true); }, 2500);
+        });
+    };
+    fetchCount(false);
   })();
 </script>
 <script>
